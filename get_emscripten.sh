@@ -1,0 +1,11 @@
+#!/bin/bash -e
+rm -f emsdk-portable.tar.gz
+curl -O https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz
+tar xzf emsdk-portable.tar.gz
+rm -f emsdk-portable.tar.gz
+cd emsdk_portable
+
+./emsdk update
+./emsdk install latest
+./emsdk activate latest
+
