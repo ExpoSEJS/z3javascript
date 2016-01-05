@@ -1,3 +1,2 @@
-./scripts/get_z3.sh
 ./scripts/get_emscripten.sh
 ./scripts/build_z3.sh
