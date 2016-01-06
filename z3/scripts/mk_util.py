@@ -789,6 +789,9 @@ def get_components():
 def get_z3py_dir():
     return Z3PY_SRC_DIR
 
+def get_z3js_dir():
+    return "../compiled/"
+
 # Return true if in verbose mode
 def is_verbose():
     return VERBOSE

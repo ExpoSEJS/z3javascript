@@ -28,6 +28,7 @@ dotnet_dir  = get_component('dotnet').src_dir
 log_h   = open(os.path.join(api_dir, 'api_log_macros.h'), 'w')
 log_c   = open(os.path.join(api_dir, 'api_log_macros.cpp'), 'w')
 exe_c   = open(os.path.join(api_dir, 'api_commands.cpp'), 'w')
+core_js = open(os.path.join(get_z3js_dir(), 'z3_bindings_stripped.js'), 'w')
 core_py = open(os.path.join(get_z3py_dir(), 'z3core.py'), 'w')
 dotnet_fileout = os.path.join(dotnet_dir, 'Native.cs')
 ##
@@ -148,6 +149,12 @@ Type2PyStr = { VOID_PTR : 'ctypes.c_void_p', INT : 'ctypes.c_int', UINT : 'ctype
                PRINT_MODE : 'ctypes.c_uint', ERROR_CODE : 'ctypes.c_uint'
                }
 
+Type2JsStr = { VOID : 'Void', VOID_PTR : 'Voidp', INT : 'CInt', UINT : 'CUInt', INT64 : 'CLong',
+               UINT64 : 'CULong', DOUBLE : 'CDouble',
+               STRING : 'CString', STRING_PTR : 'CStringPtr', FLOAT: 'CFloat', BOOL : 'CInt', SYMBOL : 'Symbol',
+               PRINT_MODE : 'CUInt', ERROR_CODE : 'CUInt'
+               }
+
 # Mapping to .NET types
 Type2Dotnet = { VOID : 'void', VOID_PTR : 'IntPtr', INT : 'int', UINT : 'uint', INT64 : 'Int64', UINT64 : 'UInt64', DOUBLE : 'double',
                 FLOAT : 'float', STRING : 'string', STRING_PTR : 'byte**', BOOL : 'int', SYMBOL : 'IntPtr',
@@ -174,6 +181,7 @@ def def_Type(var, c_type, py_type):
     exec('%s = %s' % (var, next_type_id), globals())
     Type2Str[next_type_id]   = c_type
     Type2PyStr[next_type_id] = py_type
+    Type2JsStr[next_type_id] = py_type
     next_type_id    = next_type_id + 1
 
 def def_Types():
@@ -198,6 +206,10 @@ def type2str(ty):
 def type2pystr(ty):
     global Type2PyStr
     return Type2PyStr[ty]
+
+def type2jsstr(ty):
+    global Type2JsStr
+    return Type2JsStr[ty]
 
 def type2dotnet(ty):
     global Type2Dotnet
@@ -345,6 +357,14 @@ def param2ml(p):
     else:
         return type2ml(param_type(p))
 
+def param2jsstr(p):
+    if param_kind(p) == IN_ARRAY or param_kind(p) == OUT_ARRAY or param_kind(p) == IN_ARRAY or param_kind(p) == INOUT_ARRAY:
+        return "%sArray" % type2jsstr(param_type(p))
+    elif param_kind(p) == OUT:
+        return "ref.refType(%s)" % type2jsstr(param_type(p))
+    else:
+        return type2jsstr(param_type(p))
+
 # Save name, result, params to generate wrapper
 _API2PY = []
 
@@ -364,7 +384,26 @@ def mk_py_binding(name, result, params):
         core_py.write(param2pystr(p))
     core_py.write("]\n")
 
+# Save name, result, params to generate wrapper
+_API2JS = []
+
+#     'Z3_set_param_value': [ Void, [ Config, 'string', 'string' ]],
+def mk_js_binding(name, result, params):
+    global core_js
+    global _API2JS
+    _API2JS.append((name, result, params))
+    core_js.write("      \'%s\': [ %s, [ " % (name, type2jsstr(result)))
+    first = True
+    for p in params:
+        if first:
+            first = False
+        else:
+            core_js.write(", ")
+        core_js.write(param2jsstr(p))
+    core_js.write("]],\n")
+
 def extra_API(name, result, params):
+    mk_js_binding(name, result, params)
     mk_py_binding(name, result, params)
     reg_dotnet(name, result, params)
 
@@ -917,6 +956,7 @@ API2Id = {}
 def def_API(name, result, params):
     global API2Id, next_id
     global log_h, log_c
+    mk_js_binding(name, result, params)
     mk_py_binding(name, result, params)
     reg_dotnet(name, result, params)
     API2Id[next_id] = name

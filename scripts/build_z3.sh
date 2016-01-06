@@ -1,3 +1,6 @@
+./emsdk_portable/emsdk activate latest
+./emsdk/emsdk_env.sh
+
 cd z3
 if [ -e build ]; then
     mv build build-$(stat -c "%y" build | sed 's/[ :]/_/g' - | sed 's/\..*/ /g')
