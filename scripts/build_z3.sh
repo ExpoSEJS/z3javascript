@@ -28,3 +28,5 @@ sed -i 's/^\(CXXFLAGS=.*\)/\1 -fPIC/g' config.mk
 sed -i 's/^\(LINK_EXTRA_FLAGS=.*\)/\1 -O3 -fPIC/g' config.mk
 emmake make
 cp z3.emscripten.js* ../../compiled/
+make
+cp libz3.so* ../../compiled/
