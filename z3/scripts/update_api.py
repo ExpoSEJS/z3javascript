@@ -387,12 +387,13 @@ def mk_py_binding(name, result, params):
 # Save name, result, params to generate wrapper
 _API2JS = []
 
-#     'Z3_set_param_value': [ Void, [ Config, 'string', 'string' ]],
+#     GeneratedBindings['Z3_set_param_value'] = [ Void, [ Config, 'string', 'string' ]];
 def mk_js_binding(name, result, params):
     global core_js
     global _API2JS
+
     _API2JS.append((name, result, params))
-    core_js.write("      \'%s\': [ %s, [ " % (name, type2jsstr(result)))
+    core_js.write("GeneratedBindings[\'%s\'] = [ %s, [ " % (name, type2jsstr(result)))
     first = True
     for p in params:
         if first:
@@ -400,7 +401,9 @@ def mk_js_binding(name, result, params):
         else:
             core_js.write(", ")
         core_js.write(param2jsstr(p))
-    core_js.write("]],\n")
+
+    core_js.write("]];")
+    core_js.write("\n")
 
 def extra_API(name, result, params):
     mk_js_binding(name, result, params)

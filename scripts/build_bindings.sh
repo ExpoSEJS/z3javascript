@@ -1,0 +1,8 @@
+#!/bin/bash -e
+IFS=$"\n"
+
+entry="$(cat ./templates/pre_bindings.js)"
+binding="$(cat ./compiled/z3_bindings_stripped.js)"
+exit="$(cat ./templates/post_bindings.js)"
+
+echo "$entry \n$binding \n$exit" > ./compiled/z3_bindings_built.js

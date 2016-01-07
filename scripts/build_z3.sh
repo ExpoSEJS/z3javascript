@@ -1,3 +1,4 @@
+#!/bin/bash -e
 ./emsdk_portable/emsdk activate latest
 ./emsdk/emsdk_env.sh
 

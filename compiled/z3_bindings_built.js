@@ -1,3 +1,4 @@
+var GeneratedBindings = []; 
 GeneratedBindings['Z3_global_param_set'] = [ Void, [ CString, CString]];
 GeneratedBindings['Z3_global_param_reset_all'] = [ Void, [ ]];
 GeneratedBindings['Z3_global_param_get'] = [ CInt, [ CString, ref.refType(CString)]];
@@ -589,4 +590,5 @@ GeneratedBindings['Z3_fpa_get_numeral_significand_uint64'] = [ CInt, [ ContextOb
 GeneratedBindings['Z3_fpa_get_numeral_exponent_string'] = [ CString, [ ContextObj, Ast]];
 GeneratedBindings['Z3_fpa_get_numeral_exponent_int64'] = [ CInt, [ ContextObj, Ast, ref.refType(CLong)]];
 GeneratedBindings['Z3_mk_fpa_to_ieee_bv'] = [ Ast, [ ContextObj, Ast]];
-GeneratedBindings['Z3_mk_fpa_to_fp_int_real'] = [ Ast, [ ContextObj, Ast, Ast, Ast, Sort]];
+GeneratedBindings['Z3_mk_fpa_to_fp_int_real'] = [ Ast, [ ContextObj, Ast, Ast, Ast, Sort]]; 
+
