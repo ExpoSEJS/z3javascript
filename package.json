@@ -2,7 +2,7 @@
   "name": "z3_js",
   "version": "0.0.1",
   "description": "Microsfts Z3 theorum prover built for Javascript",
-  "main": "./bin/z3_bindings_em.js",
+  "main": "./compiled/z3_bindings_em_es5.js",
   "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.4.0",
