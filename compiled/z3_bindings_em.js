@@ -40,6 +40,7 @@ let RCFNumObj = Voidp;
 // Names for standard types
 let CUInt = 'number';
 let CInt = 'number';
+let CFloat = 'number';
 let CBool = 'number';
 let CULong = 'number';
 let CLong = 'number';

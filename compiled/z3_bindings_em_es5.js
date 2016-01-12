@@ -48,6 +48,7 @@ var RCFNumObj = Voidp;
 // Names for standard types
 var CUInt = 'number';
 var CInt = 'number';
+var CFloat = 'number';
 var CBool = 'number';
 var CULong = 'number';
 var CLong = 'number';

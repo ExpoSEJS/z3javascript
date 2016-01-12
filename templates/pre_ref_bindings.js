@@ -48,6 +48,7 @@ let RCFNumObj = Voidp;
 let CUInt = ref.types.uint32;
 let CInt = ref.types.int32;
 let CBool = ref.types.bool;
+let CFloat = ref.types.float;
 let CULong = ref.types.uint64;
 let CLong = ref.types.int64;
 let CDouble = ref.types.double;
