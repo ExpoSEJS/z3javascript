@@ -55,7 +55,13 @@ let ConstructorArray = 'array';
 let ConstructorListArray = 'array';
 let PatternArray = 'array';
 let TacticObjArray = 'array';
-let RCFNumObjArray = 'array'; 
+let RCFNumObjArray = 'array';
+
+var ref = {
+	refType: function() {
+		return 'number';
+	}
+}; 
 
 var GeneratedBindings = []; 
 

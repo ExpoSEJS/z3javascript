@@ -1,7 +1,7 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+	value: true
 });
 
 var _z3Emscripten = require('./z3.emscripten.js');
@@ -64,6 +64,12 @@ var ConstructorListArray = 'array';
 var PatternArray = 'array';
 var TacticObjArray = 'array';
 var RCFNumObjArray = 'array';
+
+var ref = {
+	refType: function refType() {
+		return 'number';
+	}
+};
 
 var GeneratedBindings = [];
 
@@ -663,7 +669,7 @@ GeneratedBindings['Z3_mk_fpa_to_fp_int_real'] = [Ast, [ContextObj, Ast, Ast, Ast
 var Z3 = {};
 
 for (method in GeneratedBindings) {
-  Z3[method] = _z3Emscripten2.default.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
+	Z3[method] = _z3Emscripten2.default.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
 }
 
 //////// End Z3 function definitions
