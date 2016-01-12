@@ -264,5 +264,18 @@ Z3.GOAL_PRECISE = 0;
 Z3.GOAL_UNDER_OVER = 3;
 Z3.GOAL_OVER = 2;
 
+//// Exported types
+Z3.Ast = Ast;
+
+Z3.AstArray = AstArray;
+Z3.CUIntArray = CUIntArray;
+Z3.SymbolArray = SymbolArray
+Z3.SortArray = SortArray;
+Z3.FuncDeclArray = FuncDeclArray;
+Z3.ConstructorArray = ConstructorArray;
+Z3.ConstructorListArray = ConstructorListArray;
+Z3.PatternArray = PatternArray;
+Z3.TacticObjArray = TacticObjArray;
+Z3.RCFNumObjArray = RCFNumObjArray;
 
 export default Z3;
