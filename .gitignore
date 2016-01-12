@@ -1,5 +1,6 @@
 z3/build*
 emsdk_portable/*
+node_modules/*
 *a.out.*
 #Backup files
 *~
