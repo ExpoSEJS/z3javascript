@@ -47,6 +47,7 @@ let CString = 'string';
 
 // Array types. Not all of these may be valid (check over time)
 let AstArray = 'array';
+let CIntArray = 'array';
 let CUIntArray = 'array';
 let SymbolArray = 'array';
 let SortArray = 'array';

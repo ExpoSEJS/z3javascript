@@ -54,6 +54,7 @@ let CString = ref.types.CString;
 
 // Array types. Not all of these may be valid (check over time)
 let AstArray = ArrayType(Ast);
+let CIntArray = ArrayType(CInt);
 let CUIntArray = ArrayType(CUInt);
 let SymbolArray = ArrayType(Symbol);
 let SortArray = ArrayType(Symbol);

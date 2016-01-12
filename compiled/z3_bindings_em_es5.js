@@ -55,6 +55,7 @@ var CString = 'string';
 
 // Array types. Not all of these may be valid (check over time)
 var AstArray = 'array';
+var CIntArray = 'array';
 var CUIntArray = 'array';
 var SymbolArray = 'array';
 var SortArray = 'array';
