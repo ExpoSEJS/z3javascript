@@ -1,6 +1,6 @@
 #!/bin/bash -e
 ./emsdk_portable/emsdk activate latest
-./emsdk/emsdk_env.sh
+source ./emsdk_portable/emsdk_env.sh
 
 cd z3
 
@@ -13,11 +13,13 @@ alias g++=em++
 alias ar=emar
 alias cc=emcc
 alias gcc=emcc
+alias clang=emcc
+alias clang++=em++
 alias cmake=emcmake
 alias configure=emconfigure
 alias ranlib=emranlib
 
-export CC=emcc
+export CC=em
 export CXX=em++
 
 python scripts/mk_make.py --x86 --githash=$(git rev-parse HEAD) --staticlib
@@ -28,5 +30,5 @@ sed -i 's/^\(CXXFLAGS=.*\)/\1 -fPIC/g' config.mk
 sed -i 's/^\(LINK_EXTRA_FLAGS=.*\)/\1 -O3 -fPIC/g' config.mk
 emmake make
 cp z3.emscripten.js* ../../compiled/
-make
-cp libz3.so* ../../compiled/
+#make
+#cp libz3.so* ../../compiled/
