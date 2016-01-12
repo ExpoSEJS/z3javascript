@@ -16,6 +16,7 @@ let Void  = ref.types.void,
 
 let Z3Exception = Voidp;
 let ContextObj = Voidp;
+let OptimizeObj = Voidp;
 let TheoryObj = Voidp;
 let Config = Voidp;
 let Symbol = Voidp;

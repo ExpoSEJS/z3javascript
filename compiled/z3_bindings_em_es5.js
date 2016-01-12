@@ -17,6 +17,7 @@ var Void = null,
 
 var Z3Exception = Voidp;
 var ContextObj = Voidp;
+var OptimizeObj = Voidp;
 var TheoryObj = Voidp;
 var Config = Voidp;
 var Symbol = Voidp;
