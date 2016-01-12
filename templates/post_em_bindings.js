@@ -1,6 +1,6 @@
 var Z3 = {};
 
-for (method in GeneratedBindings) {
+for (let method in GeneratedBindings) {
 	Z3[method] = Module.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
 }
 

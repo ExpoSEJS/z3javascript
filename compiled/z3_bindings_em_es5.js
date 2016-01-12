@@ -671,7 +671,7 @@ GeneratedBindings['Z3_mk_fpa_to_fp_int_real'] = [Ast, [ContextObj, Ast, Ast, Ast
 
 var Z3 = {};
 
-for (method in GeneratedBindings) {
+for (var method in GeneratedBindings) {
 	Z3[method] = _z3Emscripten2.default.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
 }
 

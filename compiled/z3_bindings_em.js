@@ -663,7 +663,7 @@ GeneratedBindings['Z3_mk_fpa_to_fp_int_real'] = [ Ast, [ ContextObj, Ast, Ast, A
 
 var Z3 = {};
 
-for (method in GeneratedBindings) {
+for (let method in GeneratedBindings) {
 	Z3[method] = Module.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
 }
 
