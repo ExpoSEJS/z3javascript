@@ -387,15 +387,22 @@ def mk_py_binding(name, result, params):
 
 # Save name, result, params to generate wrapper
 _API2JS = []
+FirstJS = True
 
 #     GeneratedBindings['Z3_set_param_value'] = [ Void, [ Config, 'string', 'string' ]];
 def mk_js_binding(name, result, params):
     global core_js
     global core_flat
+    global FirstJS
     global _API2JS
 
     _API2JS.append((name, result, params))
-    core_flat.write("%s " % (name))
+
+    if FirstJS == False:
+        core_flat.write(", ")
+
+    core_flat.write("\'_%s\'" % (name))
+
     core_js.write("GeneratedBindings[\'%s\'] = [ %s, [ " % (name, type2jsstr(result)))
     first = True
     for p in params:
@@ -404,6 +411,8 @@ def mk_js_binding(name, result, params):
         else:
             core_js.write(", ")
         core_js.write(param2jsstr(p))
+
+    FirstJS = False
 
     core_js.write("]];")
     core_js.write("\n")
