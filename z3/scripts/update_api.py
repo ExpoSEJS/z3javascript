@@ -29,6 +29,7 @@ log_h   = open(os.path.join(api_dir, 'api_log_macros.h'), 'w')
 log_c   = open(os.path.join(api_dir, 'api_log_macros.cpp'), 'w')
 exe_c   = open(os.path.join(api_dir, 'api_commands.cpp'), 'w')
 core_js = open(os.path.join(get_z3js_dir(), 'z3_bindings_stripped.js'), 'w')
+core_flat = open(os.path.join(get_z3js_dir(), 'z3_bindings_flat'), 'w')
 core_py = open(os.path.join(get_z3py_dir(), 'z3core.py'), 'w')
 dotnet_fileout = os.path.join(dotnet_dir, 'Native.cs')
 ##
@@ -390,9 +391,11 @@ _API2JS = []
 #     GeneratedBindings['Z3_set_param_value'] = [ Void, [ Config, 'string', 'string' ]];
 def mk_js_binding(name, result, params):
     global core_js
+    global core_flat
     global _API2JS
 
     _API2JS.append((name, result, params))
+    core_flat.write("%s " % (name))
     core_js.write("GeneratedBindings[\'%s\'] = [ %s, [ " % (name, type2jsstr(result)))
     first = True
     for p in params:
