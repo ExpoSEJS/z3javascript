@@ -78,8 +78,7 @@ def init_project_def():
     add_lib('opt', ['smt', 'smtlogic_tactics', 'sls_tactic', 'sat_solver'], 'opt')
     API_files = ['z3_api.h', 'z3_ast_containers.h', 'z3_algebraic.h', 'z3_polynomial.h', 'z3_rcf.h', 'z3_fixedpoint.h', 'z3_optimization.h', 'z3_interp.h', 'z3_fpa.h']
     add_lib('api', ['portfolio', 'smtparser', 'realclosure', 'interp', 'opt'],
-            includes2install=['z3.h', 'z3_v1.h', 'z3_macros.h'] + API_files)
-    add_lib('strings', ['api'])
+            includes2install=['z3.h', 'strTheory.h', 'z3_v1.h', 'z3_macros.h'] + API_files)
     add_exe('shell', ['api', 'sat', 'extra_cmds','opt'], exe_name='z3')
     add_exe('test', ['api', 'fuzzing', 'simplex'], exe_name='test-z3', install=False)
     _libz3Component = add_dll('api_dll', ['api', 'sat', 'extra_cmds'], 'api/dll',
