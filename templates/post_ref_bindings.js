@@ -1,5 +1,11 @@
 let Z3 = ffi.Library(libPath, GeneratedBindings);
 
+Z3.bindings_model_eval = function() {
+	var pAST = ref.alloc(Z3.Ast, null);
+    var result = Z3.Z3_model_eval(this.ctx, this.mdl, expr.ast, true, pAST);
+    return result == Z3.TRUE ? new Expr(this.ctx, pAST.deref()) : null;
+}
+
 //////// End Z3 function definitions
 
 // Constants - these are taken from z3onsts.py (and reformatted for export)
