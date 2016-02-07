@@ -667,10 +667,16 @@ for (let method in GeneratedBindings) {
 	Z3[method] = Module.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
 }
 
+Z3.bindings_model_eval = function(ctx, mdl, expr) {
+	var pAST = Module._malloc(8);
+    var result = Z3.Z3_model_eval(ctx, mdl, expr.ast, true, pAST);
+    var eAST = Module.getValue(pAST, '*');
+    Module._free(pAST);
+    return result == Z3.TRUE ? new Expr(ctx, eAST) : null;
+}
+
 //////// End Z3 function definitions
-
 // Constants - these are taken from z3onsts.py (and reformatted for export)
-
 // enum Z3_lbool
 Z3.TRUE = 1;
 Z3.UNDEF = 0;
