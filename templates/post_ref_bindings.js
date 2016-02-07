@@ -1,9 +1,9 @@
 let Z3 = ffi.Library(libPath, GeneratedBindings);
 
-Z3.bindings_model_eval = function() {
+Z3.bindings_model_eval = function(ctx, mdl, expr) {
 	var pAST = ref.alloc(Z3.Ast, null);
-    var result = Z3.Z3_model_eval(this.ctx, this.mdl, expr.ast, true, pAST);
-    return result == Z3.TRUE ? new Expr(this.ctx, pAST.deref()) : null;
+    var result = Z3.Z3_model_eval(ctx, mdl, expr.ast, true, pAST);
+    return result == Z3.TRUE ? new Expr(ctx, pAST.deref()) : null;
 }
 
 //////// End Z3 function definitions

@@ -5,9 +5,12 @@ for (let method in GeneratedBindings) {
 }
 
 Z3.bindings_model_eval = function() {
-	var pAST = ref.alloc(Z3.Ast, null);
+	var pAST = Module._malloc(8);
     var result = Z3.Z3_model_eval(this.ctx, this.mdl, expr.ast, true, pAST);
-    return result == Z3.TRUE ? new Expr(this.ctx, pAST.deref()) : null;
+    var eAST = Module.getValue(pAST, '*');
+    Module._free(pAST);
+
+    return result == Z3.TRUE ? new Expr(this.ctx, eAST) : null;
 }
 
 //////// End Z3 function definitions
