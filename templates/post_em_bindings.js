@@ -9,7 +9,7 @@ Z3.bindings_model_eval = function(ctx, mdl, expr) {
     var result = Z3.Z3_model_eval(ctx, mdl, expr.ast, true, pAST);
     var eAST = Module.getValue(pAST, '*');
     Module._free(pAST);
-    return result == Z3.TRUE ? new Expr(ctx, eAST) : null;
+    return result == Z3.TRUE ? eAST : null;
 }
 
 //////// End Z3 function definitions
