@@ -677,7 +677,7 @@ for (var method in GeneratedBindings) {
 
 Z3.bindings_model_eval = function (ctx, mdl, expr) {
   var pAST = _z3Emscripten2.default._malloc(8);
-  var result = Z3.Z3_model_eval(ctx, mdl, expr.ast, true, pAST);
+  var result = Z3.Z3_model_eval(ctx, mdl, expr, true, pAST);
   var eAST = _z3Emscripten2.default.getValue(pAST, '*');
   _z3Emscripten2.default._free(pAST);
   return result == Z3.TRUE ? eAST : null;
