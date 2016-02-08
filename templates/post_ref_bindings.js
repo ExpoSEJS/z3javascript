@@ -7,9 +7,7 @@ Z3.bindings_model_eval = function(ctx, mdl, expr) {
 }
 
 //////// End Z3 function definitions
-
 // Constants - these are taken from z3onsts.py (and reformatted for export)
-
 // enum Z3_lbool
 Z3.TRUE = 1;
 Z3.UNDEF = 0;

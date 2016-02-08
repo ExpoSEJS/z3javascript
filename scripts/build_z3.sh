@@ -28,8 +28,8 @@ sed -i 's/EXE_EXT=/EXE_EXT=.emscripten.js/g' config.mk
 sed -i 's/-m32/-m64/g' config.mk
 sed -i 's/^\(CXXFLAGS=.*\)/\1 -fPIC/g' config.mk
 sed -i 's/^\(CXXFLAGS=.*\)/\1 INSERTEXPORTHERE/g' config.mk
-sed -i 's/^\(LINK_EXTRA_FLAGS=.*\)/\1 -O2 -fPIC INSERTEXPORTHERE/g' config.mk
-sed -i 's/O3/O2/g' config.mk
+sed -i 's/^\(LINK_EXTRA_FLAGS=.*\)/\1 -O3 -fPIC INSERTEXPORTHERE/g' config.mk
+sed -i 's/O3/O0/g' config.mk
 sed -i "s/INSERTEXPORTHERE/-s EXPORTED_FUNCTIONS=\"[$(cat ../../compiled/z3_bindings_flat)]\"/g" config.mk
 emmake make
 cp z3.emscripten.js* ../../compiled/
