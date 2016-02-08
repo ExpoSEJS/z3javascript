@@ -1,7 +1,8 @@
 #!/bin/bash -e
-./build_z3.sh
-./build_z3_std.sh
-./build_bindings.sh
-./build_em_bindings.sh
-./build_ref_bindings.sh
-./compile_to_es5.sh
+./scripts/build_z3.sh
+./scripts/build_z3_std.sh
+./scripts/build_bindings.sh
+./scripts/build_em_bindings.sh
+./scripts/build_ref_bindings.sh
+./scripts/compile_to_es5.sh
+npm run compile
