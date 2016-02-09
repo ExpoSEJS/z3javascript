@@ -1,9 +1,5 @@
 "use strict";
 
-//Remove fill on Array as it causes emscripten to crash (Re added at bottom of file)
-var findProto = Array.prototype.find;
-delete Array.prototype.find;
-
 import Module from './z3.emscripten.js';
 
 // Manually defined types (from Z3 Python API). Could possibly be simplified to just Voidp
@@ -69,5 +65,3 @@ var ref = {
 		return 'number';
 	}
 };
-
-Array.prototype.find = findProto;

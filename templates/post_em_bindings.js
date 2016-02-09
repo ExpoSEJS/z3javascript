@@ -1,7 +1,9 @@
 var Z3 = {};
 
 for (let method in GeneratedBindings) {
-	Z3[method] = Module.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
+	if (!Array.prototype[method]) {
+		Z3[method] = Module.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
+	}
 }
 
 Z3.bindings_model_eval = function(ctx, mdl, expr) {
