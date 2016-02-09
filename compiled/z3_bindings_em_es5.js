@@ -1,7 +1,7 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+  value: true
 });
 
 var _z3Emscripten = require('./z3.emscripten.js');
@@ -69,9 +69,9 @@ var TacticObjArray = 'array';
 var RCFNumObjArray = 'array';
 
 var ref = {
-	refType: function refType() {
-		return 'number';
-	}
+  refType: function refType() {
+    return 'number';
+  }
 };
 
 var GeneratedBindings = [];
@@ -672,13 +672,19 @@ GeneratedBindings['Z3_mk_fpa_to_fp_int_real'] = [Ast, [ContextObj, Ast, Ast, Ast
 var Z3 = {};
 
 for (var method in GeneratedBindings) {
-	Z3[method] = _z3Emscripten2.default.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
+  Z3[method] = _z3Emscripten2.default.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
 }
 
+Z3.bindings_model_eval = function (ctx, mdl, expr) {
+  var pAST = _z3Emscripten2.default._malloc(8);
+  var result = Z3.Z3_model_eval(ctx, mdl, expr, true, pAST);
+  var eAST = _z3Emscripten2.default.getValue(pAST, '*');
+  _z3Emscripten2.default._free(pAST);
+  return result == Z3.TRUE ? eAST : null;
+};
+
 //////// End Z3 function definitions
-
 // Constants - these are taken from z3onsts.py (and reformatted for export)
-
 // enum Z3_lbool
 Z3.TRUE = 1;
 Z3.UNDEF = 0;

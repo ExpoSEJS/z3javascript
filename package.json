@@ -10,7 +10,6 @@
     "babel-preset-stage-0": "^6.3.13"
   },
   "scripts": {
-    "compile": "sh ./scripts/compile_to_es5",
     "prepublish": "",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -8,5 +8,5 @@ fi
 python scripts/mk_make.py --x86 --githash=$(git rev-parse HEAD) --staticlib
 cd build
 
-make
+make -j 8
 cp libz3.so* ../../compiled/
