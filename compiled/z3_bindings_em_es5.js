@@ -1,5 +1,7 @@
 "use strict";
 
+//Remove fill on Array as it causes emscripten to crash (Re added at bottom of file)
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -9,6 +11,9 @@ var _z3Emscripten = require('./z3.emscripten.js');
 var _z3Emscripten2 = _interopRequireDefault(_z3Emscripten);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var findProto = Array.prototype.find;
+delete Array.prototype.find;
 
 // Manually defined types (from Z3 Python API). Could possibly be simplified to just Voidp
 // but maybe we'll need the distinction later
@@ -73,6 +78,8 @@ var ref = {
     return 'number';
   }
 };
+
+Array.prototype.find = findProto;
 
 var GeneratedBindings = [];
 
