@@ -1,9 +1,5 @@
 "use strict";
 
-//Remove fill on Array as it causes emscripten to crash (Re added at bottom of file)
-var findProto = Array.prototype.find;
-delete Array.prototype.find;
-
 import Module from './z3.emscripten.js';
 
 // Manually defined types (from Z3 Python API). Could possibly be simplified to just Voidp
@@ -68,9 +64,7 @@ var ref = {
 	refType: function() {
 		return 'number';
 	}
-};
-
-Array.prototype.find = findProto; 
+}; 
 
 var GeneratedBindings = []; 
 
@@ -670,7 +664,9 @@ GeneratedBindings['Z3_mk_fpa_to_fp_int_real'] = [ Ast, [ ContextObj, Ast, Ast, A
 var Z3 = {};
 
 for (let method in GeneratedBindings) {
-	Z3[method] = Module.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
+	if (!Array.prototype[method]) {
+		Z3[method] = Module.cwrap(method, GeneratedBindings[method][0], GeneratedBindings[method][1]);
+	}
 }
 
 Z3.bindings_model_eval = function(ctx, mdl, expr) {
