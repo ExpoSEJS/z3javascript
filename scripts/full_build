@@ -1,0 +1,6 @@
+#!/bin/bash -e
+./scripts/build_z3
+./scripts/build_bindings
+./scripts/build_em_bindings
+./scripts/build_ref_bindings
+./scripts/compile_to_es5
