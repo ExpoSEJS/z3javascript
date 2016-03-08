@@ -1,3 +1,4 @@
 #!/bin/bash -e
 ./scripts/get_emscripten
 ./scripts/full_build
+exit 0
