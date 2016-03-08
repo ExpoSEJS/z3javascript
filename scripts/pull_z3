@@ -1,2 +1,6 @@
 #!/bin/bash -e
-git clone https://github.com/jawline/z3
+if [ -e z3 ]; then
+	echo "Dont need to pull Z3"
+else
+	git clone https://github.com/jawline/z3
+fi
