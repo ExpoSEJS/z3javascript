@@ -10,7 +10,7 @@
   },
   "scripts": {
     "prepublish": "",
-    "install": "git submodule foreach git pull origin master && npm run build",
+    "install": "./scripts/pull_z3 && npm run build",
     "build":"./setup",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -1,0 +1,4 @@
+#!/bin/bash -e
+cd z3
+git submodule init
+git submodule update
