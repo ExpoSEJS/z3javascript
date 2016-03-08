@@ -11,6 +11,8 @@
   },
   "scripts": {
     "prepublish": "",
+    "install": "npm run build",
+    "build":"./setup",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

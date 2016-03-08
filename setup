@@ -1,4 +1,3 @@
 #!/bin/bash -e
-npm install
 ./scripts/get_emscripten
 ./scripts/full_build

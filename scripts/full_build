@@ -1,4 +1,5 @@
 #!/bin/bash -e
+./scripts/build_z3_std
 ./scripts/build_z3
 ./scripts/build_bindings
 ./scripts/build_em_bindings
