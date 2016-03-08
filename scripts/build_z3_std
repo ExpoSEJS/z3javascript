@@ -9,4 +9,4 @@ CXX=clang++ CC=clang python scripts/mk_make.py --x86 --githash=$(git rev-parse H
 cd build
 
 make -j 8
-cp libz3.so* ../../compiled/
+cp libz3* ../../compiled/
