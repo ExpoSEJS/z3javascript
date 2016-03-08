@@ -1,4 +1,5 @@
 #!/bin/bash -e
+./scripts/build_z3_std
 ./scripts/get_emscripten
 ./scripts/full_build
 exit 0
