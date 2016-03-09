@@ -4,6 +4,3 @@ if [ -e z3 ]; then
 else
 	git clone https://github.com/jawline/z3
 fi
-
-ls
-ls node_modules/
