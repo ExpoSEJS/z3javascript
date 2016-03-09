@@ -10,7 +10,7 @@
   },
   "scripts": {
     "prepublish": "",
-    "postinstall": "./scripts/pull_z3 && npm run build",
+    "postinstall": "./scripts/pull_z3 && ./scripts/install_babel && npm run build",
     "build":"./setup",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

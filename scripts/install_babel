@@ -1,0 +1,4 @@
+#!/bin/bash -e
+npm install babel-cli
+npm install babel-preset-es2015
+npm install babel-preset-stage-0
