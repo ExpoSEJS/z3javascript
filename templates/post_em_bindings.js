@@ -6,8 +6,10 @@ for (let method in GeneratedBindings) {
 	}
 }
 
+let PTR_SIZE = 4;
+
 Z3.bindings_model_eval = function(ctx, mdl, expr) {
-	var pAST = Module._malloc(8);
+	var pAST = Module._malloc(PTR_SIZE);
     var result = Z3.Z3_model_eval(ctx, mdl, expr, true, pAST);
     var eAST = Module.getValue(pAST, '*');
     Module._free(pAST);
