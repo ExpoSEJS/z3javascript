@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 entry="$(cat ./templates/pre_ref_bindings.js)"
-binding="$(cat ./compiled/z3_bindings_built.js)"
+binding="$(cat ./bin/z3_bindings_built.js)"
 exit="$(cat ./templates/post_ref_bindings.js)"
 
-printf "$entry \n\n$binding \n\n$exit" > ./compiled/z3_bindings_ref.js
-babel ./compiled/z3_bindings_ref.js > ./compiled/z3_bindings_ref_es5.js
+printf "$entry \n\n$binding \n\n$exit" > ./bin/z3_bindings_ref.js
+babel ./bin/z3_bindings_ref.js > ./bin/z3_bindings_ref_es5.js

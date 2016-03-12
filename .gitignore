@@ -1,12 +1,10 @@
 z3/build*
-compiled/z3*
+bin/
 emsdk_portable/*
 node_modules/*
 *a.out.*
 #Backup files
 *~
-
-bin/*
 
 # Object files
 *.o

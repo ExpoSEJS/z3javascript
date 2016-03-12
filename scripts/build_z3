@@ -35,6 +35,6 @@ sed -i.bak -e 's/^\(CXXFLAGS=.*\)/\1 -fPIC -std=c++03 /g' config.mk
 sed -i.bak -e 's/^\(CXXFLAGS=.*\)/\1 INSERTEXPORTHERE/g' config.mk
 sed -i.bak -e 's/^\(LINK_EXTRA_FLAGS=.*\)/\1 -O3 -std=c++03 -fPIC INSERTEXPORTHERE/g' config.mk
 sed -i.bak -e 's/O3/O3/g' config.mk
-sed -i.bak -e "s/INSERTEXPORTHERE/-s EXPORTED_FUNCTIONS=\"[$(cat ../../compiled/z3_bindings_flat)]\"/g" config.mk
+sed -i.bak -e "s/INSERTEXPORTHERE/-s EXPORTED_FUNCTIONS=\"[$(cat ../../bin/z3_bindings_flat)]\"/g" config.mk
 emmake make -j 8
-cp z3.emscripten.js* ../../compiled/
+cp z3.emscripten.js* ../../bin/
