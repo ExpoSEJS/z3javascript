@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 if [ -e bin ]; then
+	echo "Do not need to create a bin dir"
 else
     mkdir bin
 fi
