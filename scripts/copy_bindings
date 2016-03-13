@@ -1,3 +1,3 @@
 #!/bin/bash -e
-cp z3/src/api/python/z3_bindings_flat ./bin/
-cp z3/src/api/python/z3_bindings_stripped.js ./bin/
+cp "./z3/src/api/python/z3_bindings_flat" "./bin/z3_bindings_flat"
+cp "./z3/src/api/python/z3_bindings_stripped.js" "./bin/z3_bindings_stripped.js"
