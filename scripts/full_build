@@ -1,6 +1,5 @@
 #!/bin/bash -e
 ./scripts/build_z3
-./scripts/copy_bindings
 ./scripts/build_bindings
 ./scripts/build_em_bindings
 ./scripts/build_ref_bindings

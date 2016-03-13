@@ -28,6 +28,9 @@ export RANLIB=emranlib
 export PATH=`echo $PATH | sed -e 's/:\/opt\/local\/bin:\/opt\/local\/sbin//'`
 
 python scripts/mk_make.py --x86 --githash=$(git rev-parse HEAD) --staticlib
+
+(cd ../ && ./scripts/copy_bindings)
+
 cd build
 sed -i.bak -e 's/EXE_EXT=/EXE_EXT=.emscripten.js/g' config.mk
 sed -i.bak -e 's/-m32/-m64/g' config.mk
