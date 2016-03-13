@@ -1,2 +1,6 @@
 #!/bin/bash -e
+echo "Copying Bindings"
+pwd
+ls
 cp ./z3/src/api/python/z3_bindings* ./bin/
+echo "Done"
