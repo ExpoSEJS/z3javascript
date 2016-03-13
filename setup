@@ -1,4 +1,10 @@
 #!/bin/bash -e
+
+if [ -e bin ]; then
+else
+    mkdir bin
+fi
+
 #./scripts/build_z3_std
 ./scripts/get_emscripten
 ./scripts/full_build
