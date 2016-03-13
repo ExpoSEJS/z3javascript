@@ -41,5 +41,7 @@ emmake make -j 8
 echo "PWD"
 pwd
 ls
-cp ./z3.emscripten.js* ../../bin/
+rm -f ../../bin/z3.emscripten.js*
+cp ./z3.emscripten.js ../../bin/
+cp ./z3.emscripten.js.mem ../../bin/
 echo "DOIFAIL"
