@@ -1,8 +1,7 @@
-export default function(mode) {
+export default function(mode, path) {
 	if (mode === 'native') {
 		throw 'Unfinished';
 	}
 
-	import Z3 from './z3_bindings_em_es5.js';
-	return Z3;
+	return require('./z3_bindings_em_es5.js').default;
 };
