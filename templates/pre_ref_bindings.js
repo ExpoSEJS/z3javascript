@@ -7,7 +7,7 @@ import ArrayType from 'ref-array';
 import ffi from 'ffi';
 import config from './config';
 
-let libPath = config.Z3_DIR;
+export default function(libPath) {
 
 // Manually defined types (from Z3 Python API). Could possibly be simplified to just Voidp
 // but maybe we'll need the distinction later
