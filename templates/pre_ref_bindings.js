@@ -5,7 +5,6 @@
 import ref from 'ref';
 import ArrayType from 'ref-array';
 import ffi from 'ffi';
-import config from './config';
 
 export default function(libPath) {
 
