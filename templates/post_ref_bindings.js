@@ -280,4 +280,5 @@ Z3.PatternArray = PatternArray;
 Z3.TacticObjArray = TacticObjArray;
 Z3.RCFNumObjArray = RCFNumObjArray;
 
+return Z3;
 };
