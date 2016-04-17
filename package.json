@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/jawline/Z3JS.git"
+    "url": "git+https://github.com/jawline/Z3JS.git"
   },
   "author": "Blake Loring",
   "license": "",
