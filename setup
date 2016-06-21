@@ -6,8 +6,13 @@ else
     mkdir bin
 fi
 
-./scripts/get_emscripten
-./scripts/full_build
-./scripts/build_z3_std
+if [ -z ${Z3_WEB}]; then
+	./scripts/get_emscripten
+	./scripts/build_z3
+else
+	./scripts/build_z3_std
+fi
+
+./scripts/binds
 
 exit 0
