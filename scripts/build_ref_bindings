@@ -1,5 +1,4 @@
 #!/bin/bash -e
-
 entry="$(cat ./templates/pre_ref_bindings.js)"
 binding="$(cat ./bin/z3_bindings_built.js)"
 exit="$(cat ./templates/post_ref_bindings.js)"
