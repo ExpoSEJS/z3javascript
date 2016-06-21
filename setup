@@ -1,5 +1,4 @@
 #!/bin/bash -e
-
 if [ -e bin ]; then
 	echo "Do not need to create a bin dir"
 else
@@ -16,5 +15,13 @@ else
 fi
 
 ./scripts/binds
+
+if [ ! -z ${Z3_WEB} ]; then
+	echo "Em Build Cp"
+	cp ./bin/z3_bindings_em_es5.js ./bin/package.js
+else
+	echo "DllBuild Cp"
+	cp ./bin/z3_bindings_ref_es5.js ./bin/package.js
+fi
 
 exit 0
