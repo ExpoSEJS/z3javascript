@@ -6,10 +6,12 @@ else
     mkdir bin
 fi
 
-if [ -z ${Z3_WEB}]; then
+if [ ! -z ${Z3_WEB} ]; then
+	echo "Em Build"
 	./scripts/get_emscripten
 	./scripts/build_z3
 else
+	echo "DllBuild"
 	./scripts/build_z3_std
 fi
 
