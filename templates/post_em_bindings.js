@@ -288,4 +288,4 @@ Z3.PatternArray = PatternArray;
 Z3.TacticObjArray = TacticObjArray;
 Z3.RCFNumObjArray = RCFNumObjArray;
 
-export default Z3;
+export default function() { return Z3; };
