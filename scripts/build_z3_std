@@ -5,9 +5,7 @@ if [ -e build ]; then
     rm -rf ./build/
 fi
 
-#TODO: Why the hell does this fix the Mac Build
-export PATH=`echo $PATH | sed -e 's/:\/opt\/local\/bin:\/opt\/local\/sbin//'`
-python scripts/mk_make.py --x86 --githash=$(git rev-parse HEAD) --staticlib
+python scripts/mk_make.py
 (cd ../ && ./scripts/copy_bindings)
 cd build
 
