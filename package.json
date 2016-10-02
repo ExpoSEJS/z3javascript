@@ -13,7 +13,7 @@
   },
   "scripts": {
     "prepublish": "",
-    "install": "./scripts/pull_z3 && npm run build && echo Done",
+    "install": "./postinstall",
     "build": "./setup",
     "test": "echo \"Error: no test specified\""
   },
