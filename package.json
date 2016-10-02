@@ -14,7 +14,7 @@
   "scripts": {
     "prepublish": "",
     "postinstall": "./postinstall",
-    "build": "./setup",
+    "build": "",
     "test": "echo \"Error: no test specified\""
   },
   "repository": {
