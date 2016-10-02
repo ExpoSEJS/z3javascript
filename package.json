@@ -13,7 +13,7 @@
   },
   "scripts": {
     "prepublish": "",
-    "install": "./postinstall",
+    "postinstall": "./postinstall",
     "build": "./setup",
     "test": "echo \"Error: no test specified\""
   },
