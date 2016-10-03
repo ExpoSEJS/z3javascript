@@ -1,4 +1,10 @@
 #!/bin/bash -e
+
+#Have to install as postinstall is broken on 0.12.7 on Ubuntu
+npm install babel-cli
+npm install babel-preset-es2015
+npm install babel-preset-stage-0
+
 if [ -e bin ]; then
 	echo "Do not need to create a bin dir"
 else
