@@ -30,7 +30,9 @@ else
 	cp ./bin/z3_bindings_ref_es5.js ./bin/package.js
 fi
 
-
 echo "Done Z3JS"
+
+echo "Building Wrapper"
+./scripts/build_wrapper
 
 exit 0
