@@ -1,4 +1,4 @@
-z3/build*
+z3/
 bin/
 emsdk_portable/*
 node_modules/*
