@@ -1,5 +1,5 @@
 {
-  "name": "z3_js_em",
+  "name": "z3javascript",
   "version": "0.0.1",
   "description": "Microsfts Z3 theorum prover built for Javascript",
   "main": "./bin/package.js",
