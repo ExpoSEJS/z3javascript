@@ -2,6 +2,7 @@
 
 #Necessary as npm doesnt want to copy .PHONY and bin/
 if [ -e bin ]; then
+	echo "no bin dir"
 else
   mkdir bin
 fi
