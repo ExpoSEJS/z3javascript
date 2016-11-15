@@ -23,6 +23,10 @@ class Context {
     }
 
     _buildVar(func, ...args) {
+        return this._buildVarNoArgs(func, args);
+    }
+    
+    _buildVarNoArgs(func, args) {
         return new Expr(this.ctx, func(this.ctx, args.length, Z3Utils.astArray(args)));
     }
 
@@ -56,6 +60,26 @@ class Context {
 
     mkSeqLength(val) {
         return this._build(Z3.Z3_mk_seq_length, val);
+    }
+    
+    mkSeqAt(val, off) {
+        return this._build(Z3.Z3_mk_seq_at, val, off);
+    }
+   
+    mkSeqContains(val1, val2) {
+        return this._build(Z3.Z3_mk_seq_contains, val1, val2);
+    }
+    
+    mkSeqConcat(strings) {
+        return this._buildVarNoArgs(Z3.Z3_mk_seq_concat, strings);
+    }
+    
+    mkSeqSubstr(str, offset, length) {
+        return this._build(Z3.Z3_mk_seq_extract, str, offset, length);
+    }
+    
+    mkSeqIndexOf(str, str2, off) {
+        return this._build(Z3.Z3_mk_seq_index, str, str2, off);
     }
 
     isString(ast) {
@@ -96,6 +120,10 @@ class Context {
 
     mkEq(left, right) {
         return this._build(Z3.Z3_mk_eq, left, right);
+    }
+    
+    mkRealToInt(real) {
+        return this._build(Z3.Z3_mk_real2int, real);
     }
 
     //missing: distinct
@@ -142,10 +170,6 @@ class Context {
 
     mkDoubleSort() {
         return Z3.Z3_mk_fpa_sort_64(this.ctx);
-    }
-
-    mkSeqConcat(arg1, arg2) {
-        return this._buildVar(Z3.Z3_mk_seq_concat, arg1, arg2);
     }
 
     mkAdd(left, right) {
