@@ -1,5 +1,11 @@
 #!/bin/bash -e
 
+#Necessary as npm doesnt want to copy .PHONY and bin/
+if [ -e bin ]; then
+else
+  mkdir bin
+fi
+
 #Have to install as postinstall is broken on 0.12.7 on Ubuntu
 npm install babel-cli
 npm install babel-preset-es2015
