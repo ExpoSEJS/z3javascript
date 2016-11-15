@@ -1,4 +1,6 @@
 #!/bin/bash -e
+#Copyright Blake Loring <blake_l@parsed.uk> 2015
+
 cd z3
 
 if [ -e build ]; then

@@ -1,4 +1,5 @@
 #!/bin/bash -e
+#Copyright Blake Loring <blake_l@parsed.uk> 2015
 
 #Necessary as npm doesnt want to copy .PHONY and bin/
 if [ -e bin ]; then
@@ -8,9 +9,7 @@ else
 fi
 
 #Have to install as postinstall is broken on 0.12.7 on Ubuntu
-npm install babel-cli
-npm install babel-preset-es2015
-npm install babel-preset-stage-0
+./scripts/install_babel
 
 if [ ! -z ${Z3_WEB} ]; then
 	echo "Em Build"

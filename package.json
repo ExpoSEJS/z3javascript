@@ -21,7 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/jawline/z3javascript.git"
   },
-  "author": "Blake Loring",
+  "author": "Blake Loring <blake_l@parsed.uk>",
   "license": "MIT (./LICENSE)",
   "bugs": {
     "url": "https://github.com/jawline/z3javascript/issues"

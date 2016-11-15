@@ -1,4 +1,6 @@
 #!/bin/bash -e
+#Copyright Blake Loring <blake_l@parsed.uk> 2015
+
 entry="$(cat ./templates/pre_bindings.js)"
 binding="$(cat ./bin/z3_bindings_stripped.js)"
 exit="$(cat ./templates/post_bindings.js)"

@@ -1,4 +1,6 @@
 #!/bin/bash -e
+#Copyright Blake Loring <blake_l@parsed.uk> 2015
+
 ./emsdk_portable/emsdk activate latest
 source ./emsdk_portable/emsdk_env.sh
 

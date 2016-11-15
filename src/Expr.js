@@ -1,3 +1,6 @@
+/**
+ * Copyright Blake Loring <blake_l@parsed.uk> 2015
+ */
 "use strict";
 
 import Z3 from './Z3Loader';

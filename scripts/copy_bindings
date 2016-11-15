@@ -1,4 +1,6 @@
 #!/bin/bash -e
+#Copyright Blake Loring <blake_l@parsed.uk> 2015
+
 echo "Copying Bindings"
 cp ./z3/src/api/python/z3_bindings* ./bin/
 echo "Done"

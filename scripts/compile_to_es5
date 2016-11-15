@@ -1,3 +1,4 @@
 #!/bin/bash -e
+#Copyright Blake Loring <blake_l@parsed.uk> 2015
 ./node_modules/.bin/babel --presets es2015,stage-0 ./bin/z3_bindings_em.js > ./bin/z3_bindings_em_es5.js
 ./node_modules/.bin/babel --presets es2015,stage-0 ./bin/z3_bindings_ref.js > ./bin/z3_bindings_ref_es5.js
