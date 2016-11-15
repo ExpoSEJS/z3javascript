@@ -1,7 +1,7 @@
 {
   "name": "z3javascript",
   "version": "0.0.1",
-  "description": "Microsfts Z3 theorum prover built for Javascript",
+  "description": "Microsfts Z3 bindings for JavaScript to be used with node.js",
   "main": "./bin/Z3.js",
   "dependencies": {
     "babel-cli": "^6.4.0",
@@ -19,12 +19,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jawline/Z3JS.git"
+    "url": "git+https://github.com/jawline/z3javascript.git"
   },
   "author": "Blake Loring",
   "license": "",
   "bugs": {
-    "url": "https://github.com/jawline/Z3JS/issues"
+    "url": "https://github.com/jawline/z3javascript/issues"
   },
-  "homepage": "https://github.com/jawline/Z3JS#readme"
+  "homepage": "https://github.com/jawline/z3javascript#readme"
 }
