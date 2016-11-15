@@ -1,5 +1,4 @@
-#z3javascript
-
+#Z3Javascript
 A project to try and get Z3 running as a Javascript library. The project functions either in DLL mode, opening up as a `ref`, or as a `emscripten` binding.
 The project also includes a convenience wrapper to wrap ASTs.
 
@@ -10,7 +9,6 @@ NOTE: `Z3_PATH` environment variable should point to the Z3 .so .dll or .dylib
 Emscripten support is new, buggy and not recommended. if `Z3_WEB` env variable is set Z3 will build in emscripten and the wrapper will automatically use the emscripten bindings but support is new. To use the emscripten build you will need the mem created by `Z3_WEB=true` npm install in the current working directory of the application running Z3.
 
 #Usage
-
 Used as an npm dependency.
 
 `npm install git+ssh://github.com/jawline/z3javascript.git`
@@ -27,5 +25,6 @@ On Ubuntu gcc, g++ multilib may also be needed (gcc-4.8-multilib, g++-4.8-multil
 To initially setup run `npm install`
 
 #Rebuilding
-To recompile the emscripten binding run ./scripts/build_z3.sh
-To recompile the native library run ./scripts/build_z3_std.sh
+`./setup` will automatically pull and build Z3.
+To specifically recompile the emscripten binding run `./scripts/build_z3.sh`.
+To specifically recompile the native library run `./scripts/build_z3_std.sh`.
