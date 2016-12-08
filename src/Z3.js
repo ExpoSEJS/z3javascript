@@ -13,12 +13,14 @@ import Expr from './Expr';
 import Model from './Model';
 import Context from './Context.js';
 import Solver from './Solver';
+import Regex from './Regex';
 
-class API {}
+let API = {};
 
 API.Solver = Solver;
 API.Context = Context;
 API.Model = Model;
 API.Expr = Expr;
+API.Regex = Regex;
 
 export default API;

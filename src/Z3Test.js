@@ -10,41 +10,20 @@ console.log('Done import');
 var ctx = new Z3.Context();
 var solver = new Z3.Solver(ctx);
 
-let rSort = ctx.mkRealSort();
+let testRegex = Z3.Regex(ctx, /abc*d/);
 
-let q75 = ctx.mkNumeral('75', rSort);
-let q150 = ctx.mkNumeral('150', rSort);
-let qrGy = ctx.mkRealVar('Y');
-let qrGt = ctx.mkRealVar('X');
+console.log('Test Regex: ' + testRegex);
 
-console.log('Here here');
+let stringToBeTest = ctx.mkString('abcabcd');
+let seqInRe = ctx.mkSeqInRe(stringToBeTest, testRegex);
 
-ctx.mkSub(qrGt, q75);
+solver.assert(seqInRe);
 
-console.log('Here');
+let mdl = solver.getModel();
 
-let cA = ctx.mkNot(ctx.mkLe(q150, qrGt));
-let cB = ctx.mkNot(ctx.mkLe(qrGt, q75));
-
-console.log('Made stuff');
-
-for (var i = 0; i < 1000; i++) {
-	solver.push();
-	solver.assert(cA);
-	solver.assert(cB);
-
-	console.log(solver.toString());
-
-	let model = solver.getModel();
-
-	console.log('Solvable: ' + !!model);
-
-	if (model) {
-		console.log('QRGTEV: ' + solver.getModel().eval(qrGt).asConstant());
-		console.log('QRGT: ' + qrGt.toString());
-		console.log('QRGT: ' + qrGt.asConstant());
-	}
-
-	model.destroy();
-	solver.pop();
+if (mdl) {
+	console.log(mdl.eval(stringToBeTest).toPrettyString());
+	console.log(mdl.eval(seqInRe).toPrettyString());
+} else {
+	console.log('Unsat');
 }

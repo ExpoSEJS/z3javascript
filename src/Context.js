@@ -85,6 +85,30 @@ class Context {
         return this._build(Z3.Z3_mk_seq_index, str, str2, off);
     }
 
+    mkSeqInRe(seq, re) {
+        return this._build(Z3.Z3_mk_seq_in_re, seq, re);
+    }
+
+    mkReConcat(re1, re2) {
+        return this._buildVar(Z3.Z3_mk_re_concat, re1, re2);
+    }
+
+    mkReOption(re) {
+        return this._build(Z3.Z3_mk_re_option, re);
+    }
+
+    mkReStar(re) {
+        return this._build(Z3.Z3_mk_re_star, re);
+    }
+
+    mkRePlus(re) {
+        return this._build(Z3.Z3_mk_re_plus, re);
+    }
+
+    mkSeqToRe(seq) {
+        return this._build(Z3.Z3_mk_seq_to_re, seq);
+    }
+
     isString(ast) {
         return Z3.Z3_is_string(this.ctx, ast) === Z3.TRUE;
     }
