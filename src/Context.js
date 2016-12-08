@@ -19,6 +19,10 @@ class Context {
           this.ctx = Z3.Z3_mk_context_rc(config);
           Z3.Z3_del_config(config);
     }
+    
+    _nullExpr() {
+        return new Expr(this.ctx, null);
+    }
 
     _build(func, ...args) {
         let fnResult = func.apply(this, [this.ctx].concat(Z3Utils.astArray(args)));
@@ -78,6 +82,11 @@ class Context {
     }
     
     mkSeqSubstr(str, offset, length) {
+        
+        if (!length) {
+            length = this._nullExpr();
+        }
+        
         return this._build(Z3.Z3_mk_seq_extract, str, offset, length);
     }
     
