@@ -65,6 +65,10 @@ class Context {
         return new Expr(this.ctx, Z3.Z3_mk_string(this.ctx, val));
     }
 
+    mkIntVal(val) {
+        return this.mkInt(val, this.mkIntSort());
+    }
+
     mkSeqLength(val) {
         return this._build(Z3.Z3_mk_seq_length, val);
     }

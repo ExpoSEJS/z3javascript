@@ -37,10 +37,38 @@ function RegexRecursive(ctx, regex, idx) {
 
 	/**
 	 * BNF:
+	 * RangeInner: char-char [RangeInner]
+	 * Range: [RangeInner]
 	 * Atom1: char | '(' Atoms ')'
 	 * Atom2: Atom1 ['*' | '+' | "|"]
 	 * Atoms: [Atom [Atoms]]
 	 */
+
+	function ParseRangeInner() {
+		let c1 = next();
+		
+		if (!(next() == '-')) {
+			return null;
+		}
+
+		let c2 = next();
+		
+		if (current() != ']') {
+			return null; //TODO: Work out how the fuck to make a range with the C API
+		} else {
+			return ParseRangeInner(); //TODO: Rollup  range
+		}
+	}
+
+	function ParseRange() {
+		next();
+		let r = ParseRangeInner();
+		if (next() == ']') {
+			return r;
+		} else {
+			return null;
+		}
+	}
 
 	function ParseAtom1() {
 		if (current() == '(') {
@@ -50,8 +78,39 @@ function RegexRecursive(ctx, regex, idx) {
 				console.log('Some error has occured parsing regex');
 			}
 			return atoms;
+		} else if (current() == '[') {
+			return ParseRange();
 		} else {
 			return mk(next());
+		}
+	}
+
+	function ParseNumber() {
+		
+		function digit() {
+			current() >= '0' && current() <= '9';
+		}
+
+		let numStr = '';
+
+		if (!digit()) {
+			return null;
+		}
+
+		while (digit()) {
+			numStr += next();
+		}
+
+		return parseInt(numStr);
+	}
+
+	function ParseLoopCount() {
+		let n1 = ctx.mkIntVal(parseNumber());
+		if (peek() == ',') {
+			let n2 = ctx.mkIntVal(parseNumber());
+			return [n1, n2];
+		} else {
+			return [n1, n1];
 		}
 	}
 
@@ -63,10 +122,22 @@ function RegexRecursive(ctx, regex, idx) {
 		} else if (current() == '+') {
 			next();
 			return ctx.mkRePlus(atom);
+		} else if (current() == '?') {
+			next();
+			return ctx.mkReOption(atom);
 		} else if (current() == '|') {
 			next();
 			let atom2 = ParseAtom2();
 			return ctx.mkReUnion(atom, atom2);
+		} else if (current() == '{') {
+			next();
+			let [lo, hi] = ParseLoopCount();
+			
+			if (!next() == '}') {
+				return null;
+			}
+
+			//TODO: WOrk out how to loop the bastard
 		} else {
 			return atom;
 		}
