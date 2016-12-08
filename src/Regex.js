@@ -65,7 +65,7 @@ function RegexRecursive(ctx, regex, idx) {
 			return ctx.mkRePlus(atom);
 		} else if (current() == '|') {
 			next();
-			let atom2 = ParseAtom1();
+			let atom2 = ParseAtom2();
 			return ctx.mkReUnion(atom, atom2);
 		} else {
 			return atom;
@@ -80,7 +80,7 @@ function RegexRecursive(ctx, regex, idx) {
 			rollup = ctx.mkReConcat(rollup, ParseAtom2());
 		}
 
-		return rollup;
+		return rollup.simplify();
 	}
 
 	return ParseAtoms();
