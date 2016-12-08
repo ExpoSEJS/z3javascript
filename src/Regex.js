@@ -9,61 +9,85 @@
 	return regex.substr(firstSlash + 1, lastSlash - 1);
 }
 
-function RegularExpression(ctx, regex, start, culled) {
-	let idx = start || 0;
-	let c_part = '';
-	let portions = [];
+function RegexRecursive(ctx, regex, idx) {
 
-	function MkRe(str) {
-		return ctx.mkSeqToRe(ctx.mkString(str));
+	function more() {
+		return idx < regex.length && current() != ')';
 	}
 
-	while (idx < regex.length && regex[idx] != ')') {
-		switch (regex[idx]) {
-			case '\\':
-				c_part += regex[idx + 1];
-				idx += 2;
-				break;
-			case '*':
-				portions.push(ctx.mkReStar(MkRe(c_part)));
-				c_part = '';
-				idx += 1;
-				break;
-			case '+':
-				portions.push(ctx.mkRePlus(MkRe(c_part)));
-				c_part = '';
-				idx += 1;
-				break;
-			case '(':
-				let recursionResult = RegularExpression(ctx, regex, idx + 1, true);
-				portions.push(recursionResult[0]);
-				idx = recursionResult[1] + 1;
-				break;
-			default:
-				c_part += regex[idx];
-				idx++;
-				break;
-		}
+	function mk(v) {
+		return ctx.mkSeqToRe(ctx.mkString(v));
 	}
 
-	portions.push(MkRe(c_part));
+	function current() {
+		return regex[idx];
+	}
 
-	let concatenated = undefined;
+	function next() {
+		return regex[idx++];
+	}
 
-	for (let i = 0; i < portions.length; i++) {
-		console.log('Concat ' + portions[i])
-		if (!concatenated) {
-			concatenated = portions[i];
+	function peek() {
+		return regex[idx + 1];
+	}
+
+	function special(x) {
+		return x == "*" || x == "+";
+	}
+
+	/**
+	 * BNF:
+	 * Atom1: char | '(' Atoms ')'
+	 * Atom2: Atom1 ['*' | '+' | "|"]
+	 * Atoms: [Atom [Atoms]]
+	 */
+
+	function ParseAtom1() {
+		if (current() == '(') {
+			next();
+			let atoms = ParseAtoms();
+			if (next() != ')') {
+				console.log('Some error has occured parsing regex');
+			}
+			return atoms;
 		} else {
-			concatenated = ctx.mkReConcat(concatenated, portions[i]);
+			return mk(next());
 		}
 	}
 
-	return [concatenated, idx];
+	function ParseAtom2() {
+		let atom = ParseAtom1();
+		if (current() == '*') {
+			next();
+			return ctx.mkReStar(atom);
+		} else if (current() == '+') {
+			next();
+			return ctx.mkRePlus(atom);
+		} else if (current() == '|') {
+			next();
+			let atom2 = ParseAtom1();
+			return ctx.mkReUnion(atom, atom2);
+		} else {
+			return atom;
+		}
+	}
+
+	function ParseAtoms() {
+	
+		let rollup = mk('');
+
+		while (more()) {
+			rollup = ctx.mkReConcat(rollup, ParseAtom2());
+		}
+
+		return rollup;
+	}
+
+	return ParseAtoms();
 }
 
 function RegexOuter(ctx, regex) {
-	return RegularExpression(ctx, CullOuterRegex('' + regex), 0, false)[0];
+	return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false);
 }
 
 export default RegexOuter;

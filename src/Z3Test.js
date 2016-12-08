@@ -10,11 +10,11 @@ console.log('Done import');
 var ctx = new Z3.Context();
 var solver = new Z3.Solver(ctx);
 
-let testRegex = Z3.Regex(ctx, /abc*d/);
+let testRegex = Z3.Regex(ctx, /a(bc)*d(a|b)/);
 
 console.log('Test Regex: ' + testRegex);
 
-let stringToBeTest = ctx.mkString('abcabcd');
+let stringToBeTest = ctx.mkString('abcbcda');
 let seqInRe = ctx.mkSeqInRe(stringToBeTest, testRegex);
 
 solver.assert(seqInRe);

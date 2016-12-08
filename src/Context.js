@@ -110,6 +110,10 @@ class Context {
         return this._build(Z3.Z3_mk_re_star, re);
     }
 
+    mkReUnion(re1, re2) {
+        return this._buildVar(Z3.Z3_mk_re_union, re1, re2);
+    }
+
     mkRePlus(re) {
         return this._build(Z3.Z3_mk_re_plus, re);
     }
