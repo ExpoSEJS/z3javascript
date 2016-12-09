@@ -35,6 +35,10 @@ function RegexRecursive(ctx, regex, idx) {
 		return x == "*" || x == "+";
 	}
 
+	function Any() {
+		return ctx.mkReRange(ctx.mkString('\x00'), ctx.mkString('\xff'));
+	}
+
 	/**
 	 * BNF:
 	 * RangeInner: char-char [RangeInner]
@@ -45,19 +49,22 @@ function RegexRecursive(ctx, regex, idx) {
 	 */
 
 	function ParseRangeInner() {
-		let c1 = next();
-		
-		if (!(next() == '-')) {
-			return null;
+
+		let range = mk('');
+
+		while (more() && current() != ']') {
+			let c1 = ctx.mkString(next());
+
+			if (current() == '-') {
+				next();
+				let c2 = ctx.mkString(next());
+				range = ctx.mkReUnion(range, ctx.mkReRange(c1, c2));
+			} else {
+				range = ctx.mkReUnion(range, ctx.mkSeqToRe(c1));
+			}
 		}
 
-		let c2 = next();
-		
-		if (current() != ']') {
-			return null; //TODO: Work out how the fuck to make a range with the C API
-		} else {
-			return ParseRangeInner(); //TODO: Rollup  range
-		}
+		return range;
 	}
 
 	function ParseRange() {
@@ -68,6 +75,10 @@ function RegexRecursive(ctx, regex, idx) {
 		} else {
 			return null;
 		}
+	}
+
+	let Specials = {
+		'.': Any
 	}
 
 	function ParseAtom1() {
@@ -81,19 +92,24 @@ function RegexRecursive(ctx, regex, idx) {
 		} else if (current() == '[') {
 			return ParseRange();
 		} else {
-			return mk(next());
+			if (Specials[current()]) {
+				return Specials[current()]();
+			} else {
+				return mk(next());
+			}
 		}
 	}
 
 	function ParseNumber() {
 		
 		function digit() {
-			current() >= '0' && current() <= '9';
+			return current() >= '0' && current() <= '9';
 		}
 
 		let numStr = '';
 
 		if (!digit()) {
+			console.log(current());
 			return null;
 		}
 
@@ -105,9 +121,16 @@ function RegexRecursive(ctx, regex, idx) {
 	}
 
 	function ParseLoopCount() {
-		let n1 = ctx.mkIntVal(parseNumber());
-		if (peek() == ',') {
-			let n2 = ctx.mkIntVal(parseNumber());
+		let n1 = ParseNumber();
+
+		if (n1 === null) {
+			console.log('Faile n1')
+			return [null, null];
+		}
+
+		if (current() == ',') {
+			next();
+			let n2 = ParseNumber();
 			return [n1, n2];
 		} else {
 			return [n1, n1];
@@ -132,12 +155,16 @@ function RegexRecursive(ctx, regex, idx) {
 		} else if (current() == '{') {
 			next();
 			let [lo, hi] = ParseLoopCount();
+
+			if (lo === null || hi === null) {
+				return null;
+			}
 			
 			if (!next() == '}') {
 				return null;
 			}
 
-			//TODO: WOrk out how to loop the bastard
+			return ctx.mkReLoop(atom, lo, hi);
 		} else {
 			return atom;
 		}

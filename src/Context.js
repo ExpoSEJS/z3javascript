@@ -122,6 +122,15 @@ class Context {
         return this._build(Z3.Z3_mk_re_plus, re);
     }
 
+    mkReRange(ch1, ch2) {
+        return this._build(Z3.Z3_mk_re_range, ch1, ch2);
+    }
+
+    mkReLoop(re, lo, hi) {
+        let fnResult = Z3.Z3_mk_re_loop(this.ctx, re.ast, lo, hi);
+        return new Expr(this.ctx, fnResult);
+    }
+
     mkSeqToRe(seq) {
         return this._build(Z3.Z3_mk_seq_to_re, seq);
     }
