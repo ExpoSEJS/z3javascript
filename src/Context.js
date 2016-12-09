@@ -57,10 +57,6 @@ class Context {
         return this.mkVar(name, this.mkBoolSort());
     }
 
-    mkStringSort() {
-        return Z3.Z3_mk_string_sort(this.ctx);
-    }
-
     mkString(val) {
         return new Expr(this.ctx, Z3.Z3_mk_string(this.ctx, val));
     }
@@ -106,6 +102,10 @@ class Context {
         return this._buildVar(Z3.Z3_mk_re_concat, re1, re2);
     }
 
+    mkReFull() {
+        return new Expr(Z3.Z3_mk_re_full(this.ctx, this.mkStringSort()));
+    }
+
     mkReOption(re) {
         return this._build(Z3.Z3_mk_re_option, re);
     }
@@ -143,8 +143,16 @@ class Context {
         return Z3.Z3_mk_bool_sort(this.ctx);
     }
 
+    mkStringSort() {
+        return Z3.Z3_mk_string_sort(this.ctx);
+    }
+
     mkIntSort() {
         return Z3.Z3_mk_int_sort(this.ctx);
+    }
+
+    mkReSort(sort) {
+        return Z3.Z3_mk_re_sort(this.ctx, sort);
     }
 
     mkIntSymbol(val) {

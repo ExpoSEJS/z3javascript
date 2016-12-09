@@ -36,7 +36,7 @@ function RegexRecursive(ctx, regex, idx) {
 	}
 
 	function Any() {
-		return ctx.mkReRange(ctx.mkString('\x00'), ctx.mkString('\xff'));
+		return ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\xFF'));
 	}
 
 	/**
@@ -93,7 +93,9 @@ function RegexRecursive(ctx, regex, idx) {
 			return ParseRange();
 		} else {
 			if (Specials[current()]) {
-				return Specials[current()]();
+				console.log('Speci');
+				let c = next();
+				return Specials[c]();
 			} else {
 				return mk(next());
 			}
