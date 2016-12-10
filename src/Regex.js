@@ -76,7 +76,20 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseRange() {
         next();
+
+        let negate = false;
+
+        if (current() == '^') {
+        	next();
+        	negate = true;
+        }
+
         let r = ParseRangeInner();
+
+        if (negate) {
+        	r = ctx.mkReIntersect(Any(), r);
+        }
+
         if (next() == ']') {
             return r;
         } else {

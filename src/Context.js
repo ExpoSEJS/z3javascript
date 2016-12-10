@@ -118,6 +118,10 @@ class Context {
         return this._buildVar(Z3.Z3_mk_re_union, re1, re2);
     }
 
+    mkReIntersect(re1, re2) {
+        return this._buildVar(Z3.Z3_mk_re_intersect, re1, re2);
+    }
+
     mkRePlus(re) {
         return this._build(Z3.Z3_mk_re_plus, re);
     }
