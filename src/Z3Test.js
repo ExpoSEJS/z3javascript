@@ -10,7 +10,7 @@ console.log('Done import');
 var ctx = new Z3.Context();
 var solver = new Z3.Solver(ctx);
 
-let testRegex = Z3.Regex(ctx, /....abcd[a-z12345]{7}[1237-9]{5,10}/);
+let testRegex = Z3.Regex(ctx, /......[a-z12345]{7}[1237-9]{5,10}/);
 
 console.log('Test Regex: ' + testRegex);
 
