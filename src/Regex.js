@@ -30,12 +30,8 @@ function RegexRecursive(ctx, regex, idx) {
         return regex[idx + 1];
     }
 
-    function special(x) {
-        return x == "*" || x == "+";
-    }
-
     function Any() {
-        return ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\xFF'));
+        return ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\x7E'));
     }
 
     /**
@@ -87,7 +83,10 @@ function RegexRecursive(ctx, regex, idx) {
         let r = ParseRangeInner();
 
         if (negate) {
-        	r = ctx.mkReIntersect(Any(), r);
+        	let comp = ctx.mkReComplement(r);
+        	let intersection = ctx.mkReIntersect(Any(), comp);
+
+        	r = intersection;
         }
 
         if (next() == ']') {

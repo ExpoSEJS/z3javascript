@@ -122,6 +122,10 @@ class Context {
         return this._buildVar(Z3.Z3_mk_re_intersect, re1, re2);
     }
 
+    mkReComplement(re) {
+        return this._build(Z3.Z3_mk_re_complement, re);
+    }
+
     mkRePlus(re) {
         return this._build(Z3.Z3_mk_re_plus, re);
     }

@@ -10,7 +10,7 @@ console.log('Done import');
 var ctx = new Z3.Context();
 var solver = new Z3.Solver(ctx);
 
-let testRegex = Z3.Regex(ctx, /[^abcdefg]/);
+let testRegex = Z3.Regex(ctx, /[^abcd]{5}/);
 
 console.log('Test Regex: ' + testRegex);
 
@@ -25,8 +25,8 @@ solver.assert(seqInRe);
 let mdl = solver.getModel();
 
 if (mdl) {
-	console.log(mdl.eval(stringToBeTest).toString());
-	console.log(mdl.eval(seqInRe).toString());
+	console.log('Sequence In Re? ' + mdl.eval(seqInRe).asConstant());
+	console.log('String To Be Test: ' + mdl.eval(stringToBeTest).toString());
 } else {
 	console.log('Unsat');
 }
