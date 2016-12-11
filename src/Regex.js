@@ -93,9 +93,6 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
-    function AnchorEnd() { return mk(''); }
-    function AnchorStart() { return mk(''); }
-
     let Specials = {
         '.': Any
     }
@@ -120,11 +117,6 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseAtom1() {
-
-        //TODO: Find out how to do anchors
-        while (current() == '^' || current() == '$') {
-            next();
-        }
 
         if (current() == '(') {
             next();
@@ -244,13 +236,22 @@ function RegexRecursive(ctx, regex, idx) {
         let rollup = null;
 
         while (more()) {
-        	let parsed = ParseAtom2();
-        	
-        	if (!parsed) {
-        		return null;
-        	}
 
-            rollup = rollup ? ctx.mkReConcat(rollup, parsed) : parsed;
+            //TODO: Find out how to do anchors
+            while (current() == '^' || current() == '$') {
+                next();
+            }
+
+            //TODO: This is horrible, anchors should be better
+            if (more()) {
+            	let parsed = ParseAtom2();
+            	
+            	if (!parsed) {
+            		return null;
+            	}
+
+                rollup = rollup ? ctx.mkReConcat(rollup, parsed) : parsed;
+            }
         }
 
         return rollup.simplify();
