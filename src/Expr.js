@@ -39,12 +39,18 @@ class Expr {
     }
 
     escapeString(str) {
-    
-        function replacer(match, p1) {
-            return String.fromCharCode(parseInt(p1));
-        }
+            function replacer(match, p1) {
+                var chars = str[p1 + 2] + str[p1 + 3];
+                return String.fromCharCode(parseInt(chars, 16));
+            }
 
-        return str.replace(/\\x\d{2}/g, replacer).replace(/\\u\d{4}/g, replacer).replace(/\\a/g, '\a').replace(/\\b/g, '\b').replace(/\\r/g, '\r').replace(/\\v/g, '\v').replace(/\\f/g, '\f').replace(/\\n/g, '\n').replace(/\\t/g, '\t');  
+
+            function unicodeReplacer(match, p1) {
+                var chars = str[p1 + 2] + str[p1 + 3] + str[p1 + 4] + str[p1 + 5];
+                return String.fromCharCode(parseInt(chars));
+            }
+
+            return str.replace(/\\x[0-9a-fA-F]{2}/g, replacer).replace(/\\u\d{4}/g, unicodeReplacer).replace(/\\a/g, '\a').replace(/\\b/g, '\b').replace(/\\r/g, '\r').replace(/\\v/g, '\v').replace(/\\f/g, '\f').replace(/\\n/g, '\n').replace(/\\t/g, '\t');  
     }
 
     asConstant() {
