@@ -49,7 +49,6 @@ function RegexRecursive(ctx, regex, idx) {
 
         while (more() && current() != ']') {
             let c1 = ctx.mkString(next());
-
             let range = undefined;
 
             if (current() == '-') {
@@ -84,9 +83,7 @@ function RegexRecursive(ctx, regex, idx) {
 
         if (negate) {
         	let comp = ctx.mkReComplement(r);
-        	let intersection = ctx.mkReIntersect(Any(), comp);
-
-        	r = intersection;
+        	r = ctx.mkReIntersect(Any(), comp);
         }
 
         if (next() == ']') {
@@ -100,16 +97,55 @@ function RegexRecursive(ctx, regex, idx) {
         '.': Any
     }
 
+    function Alpha() {
+        let p1 = ctx.mkReRange(ctx.mkString('a'), ctx.mkString('z'));
+        let p2 = ctx.mkReRange(ctx.mkString('A'), ctx.mkString('Z'));
+        return ctx.mkReUnion(p1, p2);
+    }
+
+    function Digit() {
+    	return ctx.mkReRange(ctx.mkString('0'), ctx.mkString('9'));
+    }
+
+    function Whitespace() {
+    	let p1 = mk(' ');
+    	let p2 = mk('\t');
+    	let p3 = mk('\r');
+    	let p4 = mk('\n');
+    	let p5 = mk('\f');
+    	return ctx.mkReUnion(p1, ctx.mkReUnion(p2, ctx.mkReUnion(p3, ctx.mkReUnion(p4, p5))));
+    }
+
     function ParseAtom1() {
         if (current() == '(') {
             next();
+            
             let atoms = ParseAtoms();
+            
             if (next() != ')') {
-                console.log('Some error has occured parsing regex');
+            	return null;
             }
+
             return atoms;
         } else if (current() == '[') {
-            return ParseRange();
+        	let range = ParseRange();
+        	if (!range) { return null; }
+            return range;
+        } else if (current() == '\\') {
+        	next();
+        	let c = next();
+        	if (c == 'd') {
+        		return Digit();
+        	} else if (c == 'w') {
+        		let p1 = Alpha();
+        		let p2 = Digit();
+        		let p3 = mk('_');
+        		return ctx.mkReUnion(p1, ctx.mkReUnion(p2, p3));
+        	} else if (c == 's') {
+        		return Whitespace();
+        	} else {
+        		return mk(c);
+        	}
         } else {
             if (Specials[current()]) {
                 let c = next();
@@ -129,7 +165,6 @@ function RegexRecursive(ctx, regex, idx) {
         let numStr = '';
 
         if (!digit()) {
-            console.log(current());
             return null;
         }
 
@@ -144,7 +179,6 @@ function RegexRecursive(ctx, regex, idx) {
         let n1 = ParseNumber();
 
         if (n1 === null) {
-            console.log('Faile n1')
             return [null, null];
         }
 
@@ -158,7 +192,11 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseAtom2() {
+        
         let atom = ParseAtom1();
+
+        if (!atom) { return null; }
+
         if (current() == '*') {
             next();
             return ctx.mkReStar(atom);
@@ -171,9 +209,11 @@ function RegexRecursive(ctx, regex, idx) {
         } else if (current() == '|') {
             next();
             let atom2 = ParseAtom2();
+            if (!atom2) { return null; }
             return ctx.mkReUnion(atom, atom2);
         } else if (current() == '{') {
             next();
+
             let [lo, hi] = ParseLoopCount();
 
             if (lo === null || hi === null) {
