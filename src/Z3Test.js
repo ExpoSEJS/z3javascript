@@ -26,7 +26,7 @@ let mdl = solver.getModel();
 
 if (mdl) {
 	console.log('Sequence In Re? ' + mdl.eval(seqInRe).asConstant());
-	console.log('String To Be Test: ' + mdl.eval(stringToBeTest).toString());
+	console.log('String To Be Test: ' + mdl.eval(stringToBeTest).asConstant());
 } else {
 	console.log('Unsat');
 }

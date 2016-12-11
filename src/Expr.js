@@ -38,6 +38,16 @@ class Expr {
         return Z3.Z3_get_bool_value(this.ctx, this.ast) == Z3.TRUE;
     }
 
+    escapeString(str) {
+    
+        function replacer(match, p1) {
+            console.log('Replace ' + p1);
+            return String.fromCharCode(parseInt(p1));
+        }
+
+        return str.replace(/\\x\d{2}/g, replacer).replace(/\\a/g, '\a').replace(/\\b/g, '\b').replace(/\\r/g, '\r').replace(/\\v/g, '\v').replace(/\\f/g, '\f').replace(/\\n/g, '\n').replace(/\\t/g, '\t');  
+    }
+
     asConstant() {
         let kind = Z3.Z3_get_ast_kind(this.ctx, this.ast);
 
@@ -50,7 +60,7 @@ class Expr {
 
             case Z3.APP_AST: {
                 if (this.isString()) {
-                    return Z3.Z3_get_string(this.ctx, this.ast);
+                    return this.escapeString(Z3.Z3_get_string(this.ctx, this.ast));
                 } else {
                     return this.getBoolValue();
                 }
