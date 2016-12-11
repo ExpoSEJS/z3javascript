@@ -93,8 +93,13 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
+    function AnchorEnd() { return mk(''); }
+    function AnchorStart() { return mk(''); }
+
     let Specials = {
-        '.': Any
+        '.': Any,
+        '$': AnchorEnd,
+        '^': AnchorStart
     }
 
     function Alpha() {
