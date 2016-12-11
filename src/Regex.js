@@ -97,9 +97,7 @@ function RegexRecursive(ctx, regex, idx) {
     function AnchorStart() { return mk(''); }
 
     let Specials = {
-        '.': Any,
-        '$': AnchorEnd,
-        '^': AnchorStart
+        '.': Any
     }
 
     function Alpha() {
@@ -122,6 +120,12 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseAtom1() {
+
+        //TODO: Find out how to do anchors
+        while (current() == '^' || current() == '$') {
+            next();
+        }
+
         if (current() == '(') {
             next();
             
