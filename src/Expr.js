@@ -44,7 +44,7 @@ class Expr {
             return String.fromCharCode(parseInt(p1));
         }
 
-        return str.replace(/\\x\d{2}/g, replacer).replace(/\\u{4}/g, replacer).replace(/\\a/g, '\a').replace(/\\b/g, '\b').replace(/\\r/g, '\r').replace(/\\v/g, '\v').replace(/\\f/g, '\f').replace(/\\n/g, '\n').replace(/\\t/g, '\t');  
+        return str.replace(/\\x\d{2}/g, replacer).replace(/\\u\d{4}/g, replacer).replace(/\\a/g, '\a').replace(/\\b/g, '\b').replace(/\\r/g, '\r').replace(/\\v/g, '\v').replace(/\\f/g, '\f').replace(/\\n/g, '\n').replace(/\\t/g, '\t');  
     }
 
     asConstant() {
