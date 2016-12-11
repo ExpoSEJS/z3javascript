@@ -10,7 +10,7 @@ console.log('Done import');
 var ctx = new Z3.Context();
 var solver = new Z3.Solver(ctx);
 
-let testRegex = Z3.Regex(ctx, /\w{10}\s{3}\d{5}/);
+let testRegex = Z3.Regex(ctx, /$$$^^^^^^^\w{10}\s{3}\d{5}/);
 
 console.log('Test Regex: ' + testRegex);
 
