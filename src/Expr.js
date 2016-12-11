@@ -20,7 +20,13 @@ class Expr {
     }
 
     toString() {
-        return "Expr {" + Z3.Z3_ast_to_string(this.ctx, this.ast) + this.tag ? (" tag " + this.tag) : "" + "}";
+        let tagStr = '';
+        
+        if (this.tag) {
+            tagStr = " tag " + this.tag;
+        }
+
+        return "Expr {" + tagStr + Z3.Z3_ast_to_string(this.ctx, this.ast) + "}";
     }
 
     isString() {
