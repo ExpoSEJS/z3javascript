@@ -260,8 +260,13 @@ function RegexRecursive(ctx, regex, idx) {
     return ParseAtoms();
 }
 
+function Tag(result, regex) {
+    result.tag = '' + regex;
+    return result;
+}
+
 function RegexOuter(ctx, regex) {
-    return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false);
+    return Tag(RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false), regex);
 }
 
 export default RegexOuter;
