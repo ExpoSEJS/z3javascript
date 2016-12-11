@@ -41,7 +41,6 @@ class Expr {
     escapeString(str) {
     
         function replacer(match, p1) {
-            console.log('Replace ' + p1);
             return String.fromCharCode(parseInt(p1));
         }
 
