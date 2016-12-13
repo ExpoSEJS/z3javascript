@@ -12,6 +12,7 @@ class Context {
 
     constructor() {
           let config = Z3.Z3_mk_config();
+          
           Z3.Z3_set_param_value(config, "model", "true");
           Z3.Z3_set_param_value(config, "MODEL", "true");
           Z3.Z3_set_param_value(config, "well_sorted_check", "true");
@@ -25,7 +26,7 @@ class Context {
     }
 
     _build(func, ...args) {
-        let fnResult = func.apply(this, [this.ctx].concat(Z3Utils.astArray(args)));
+        let fnResult = func.apply(this, [this.ctx].concat(Z3Utils.astArray(args))).tag(Z3Utils.tagStr(args));
         return new Expr(this.ctx, fnResult);
     }
 
@@ -34,7 +35,7 @@ class Context {
     }
     
     _buildVarNoArgs(func, args) {
-        return new Expr(this.ctx, func(this.ctx, args.length, Z3Utils.astArray(args)));
+        return new Expr(this.ctx, func(this.ctx, args.length, Z3Utils.astArray(args))).tag(Z3Utils.tagStr(args));
     }
 
     destroy() {
@@ -58,7 +59,7 @@ class Context {
     }
 
     mkString(val) {
-        return new Expr(this.ctx, Z3.Z3_mk_string(this.ctx, val));
+        return this._build(Z3.Z3_mk_string, val);
     }
 
     mkIntVal(val) {
@@ -180,11 +181,11 @@ class Context {
      */
 
     mkTrue() {
-        return new Expr(this.ctx, Z3.Z3_mk_true(this.ctx));
+        return this._build(Z3.Z3_mk_true);
     }
 
     mkFalse() {
-        return new Expr(this.ctx, Z3.Z3_mk_false(this.ctx));
+        return this._build(Z3.Z3_mk_false);
     }
 
     mkEq(left, right) {

@@ -2,6 +2,7 @@
  * Copyright Blake Loring <blake_l@parsed.uk> 2015
  * Approximate JavaScript regular expression to Z3 regex parser
  */
+
 function CullOuterRegex(regex) {
     let firstSlash = regex.indexOf('/');
     let lastSlash = regex.lastIndexOf('/');
@@ -33,15 +34,6 @@ function RegexRecursive(ctx, regex, idx) {
     function Any() {
         return ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\x7E'));
     }
-
-    /**
-     * BNF:
-     * RangeInner: char-char [RangeInner]
-     * Range: [RangeInner]
-     * Atom1: char | '(' Atoms ')'
-     * Atom2: Atom1 ['*' | '+' | "|"]
-     * Atoms: [Atom [Atoms]]
-     */
 
     function ParseRangeInner() {
 
@@ -260,13 +252,8 @@ function RegexRecursive(ctx, regex, idx) {
     return ParseAtoms();
 }
 
-function Tag(result, regex) {
-    result.tag = '' + regex;
-    return result;
-}
-
 function RegexOuter(ctx, regex) {
-    return Tag(RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false), regex);
+    return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false).tag('' + regex);
 }
 
 export default RegexOuter;

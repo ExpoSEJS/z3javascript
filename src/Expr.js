@@ -33,6 +33,11 @@ class Expr {
         return Z3.Z3_is_string(this.ctx, this.ast);
     }
 
+    tag(str) {
+        this.tag = str;
+        return this;
+    }
+
     toPrettyString() {
         let output = Z3.Z3_ast_to_string(this.ctx, this.ast);
         output = output.replace(/\(not (\S)\)/g, "¬$1");
