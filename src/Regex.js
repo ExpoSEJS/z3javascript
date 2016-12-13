@@ -278,11 +278,11 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     if (regex[0] !== '^') {
-        ast = ctx.mkReUnion(ctx.mkReStar(Any()), ast);
+        ast = ctx.mkReConcat(ctx.mkReStar(Any()), ast);
     }
 
     if (regex[regex.length - 1] !== '$') {
-        ast = ctx.mkReUnion(ctx.mkReStar(ast), Any());
+        ast = ctx.mkReConcat(ctx.mkReStar(ast), Any());
     }
 
     return ast;

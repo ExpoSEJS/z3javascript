@@ -23,7 +23,7 @@ class Expr {
         let tagStr = '';
         
         if (this._tag) {
-            tagStr = " tag " + this._tag;
+            tagStr = " tag " + this._tag + " ";
         }
 
         return "Expr {" + tagStr + Z3.Z3_ast_to_string(this.ctx, this.ast) + "}";

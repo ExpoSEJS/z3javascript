@@ -11,7 +11,11 @@ var ctx = new Z3.Context();
 var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
-let testRegex = Z3.Regex(ctx, /^The Date Is: \d{2}:\d{2}:\d{2}\n...$/);
+
+//let testRegex = Z3.Regex(ctx, /^The Date Is: \d{2}:\d{2}:\d{2}\n...$/);
+let testRegex = Z3.Regex(ctx, /ab$/);
+
+
 console.log('Test Regex: ' + testRegex);
 
 let symbol = ctx.mkStringSymbol('HI');
