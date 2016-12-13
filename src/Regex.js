@@ -12,7 +12,7 @@ function CullOuterRegex(regex) {
 function RegexRecursive(ctx, regex, idx) {
 
     function more() {
-        return idx < regex.length && current() != ')';
+        return idx < regex.length && current() != '|' && current() != ')';
     }
 
     function mk(v) {
@@ -221,11 +221,6 @@ function RegexRecursive(ctx, regex, idx) {
         } else if (current() == '?') {
             next();
             return ctx.mkReOption(atom);
-        } else if (current() == '|') {
-            next();
-            let atom2 = ParseAtom2();
-            if (!atom2) { return null; }
-            return ctx.mkReUnion(atom, atom2);
         } else if (current() == '{') {
             next();
 
@@ -271,11 +266,29 @@ function RegexRecursive(ctx, regex, idx) {
         return rollup.simplify();
     }
 
-    let ast = ParseAtoms();
+    function ParseMaybeOption() {
+        let ast = ParseAtoms();
 
-    if (!ast) {
-        return null;
+        if (!ast) {
+            return null;
+        }
+
+        if (current() == '|') {
+            next();
+            
+            let ast2 = ParseMaybeOption();
+
+            if (!ast2) {
+                return null;
+            }
+
+            return ctx.mkReUnion(ast, ast2);
+        } else {
+            return ast;
+        }
     }
+
+    let ast = ParseMaybeOption();
 
     if (regex[0] !== '^') {
         ast = ctx.mkReConcat(ctx.mkReStar(Any()), ast);
