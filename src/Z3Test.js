@@ -10,8 +10,8 @@ console.log('Done import');
 var ctx = new Z3.Context();
 var solver = new Z3.Solver(ctx);
 
-let testRegex = Z3.Regex(ctx, /$$$^^^^^^^\w{10}\s{3}\d{5}/);
-
+console.log('Compiling RegEx');
+let testRegex = Z3.Regex(ctx, /a/);
 console.log('Test Regex: ' + testRegex);
 
 let symbol = ctx.mkStringSymbol('HI');

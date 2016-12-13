@@ -119,6 +119,7 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseAtom1() {
+        console.log('Here');
 
         if (current() == '(') {
             next();
@@ -136,8 +137,12 @@ function RegexRecursive(ctx, regex, idx) {
             return range;
         } else if (current() == '\\') {
         	next();
+
+            console.log('Spec');
+
         	let c = next();
-        	if (c == 'd') {
+        	
+            if (c == 'd') {
         		return Digit();
         	} else if (c == 'D') {
                 return ctx.mkReComplement(Digit());
@@ -157,14 +162,15 @@ function RegexRecursive(ctx, regex, idx) {
                 return mk('\t');
             } else if (c == '0') {
                 return mk('\\x00');
-            } else {
-        		return mk(c);
-        	}
+            }
+        	return mk(c);
         } else {
+            console.log('Heeere');
             if (Specials[current()]) {
                 let c = next();
                 return Specials[c]();
             } else {
+                console.log('HereF ' + current());
                 return mk(next());
             }
         }
@@ -208,6 +214,7 @@ function RegexRecursive(ctx, regex, idx) {
     function ParseAtom2() {
         
         let atom = ParseAtom1();
+        console.log('AtomR');
 
         if (!atom) { return null; }
 
@@ -270,7 +277,13 @@ function RegexRecursive(ctx, regex, idx) {
         return rollup.simplify();
     }
 
+    return mk('a');
+
     let ast = ParseAtoms();
+
+    if (!ast) {
+        return null;
+    }
 
     if (regex[0] !== '^') {
         ast = ctx.mkReUnion(ctx.mkReStar(Any()), ast);
@@ -280,7 +293,7 @@ function RegexRecursive(ctx, regex, idx) {
         ast = ctx.mkReUnion(ctx.mkReStar(ast, Any()));
     }
 
-    return res;
+    return ast;
 }
 
 function RegexOuter(ctx, regex) {

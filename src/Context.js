@@ -26,8 +26,12 @@ class Context {
     }
 
     _build(func, ...args) {
-        let fnResult = func.apply(this, [this.ctx].concat(Z3Utils.astArray(args))).tag(Z3Utils.tagStr(args));
-        return new Expr(this.ctx, fnResult);
+        return this._buildConst(Z3Utils.astArray(args)).tag(Z3Utils.tagStr(args));
+    }
+
+    _buildConst(func, ...args) {
+        let fnResult = func.apply(this, [this.ctx].concat(args));
+        return new Expr(this.ctx, fnResult);      
     }
 
     _buildVar(func, ...args) {
@@ -59,7 +63,7 @@ class Context {
     }
 
     mkString(val) {
-        return this._build(Z3.Z3_mk_string, val);
+        return this._buildConst(Z3.Z3_mk_string, val);
     }
 
     mkIntVal(val) {
