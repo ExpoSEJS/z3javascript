@@ -32,7 +32,9 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function Any() {
-        return ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\x7E'));
+        let fullRange = ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\xFF'));
+        let newLineC = ctx.mkReComplement(mk('\n'));
+        return ctx.mkReIntersect(fullRange, newLineC);
     }
 
     function ParseRangeInner() {
@@ -108,6 +110,14 @@ function RegexRecursive(ctx, regex, idx) {
     	return ctx.mkReUnion(p1, ctx.mkReUnion(p2, ctx.mkReUnion(p3, ctx.mkReUnion(p4, p5))));
     }
 
+    function AlphaNumeric() {
+        return ctx.mkReUnion(Alpha(), Digit());
+    }
+
+    function Word() {
+        return ctx.mkReUnion(AlphaNumeric(), mk('_'));
+    }
+
     function ParseAtom1() {
 
         if (current() == '(') {
@@ -129,14 +139,25 @@ function RegexRecursive(ctx, regex, idx) {
         	let c = next();
         	if (c == 'd') {
         		return Digit();
-        	} else if (c == 'w') {
-        		let p1 = Alpha();
-        		let p2 = Digit();
-        		let p3 = mk('_');
-        		return ctx.mkReUnion(p1, ctx.mkReUnion(p2, p3));
-        	} else if (c == 's') {
+        	} else if (c == 'D') {
+                return ctx.mkReComplement(Digit());
+            } else if (c == 'w') {
+        		return Word();
+        	} else if (c == 'W') {
+                return ctx.mkReComplement(Word());
+            } else if (c == 's') {
         		return Whitespace();
-        	} else {
+        	} else if (c == 'S') {
+                return ctx.mkReComplement(Whitespace());
+            } else if (c == 'n') {
+                return mk('\n');
+            } else if (c == 'r') {
+                return mk('\r');
+            } else if (c == 't') {
+                return mk('\t');
+            } else if (c == '0') {
+                return mk('\\x00');
+            } else {
         		return mk(c);
         	}
         } else {
@@ -229,8 +250,8 @@ function RegexRecursive(ctx, regex, idx) {
 
         while (more()) {
 
-            //TODO: Find out how to do anchors
             while (current() == '^' || current() == '$') {
+                //TODO: Find out how to handle multiline
                 next();
             }
 
@@ -249,7 +270,17 @@ function RegexRecursive(ctx, regex, idx) {
         return rollup.simplify();
     }
 
-    return ParseAtoms();
+    let ast = ParseAtoms();
+
+    if (regex[0] !== '^') {
+        ast = ctx.mkReUnion(ctx.mkReStar(Any()), ast);
+    }
+
+    if (regex[regex.length - 1] !== '$') {
+        ast = ctx.mkReUnion(ctx.mkReStar(ast, Any()));
+    }
+
+    return res;
 }
 
 function RegexOuter(ctx, regex) {
