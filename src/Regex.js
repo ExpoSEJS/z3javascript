@@ -32,9 +32,9 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function Any() {
-        let fullRange = ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\xFF'));
-        let newLineC = ctx.mkReComplement(mk('\n'));
-        return ctx.mkReIntersect(fullRange, newLineC);
+        let beforeNewline = ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\x09'));
+        let afterNewline = ctx.mkReRange(ctx.mkString('\\x0B'), ctx.mkString('\\xFF'));
+        return ctx.mkReUnion(beforeNewline, afterNewline);
     }
 
     function ParseRangeInner() {

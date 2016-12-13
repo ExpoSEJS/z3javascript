@@ -11,7 +11,7 @@ var ctx = new Z3.Context();
 var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
-let testRegex = Z3.Regex(ctx, /a/);
+let testRegex = Z3.Regex(ctx, /^The Date Is: \d{2}:\d{2}:\d{2}\n...$/);
 console.log('Test Regex: ' + testRegex);
 
 let symbol = ctx.mkStringSymbol('HI');
@@ -27,6 +27,7 @@ let mdl = solver.getModel();
 if (mdl) {
 	console.log('Sequence In Re? ' + mdl.eval(seqInRe).asConstant());
 	console.log('String To Be Test: ' + mdl.eval(stringToBeTest).asConstant());
+	console.log('String To Be Test As Str: ' + mdl.eval(stringToBeTest).toString());
 } else {
 	console.log('Unsat');
 }
