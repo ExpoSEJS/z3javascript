@@ -12,7 +12,7 @@ var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let testRegex = Z3.Regex(ctx, /The Date Is: [1-9]{2}:[1-9]{2}:[1-9]{4}/);
+let testRegex = Z3.Regex(ctx, /.+The Date Is: ([1-9]|[1-3][0-9]):([1-9]|10|11|12):[1-9]{4}/);
 //let testRegex = Z3.Regex(ctx, /ab$/);
 
 

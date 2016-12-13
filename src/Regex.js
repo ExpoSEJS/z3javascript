@@ -160,7 +160,7 @@ function RegexRecursive(ctx, regex, idx) {
 
             return mk(c);
         } else {
-            return ParseAtom1();
+            return ParseMaybeSpecial();
         }
     }
 
