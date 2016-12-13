@@ -282,7 +282,7 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     if (regex[regex.length - 1] !== '$') {
-        ast = ctx.mkReConcat(ctx.mkReStar(ast), Any());
+        ast = ctx.mkReConcat(ast, ctx.mkReStar(Any()));
     }
 
     return ast;
