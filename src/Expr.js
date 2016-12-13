@@ -22,7 +22,7 @@ class Expr {
     toString() {
         let tagStr = '';
         
-        if (this.tag) {
+        if (this._tag) {
             tagStr = " tag " + this.tag;
         }
 
@@ -34,7 +34,7 @@ class Expr {
     }
 
     tag(str) {
-        this.tag = str;
+        this._tag = str;
         return this;
     }
 

@@ -26,7 +26,7 @@ class Context {
     }
 
     _build(func, ...args) {
-        return this._buildConst(Z3Utils.astArray(args)).tag(Z3Utils.tagStr(args));
+        return this._buildConst.apply(this, [func].concat(Z3Utils.astArray(args))).tag(Z3Utils.tagStr(args));
     }
 
     _buildConst(func, ...args) {
