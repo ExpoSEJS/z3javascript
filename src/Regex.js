@@ -119,37 +119,34 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseAtom1() {
+        return mk(next());
+    }
 
-        if (current() == '(') {
+    function ParseMaybeSpecial() {
+        if (Specials[current()]) {
+            return Specials[next()]();
+        } else {
+            return ParseAtom1();
+        }
+    }
+
+    function ParseMaybeEscaped() {
+        if (current() == '\\') {
             next();
-            
-            let atoms = ParseAtoms();
-            
-            if (next() != ')') {
-            	return null;
-            }
 
-            return atoms;
-        } else if (current() == '[') {
-        	let range = ParseRange();
-        	if (!range) { return null; }
-            return range;
-        } else if (current() == '\\') {
-        	next();
-
-        	let c = next();
-        	
+            let c = next();
+            
             if (c == 'd') {
-        		return Digit();
-        	} else if (c == 'D') {
+                return Digit();
+            } else if (c == 'D') {
                 return ctx.mkReComplement(Digit());
             } else if (c == 'w') {
-        		return Word();
-        	} else if (c == 'W') {
+                return Word();
+            } else if (c == 'W') {
                 return ctx.mkReComplement(Word());
             } else if (c == 's') {
-        		return Whitespace();
-        	} else if (c == 'S') {
+                return Whitespace();
+            } else if (c == 'S') {
                 return ctx.mkReComplement(Whitespace());
             } else if (c == 'n') {
                 return mk('\n');
@@ -160,15 +157,59 @@ function RegexRecursive(ctx, regex, idx) {
             } else if (c == '0') {
                 return mk('\\x00');
             }
-        	return mk(c);
+
+            return mk(c);
         } else {
-            if (Specials[current()]) {
-                let c = next();
-                return Specials[c]();
-            } else {
-                return mk(next());
-            }
+            return ParseAtom1();
         }
+    }
+
+    function ParseMaybeRange() {
+        if (current() == '[') {
+            let range = ParseRange();
+            if (!range) { return null; }
+            return range;
+        } else {
+            return ParseMaybeEscaped();
+        }
+    }
+
+    function ParseMaybeSubRegex() {
+        if (current() == '(') {
+            next();
+            
+            let atoms = ParseMaybeOption();
+            
+            if (next() != ')') {
+                return null;
+            }
+
+            return atoms;
+        } else {
+            return ParseMaybeRange();
+        }
+    }
+
+    function ParseMaybePSQ() {
+        
+        let atom = ParseMaybeSubRegex();
+
+        if (!atom) {
+            return null;
+        }
+
+        if (current() == '*') {
+            next();
+            atom = ctx.mkReStar(atom);
+        } else if (current() == '+') {
+            next();
+            atom = ctx.mkRePlus(atom);
+        } else if (current() == '?') {
+            next();
+            atom = ctx.mkReOption(atom);
+        }
+
+        return atom;
     }
 
     function ParseNumber() {
@@ -190,28 +231,6 @@ function RegexRecursive(ctx, regex, idx) {
         return parseInt(numStr);
     }
 
-    function ParseMaybeSpecial() {
-        
-        let atom = ParseAtom1();
-
-        if (!atom) {
-            return null;
-        }
-
-        if (current() == '*') {
-            next();
-            atom = ctx.mkReStar(atom);
-        } else if (current() == '+') {
-            next();
-            atom = ctx.mkRePlus(atom);
-        } else if (current() == '?') {
-            next();
-            atom = ctx.mkReOption(atom);
-        }
-
-        return atom;
-    }
-
     function ParseLoopCount() {
         let n1 = ParseNumber();
 
@@ -229,7 +248,7 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseMaybeLoop() {
-        let atom = ParseMaybeSpecial();
+        let atom = ParseMaybePSQ();
 
         if (current() == '{') {
             next();
