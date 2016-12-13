@@ -190,6 +190,28 @@ function RegexRecursive(ctx, regex, idx) {
         return parseInt(numStr);
     }
 
+    function ParseMaybeSpecial() {
+        
+        let atom = ParseAtom1();
+
+        if (!atom) {
+            return null;
+        }
+
+        if (current() == '*') {
+            next();
+            atom = ctx.mkReStar(atom);
+        } else if (current() == '+') {
+            next();
+            atom = ctx.mkRePlus(atom);
+        } else if (current() == '?') {
+            next();
+            atom = ctx.mkReOption(atom);
+        }
+
+        return atom;
+    }
+
     function ParseLoopCount() {
         let n1 = ParseNumber();
 
@@ -206,22 +228,10 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
-    function ParseAtom2() {
-        
-        let atom = ParseAtom1();
+    function ParseMaybeLoop() {
+        let atom = ParseMaybeSpecial();
 
-        if (!atom) { return null; }
-
-        if (current() == '*') {
-            next();
-            return ctx.mkReStar(atom);
-        } else if (current() == '+') {
-            next();
-            return ctx.mkRePlus(atom);
-        } else if (current() == '?') {
-            next();
-            return ctx.mkReOption(atom);
-        } else if (current() == '{') {
+        if (current() == '{') {
             next();
 
             let [lo, hi] = ParseLoopCount();
@@ -234,13 +244,13 @@ function RegexRecursive(ctx, regex, idx) {
                 return null;
             }
 
-            return ctx.mkReLoop(atom, lo, hi);
-        } else {
-            return atom;
+            atom = ctx.mkReLoop(atom, lo, hi);
         }
+
+        return atom;
     }
 
-    function ParseAtoms() {
+    function ParseMaybeAtoms() {
 
         let rollup = null;
 
@@ -253,7 +263,7 @@ function RegexRecursive(ctx, regex, idx) {
 
             //TODO: This is horrible, anchors should be better
             if (more()) {
-            	let parsed = ParseAtom2();
+            	let parsed = ParseMaybeLoop();
             	
             	if (!parsed) {
             		return null;
@@ -267,7 +277,7 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseMaybeOption() {
-        let ast = ParseAtoms();
+        let ast = ParseMaybeAtoms();
 
         if (!ast) {
             return null;
@@ -275,7 +285,7 @@ function RegexRecursive(ctx, regex, idx) {
 
         if (current() == '|') {
             next();
-            
+
             let ast2 = ParseMaybeOption();
 
             if (!ast2) {
