@@ -20,13 +20,15 @@ class Expr {
     }
 
     toString() {
-        let tagStr = '';
+        let inner;
         
         if (this._tag) {
-            tagStr = " tag " + this._tag + " ";
+            inner = this._tag;
+        } else {
+            inner = Z3.Z3_ast_to_string(this.ctx, this.ast);
         }
 
-        return "Expr {" + tagStr + Z3.Z3_ast_to_string(this.ctx, this.ast) + "}";
+        return "Expr {" + inner + "}";
     }
 
     getTag() {
