@@ -11,6 +11,6 @@ export default {
 		return args.map(a => a.ast);
 	},
 	tagStr: function(args) {
-		return args.reduce((a, b) => { if (b.tag) { a = a + b.tag; } return a; }, '');
+		return args.reduce((a, b) => { if (b.getTag()) { a = a + b.getTag(); } return a; }, '');
 	}
 };

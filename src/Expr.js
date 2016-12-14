@@ -29,6 +29,10 @@ class Expr {
         return "Expr {" + tagStr + Z3.Z3_ast_to_string(this.ctx, this.ast) + "}";
     }
 
+    getTag() {
+        return this._tag;
+    }
+
     isString() {
         return Z3.Z3_is_string(this.ctx, this.ast);
     }
