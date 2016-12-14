@@ -5,6 +5,8 @@
 
 import Z3 from './Z3';
 
+let regExToTest = [/^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(e[-+]?\d+)?$/];
+
 console.log('Done import');
 
 var ctx = new Z3.Context();
@@ -12,9 +14,8 @@ var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let testRegex = Z3.Regex(ctx, /.+The Date Is: ([1-9]|[1-3][0-9]):([1-9]|10|11|12):[1-9]{4}/);
+let testRegex = Z3.Regex(ctx, /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(e[-+]?\d+)?$/);
 //let testRegex = Z3.Regex(ctx, /ab$/);
-
 
 console.log('Test Regex: ' + testRegex);
 
@@ -32,6 +33,12 @@ if (mdl) {
 	console.log('Sequence In Re? ' + mdl.eval(seqInRe).asConstant());
 	console.log('String To Be Test: ' + mdl.eval(stringToBeTest).asConstant());
 	console.log('String To Be Test As Str: ' + mdl.eval(stringToBeTest).toString());
+
+	for (let i = 0; i < regExToTest.length; i++) {
+		if (!regExToTest[i].test(mdl.eval(stringToBeTest).asConstant())) {
+			console.log('FAILED');
+		}
+	}
 } else {
 	console.log('Unsat');
 }

@@ -177,6 +177,12 @@ function RegexRecursive(ctx, regex, idx) {
     function ParseMaybeSubRegex() {
         if (current() == '(') {
             next();
+
+            //Ignore ?: capture groups can't be modelled
+            if (current() == '?' && peek() == ":") {
+                next();
+                next();
+            }
             
             let atoms = ParseMaybeOption();
             
