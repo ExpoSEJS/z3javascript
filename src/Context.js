@@ -10,12 +10,16 @@ import Model from './Model';
 
 class Context {
 
-    constructor() {
+    constructor(timeout) {
           let config = Z3.Z3_mk_config();
           
           Z3.Z3_set_param_value(config, "model", "true");
           Z3.Z3_set_param_value(config, "MODEL", "true");
           Z3.Z3_set_param_value(config, "well_sorted_check", "true");
+
+          if (timeout) {
+            Z3.Z3_set_param_value(config, "timeout", '' + timeout);
+          }
 
           this.ctx = Z3.Z3_mk_context_rc(config);
           Z3.Z3_del_config(config);

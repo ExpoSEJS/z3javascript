@@ -5,38 +5,41 @@
 
 import Z3 from './Z3';
 
-let regExToTest = [/^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(e[-+]?\d+)?$/];
-
-console.log('Done import');
-
 var ctx = new Z3.Context();
 var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let testRegex = Z3.Regex(ctx, /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(e[-+]?\d+)?$/);
-//let testRegex = Z3.Regex(ctx, /ab$/);
+let regExToTest = [/^--.+=/, /^--no-.+/, /^--.+/, /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(e[-+]?\d+)?$/];
+let testRegexs = regExToTest.map(r => Z3.Regex(ctx, r));
 
-console.log('Test Regex: ' + testRegex);
+console.log('Test Regex: ' + JSON.stringify(testRegexs));
 
 let symbol = ctx.mkStringSymbol('HI');
 let symbolic = ctx.mkConst(symbol, ctx.mkStringSort());
 
-let stringToBeTest = symbolic;
-let seqInRe = ctx.mkSeqInRe(stringToBeTest, testRegex);
+console.log('Set up HI');
 
-solver.assert(seqInRe);
+let seqInRes = testRegexs.map(x => ctx.mkSeqInRe(symbolic, x));
+
+console.log('SeqInRes done');
+
+seqInRes.forEach(x => solver.assert(x));
 
 let mdl = solver.getModel();
 
 if (mdl) {
-	console.log('Sequence In Re? ' + mdl.eval(seqInRe).asConstant());
-	console.log('String To Be Test: ' + mdl.eval(stringToBeTest).asConstant());
-	console.log('String To Be Test As Str: ' + mdl.eval(stringToBeTest).toString());
+
+	for (let i = 0; i < seqInRes.length; i++) {
+		console.log('Seq In Re: ' + mdl.eval(seqInRes[i]).asConstant());
+	}
 
 	for (let i = 0; i < regExToTest.length; i++) {
-		if (!regExToTest[i].test(mdl.eval(stringToBeTest).asConstant())) {
+		if (!regExToTest[i].test(mdl.eval(symbolic).asConstant())) {
 			console.log('FAILED');
+		} else {
+			console.log(mdl.eval(symbolic).asConstant());
+			console.log('Checked' + regExToTest[i]);
 		}
 	}
 } else {
