@@ -184,7 +184,7 @@ function RegexRecursive(ctx, regex, idx) {
                 next();
             }
             
-            let atoms = ParseMaybeOption();
+            let atoms = ParseCaptureGroup();
             
             if (next() != ')') {
                 return null;
@@ -323,7 +323,11 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
-    let ast = ParseMaybeOption();
+    function ParseCaptureGroup() {
+        return ParseMaybeOption();
+    }
+
+    let ast = ParseCaptureGroup();
 
     if (regex[0] !== '^') {
         ast = ctx.mkReConcat(ctx.mkReStar(Any()), ast);
