@@ -288,7 +288,8 @@ function RegexRecursive(ctx, regex, idx) {
                             next();
                             break;
                         }
-                    default: {
+                    default:
+                        {
                             addToCapture(captureIndex, captures[newestCapture]);
                         }
                 }
