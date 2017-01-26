@@ -227,8 +227,8 @@ function RegexRecursive(ctx, regex, idx) {
                 captures[idx] = orFiller;
             }
 
-            function handlePlusRewriting(atoms) {
-                let ncap = captures[captureIndex + 1];
+            function handlePlusRewriting(atoms, plusGroup) {
+                let ncap = captures[plusGroup];
 
                 atoms = ctx.mkRePlus(atoms);
 
@@ -242,8 +242,8 @@ function RegexRecursive(ctx, regex, idx) {
                 return atoms;
             }
 
-            function handleStarRewriting(atoms) {
-                let ncap = captures[captureIndex + 1];
+            function handleStarRewriting(atoms, starGroup) {
+                let ncap = captures[starGroup];
 
                 atoms = ctx.mkReStar(atoms);
 
@@ -258,38 +258,38 @@ function RegexRecursive(ctx, regex, idx) {
                 return atoms;
             }
 
-            function handleOptionRewriting(atoms) {
+            function handleOptionRewriting(atoms, optionGroup) {
                 atoms = ctx.mkReOption(atoms);
-                addToCapture(captureIndex, captures[captureIndex + 1]);
+                addToCapture(captureIndex, optionGroup);
                 return atoms;
             }
 
             if (capture) {
-                let nextTok = current();
-                switch (nextTok) {
+                let newestCapture = captures.length - 1;
+                switch (current()) {
                     case '*':
                         {
-                            rewriteCaptureOptional(captureIndex + 1);
-                            atoms = handleStarRewriting(atoms);
+                            rewriteCaptureOptional(newestCapture);
+                            atoms = handleStarRewriting(atoms, newestCapture);
 
                             next();
                             break;
                         }
                     case '+':
                         {
-                            atoms = handlePlusRewriting(atoms);
+                            atoms = handlePlusRewriting(atoms, newestCapture);
                             next();
                             break;
                         }
                     case '?':
                         {
-                            rewriteCaptureOptional(captureIndex + 1);
+                            rewriteCaptureOptional(newestCapture, newestCapture);
                             atoms = handleOptionRewriting(atoms);
                             next();
                             break;
                         }
                     default: {
-                            addToCapture(captureIndex, captures[captureIndex + 1]);
+                            addToCapture(captureIndex, captures[newestCapture]);
                         }
                 }
             }
@@ -358,12 +358,12 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseMaybeLoop(captureIndex) {
-        let atom = ParseMaybePSQ();
+        let atom = ParseMaybePSQ(captureIndex);
 
         if (current() == '{') {
             next();
 
-            let [lo, hi] = ParseLoopCount(captureIndex);
+            let [lo, hi] = ParseLoopCount();
 
             if (lo === null || hi === null) {
                 return null;
@@ -406,7 +406,13 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseMaybeOption(captureIndex) {
+
+
+        let startCaptures = captures.length;
+
         let ast = ParseMaybeAtoms(captureIndex);
+
+        let endLeftCaptures = captures.length;
 
         if (!ast) {
             return null;
@@ -416,6 +422,8 @@ function RegexRecursive(ctx, regex, idx) {
             next();
 
             let ast2 = ParseMaybeOption(captureIndex);
+
+            let endRightCaptures = captures.length;
 
             if (!ast2) {
                 return null;

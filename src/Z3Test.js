@@ -10,7 +10,7 @@ var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let regExToTest = [/^(a{2})+|(b{2})+$/];
+let regExToTest = [/^(a)+|(b)+$/];
 let testRegexs = regExToTest.map(r => Z3.Regex(ctx, r));
 
 console.log('Test Regex: ' + JSON.stringify(testRegexs));
