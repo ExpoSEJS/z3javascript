@@ -290,6 +290,9 @@ function RegexRecursive(ctx, regex, idx) {
                             next();
                             break;
                         }
+                    default: {
+                            addToCapture(captureIndex, captures[captureIndex + 1]);
+                        }
                 }
             }
 
