@@ -12,6 +12,8 @@ let REGEX_CTR = 0;
 
 function RegexRecursive(ctx, regex, idx) {
 
+    REGEX_CTR++;
+
     let captures = [];
     let assertions = [];
     let cap_ctr = 0;
@@ -216,8 +218,6 @@ function RegexRecursive(ctx, regex, idx) {
                 return null;
             }
 
-            console.log('Capture and peek ' + capture + ' ' + current());
-
             function rewriteCaptureOptional(idx) {
                 //Rewrite capture[n] to be capture[n] or ''
                 let orFiller = nextFiller();
@@ -226,16 +226,33 @@ function RegexRecursive(ctx, regex, idx) {
             }
 
             function handlePlusRewriting(atoms) {
-                let atomsRewriting = [ctx.mkReStar(atoms), atoms];
-                atoms = ctx.mkReConcat(atomsRewriting[0], atomsRewriting[1]);
+                let ncap = captures[captureIndex + 1];
+
+                atoms = ctx.mkRePlus(atoms);
+
                 let outerFiller = nextFiller();
                 assertions.push(ctx.mkSeqInRe(outerFiller, atoms));
 
                 let innerFiller = nextFiller();
-                assertions.push(ctx.mkSeqInRe(innerFiller, atomsRewriting[0]));
-                assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, captures[captureIndex + 1]])));
+                assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
 
-                captures[captureIndex] = ctx.mkSeqConcat([captures[captureIndex], outerFiller]);
+                captures[captureIndex] = outerFiller;
+                return atoms;
+            }
+
+            function handleStarRewriting(atoms) {
+                let ncap = captures[captureIndex + 1];
+
+                atoms = ctx.mkReStar(atoms);
+
+                let outerFiller = nextFiller();
+                assertions.push(ctx.mkSeqInRe(outerFiller, atoms));
+                assertions.push(ctx.mkImplies(ctx.mkEq(ncap, ctx.mkString('')), ctx.mkEq(outerFiller, ctx.mkString(''))));
+
+                let innerFiller = nextFiller();
+                assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
+
+                captures[captureIndex] = outerFiller;
                 return atoms;
             }
 
@@ -245,25 +262,14 @@ function RegexRecursive(ctx, regex, idx) {
                     case '*':
                         {
                             rewriteCaptureOptional(captureIndex + 1);
-                            let ncap = captures[captureIndex + 1];
-
-                            atoms = ctx.mkReStar(atoms);
-
-                            let outerFiller = nextFiller();
-                            assertions.push(ctx.mkSeqInRe(outerFiller, atoms));
-                            assertions.push(ctx.mkImplies(ctx.mkEq(ncap, ctx.mkString('')), ctx.mkEq(outerFiller, ctx.mkString(''))));
-
-                            let innerFiller = nextFiller();
-                            assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
-
-                            captures[captureIndex] = outerFiller;
+                            atoms = handleStarRewriting(atoms);
 
                             next();
                             break;
                         }
                     case '+':
                         {
-                            handlePlusRewriting(atoms);
+                            atoms = handlePlusRewriting(atoms);
                             next();
                             break;
                         }
@@ -434,8 +440,6 @@ function RegexRecursive(ctx, regex, idx) {
         ast = ctx.mkReConcat(ast, ctx.mkReStar(Any()));
         implier = ctx.mkSeqConcat([implier, nextFiller()]);
     }
-
-    REGEX_CTR++;
 
     //TODO: Fix tagging to be multiline
     return {
