@@ -192,6 +192,13 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
+    function rewriteCaptureOptional(idx) {
+        //Rewrite capture[n] to be capture[n] or ''
+        let orFiller = nextFiller();
+        assertions.push(ctx.mkOr(ctx.mkEq(orFiller, captures[idx]), ctx.mkEq(orFiller, ctx.mkString(''))));
+        captures[idx] = orFiller;
+    }
+
     function ParseMaybeCaptureGroupStart(captureIndex) {
         if (current() == '(') {
             next();
@@ -218,13 +225,6 @@ function RegexRecursive(ctx, regex, idx) {
 
             function addToCapture(idx, thing) {
                 captures[idx] = ctx.mkSeqConcat([captures[idx], thing]);
-            }
-
-            function rewriteCaptureOptional(idx) {
-                //Rewrite capture[n] to be capture[n] or ''
-                let orFiller = nextFiller();
-                assertions.push(ctx.mkOr(ctx.mkEq(orFiller, captures[idx]), ctx.mkEq(orFiller, ctx.mkString(''))));
-                captures[idx] = orFiller;
             }
 
             function handlePlusRewriting(atoms, plusGroup) {
@@ -410,7 +410,16 @@ function RegexRecursive(ctx, regex, idx) {
 
         let startCaptures = captures.length;
 
+        //The captures on an option are a bit tricky
+        //The capture is either going to be the current C0 + [Some stuff] | [Some Stuff]
+        //So we parse one side, reset the capture to cStart, then parse the other and express
+        //the final constraint as an or of the two
+        let cStart = captures[captureIndex];
+
         let ast = ParseMaybeAtoms(captureIndex);
+
+        let cLeft = captures[captureIndex];
+        captures[captureIndex] = cStart;
 
         let endLeftCaptures = captures.length;
 
@@ -423,7 +432,39 @@ function RegexRecursive(ctx, regex, idx) {
 
             let ast2 = ParseMaybeOption(captureIndex);
 
+            let cRight = captures[captureIndex];
+
             let endRightCaptures = captures.length;
+
+            let leftCaptures = [];
+            let leftOriginals = [];
+            let rightCaptures = [];
+            let rightOriginals = [];
+
+            for (let i = startCaptures; i < endLeftCaptures; i++) {
+                leftOriginals.push(captures[i]);
+                rewriteCaptureOptional(i);
+                leftCaptures.push(captures[i]);
+            }
+
+            for (let i = endLeftCaptures; i < endRightCaptures; i++) {
+                rightOriginals.push(captures[i]);
+                rewriteCaptureOptional(i);
+                rightCaptures.push(captures[i]);
+            }
+
+            let cFinal = nextFiller();
+
+            function buildSide(side, left, original, right) {
+                let forceRightNothing = right.map(x => ctx.mkEq(x, ctx.mkString('')));
+                assertions.push(ctx.mkImplies(ctx.mkEq(cFinal, side), ctx.mkAndList(forceRightNothing)));
+            }
+
+            buildSide(cLeft, leftCaptures, leftOriginals, rightCaptures);
+            buildSide(cRight, rightCaptures, rightOriginals, leftCaptures);
+
+            assertions.push(ctx.mkOr(ctx.mkEq(cFinal, cLeft), ctx.mkEq(cFinal, cRight)));
+            captures[captureIndex] = cFinal;
 
             if (!ast2) {
                 return null;

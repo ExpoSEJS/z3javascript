@@ -230,12 +230,16 @@ class Context {
         return this._build(Z3.Z3_mk_implies, left, right);
     }
 
-    mkXor(left, right) {
+    mkXOr(left, right) {
         return this._build(Z3.Z3_mk_xor, left, right);
     }
 
     mkAnd(left, right) {
         return this._buildVar(Z3.Z3_mk_and, left, right);
+    }
+
+    mkAndList(conditions) {
+        return this._buildVarNoArgs(Z3.Z3_mk_and, conditions);
     }
 
     mkOr(left, right) {
