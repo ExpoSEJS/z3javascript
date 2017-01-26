@@ -218,6 +218,10 @@ function RegexRecursive(ctx, regex, idx) {
                 return null;
             }
 
+            function addToCapture(idx, thing) {
+                captures[idx] = ctx.mkSeqConcat([captures[idx], thing]);
+            }
+
             function rewriteCaptureOptional(idx) {
                 //Rewrite capture[n] to be capture[n] or ''
                 let orFiller = nextFiller();
@@ -236,7 +240,7 @@ function RegexRecursive(ctx, regex, idx) {
                 let innerFiller = nextFiller();
                 assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
 
-                captures[captureIndex] = outerFiller;
+                addToCapture(captureIndex, outerFiller);
                 return atoms;
             }
 
@@ -252,7 +256,13 @@ function RegexRecursive(ctx, regex, idx) {
                 let innerFiller = nextFiller();
                 assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
 
-                captures[captureIndex] = outerFiller;
+                addToCapture(captureIndex, outerFiller);
+                return atoms;
+            }
+
+            function handleOptionRewriting(atoms) {
+                atoms = ctx.mkReOption(atoms);
+                addToCapture(captureIndex, captures[captureIndex + 1]);
                 return atoms;
             }
 
@@ -274,8 +284,12 @@ function RegexRecursive(ctx, regex, idx) {
                             break;
                         }
                     case '?':
-                        console.log('Special Case, Should Create a capture group')
-                        break;
+                        {
+                            rewriteCaptureOptional(captureIndex + 1);
+                            atoms = handleOptionRewriting(atoms);
+                            next();
+                            break;
+                        }
                 }
             }
 
