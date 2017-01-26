@@ -192,7 +192,7 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
-    function ParseMaybeCaptureGroupStart() {
+    function ParseMaybeCaptureGroupStart(captureIndex) {
         if (current() == '(') {
             next();
 
@@ -209,8 +209,6 @@ function RegexRecursive(ctx, regex, idx) {
                 next();
                 capture = false;
             }
-
-            let captureIndex = captures.length - 1;
 
             let atoms = ParseCaptureGroup();
 
@@ -302,9 +300,9 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
-    function ParseMaybePSQ() {
+    function ParseMaybePSQ(captureIndex) {
 
-        let atom = ParseMaybeCaptureGroupStart();
+        let atom = ParseMaybeCaptureGroupStart(captureIndex);
 
         if (!atom) {
             return null;
@@ -359,13 +357,13 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
-    function ParseMaybeLoop() {
+    function ParseMaybeLoop(captureIndex) {
         let atom = ParseMaybePSQ();
 
         if (current() == '{') {
             next();
 
-            let [lo, hi] = ParseLoopCount();
+            let [lo, hi] = ParseLoopCount(captureIndex);
 
             if (lo === null || hi === null) {
                 return null;
@@ -394,7 +392,7 @@ function RegexRecursive(ctx, regex, idx) {
 
             //TODO: This is horrible, anchors should be better
             if (more()) {
-                let parsed = ParseMaybeLoop();
+                let parsed = ParseMaybeLoop(captureIndex);
 
                 if (!parsed) {
                     return null;

@@ -10,14 +10,13 @@ var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let regExToTest = [/^[a-z]{3}([a-z]{2})?$/];
+let regExToTest = [/^(a{2})+|(b{2})+$/];
 let testRegexs = regExToTest.map(r => Z3.Regex(ctx, r));
 
 console.log('Test Regex: ' + JSON.stringify(testRegexs));
 
 let symbol = ctx.mkStringSymbol('HI');
 let symbolic = ctx.mkConst(symbol, ctx.mkStringSort());
-
 
 testRegexs.forEach(regex => {
 	solver.assert(ctx.mkSeqInRe(symbolic, regex.ast));
