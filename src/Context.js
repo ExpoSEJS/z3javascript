@@ -70,6 +70,10 @@ class Context {
         return this._buildConst(Z3.Z3_mk_string, val);
     }
 
+    mkStringVar(name) {
+        return this.mkVar(name, this.mkStringSort());
+    }
+
     mkIntVal(val) {
         return this.mkInt(val, this.mkIntSort());
     }

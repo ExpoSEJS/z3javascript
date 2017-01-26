@@ -9,7 +9,22 @@ function CullOuterRegex(regex) {
     return regex.substr(firstSlash + 1, lastSlash - 1);
 }
 
+let REGEX_CTR = 0;
+
 function RegexRecursive(ctx, regex, idx) {
+
+    let captures = [];
+    let assertions = [];
+    let cap_ctr = 0;
+    let fill_ctr = 0;
+
+    function nextCapture() {
+        return ctx.mkStringVar('' + regex + REGEX_CTR + ' Capture ' + cap_ctr++);
+    }
+
+    function nextFiller() {
+        return ctx.mkStringVar('' + regex + REGEX_CTR + ' Fill ' + fill_ctr++);
+    }
 
     function more() {
         return idx < regex.length && current() != '|' && current() != ')';
@@ -174,20 +189,57 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
-    function ParseMaybeSubRegex() {
+    function ParseMaybeCaptureGroupStart() {
         if (current() == '(') {
             next();
 
+            let capture = true;
+
             //Ignore ?: capture groups can't be modelled
-            if (current() == '?' && peek() == ":") {
+            if (current() == '?') {
                 next();
+
+                if (current() != ':') {
+                    return null;
+                }
+
                 next();
+                capture = false;
             }
+
+            let captureIndex = captures.length - 1;
             
             let atoms = ParseCaptureGroup();
             
             if (next() != ')') {
                 return null;
+            }
+
+            console.log('Capture and peek ' + capture + ' ' + current());
+
+            if (capture) {
+                let nextTok = current();
+                switch (nextTok) {
+                    case '*':
+                        console.log('Special case *');
+                        break;
+                    case '+':
+                        let atomsRewriting = [ctx.mkReStar(atoms), atoms];
+                        atoms = ctx.mkReConcat(atomsRewriting[0], atomsRewriting[1]);
+                        let outerFiller = nextFiller();
+                        assertions.push(ctx.mkSeqInRe(outerFiller, atoms));
+
+                        let innerFiller = nextFiller();
+                        assertions.push(ctx.mkSeqInRe(innerFiller, atomsRewriting[0]));
+                        assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, captures[captureIndex + 1]])));
+                            
+                        captures[captureIndex] = ctx.mkSeqConcat([captures[captureIndex], outerFiller]);
+
+                        break;
+                    case '?':
+                        console.log('Special Case, Should Create a capture group')
+                        break;
+                }
             }
 
             return atoms;
@@ -198,7 +250,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseMaybePSQ() {
         
-        let atom = ParseMaybeSubRegex();
+        let atom = ParseMaybeCaptureGroupStart();
 
         if (!atom) {
             return null;
@@ -275,7 +327,7 @@ function RegexRecursive(ctx, regex, idx) {
         return atom;
     }
 
-    function ParseMaybeAtoms() {
+    function ParseMaybeAtoms(captureIndex) {
 
         let rollup = null;
 
@@ -301,8 +353,8 @@ function RegexRecursive(ctx, regex, idx) {
         return rollup.simplify();
     }
 
-    function ParseMaybeOption() {
-        let ast = ParseMaybeAtoms();
+    function ParseMaybeOption(captureIndex) {
+        let ast = ParseMaybeAtoms(captureIndex);
 
         if (!ast) {
             return null;
@@ -311,7 +363,7 @@ function RegexRecursive(ctx, regex, idx) {
         if (current() == '|') {
             next();
 
-            let ast2 = ParseMaybeOption();
+            let ast2 = ParseMaybeOption(captureIndex);
 
             if (!ast2) {
                 return null;
@@ -324,24 +376,47 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseCaptureGroup() {
-        return ParseMaybeOption();
+        let captureIndex = captures.length;
+        captures.push(nextCapture());
+
+        let r = ParseMaybeOption(captureIndex);
+
+        if (!r) {
+            return null;
+        }
+
+        assertions.push(ctx.mkSeqInRe(captures[captureIndex], r));
+
+        return r;
     }
 
     let ast = ParseCaptureGroup();
 
+    let implier = captures[0];
+
     if (regex[0] !== '^') {
         ast = ctx.mkReConcat(ctx.mkReStar(Any()), ast);
+        implier = ctx.mkSeqConcat([nextFiller(), implier]);
     }
 
     if (regex[regex.length - 1] !== '$') {
         ast = ctx.mkReConcat(ast, ctx.mkReStar(Any()));
+        implier = ctx.mkSeqConcat([implier, nextFiller()]);
     }
 
-    return ast;
+    REGEX_CTR++;
+
+    //TODO: Fix tagging to be multiline
+    return {
+        ast: ast.tag('' + regex),
+        implier: implier,
+        assertions: assertions,
+        captures: captures
+    };
 }
 
 function RegexOuter(ctx, regex) {
-    return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false).tag('' + regex);
+    return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false);
 }
 
 export default RegexOuter;
