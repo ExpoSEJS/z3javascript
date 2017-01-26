@@ -10,7 +10,7 @@ var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let regExToTest = [/^(..)+$/];
+let regExToTest = [/^(..)*$/];
 let testRegexs = regExToTest.map(r => Z3.Regex(ctx, r));
 
 console.log('Test Regex: ' + JSON.stringify(testRegexs));
@@ -18,12 +18,10 @@ console.log('Test Regex: ' + JSON.stringify(testRegexs));
 let symbol = ctx.mkStringSymbol('HI');
 let symbolic = ctx.mkConst(symbol, ctx.mkStringSort());
 
-solver.assert(ctx.mkEq(ctx.mkString('helloabccd'), symbolic));
+solver.assert(ctx.mkEq(ctx.mkString('cc'), testRegexs[0].captures[1]));
 
 testRegexs.forEach(regex => {
 	solver.assert(ctx.mkSeqInRe(symbolic, regex.ast));
-	let iv1 = ctx.mkIntVar('IVAR1');
-	let iv2 = ctx.mkIntVar('IVAR2');
 	solver.assert(ctx.mkImplies(ctx.mkSeqInRe(symbolic, regex.ast), ctx.mkEq(symbolic, regex.implier)));
 	regex.assertions.forEach(assert => {
 		solver.assert(assert);

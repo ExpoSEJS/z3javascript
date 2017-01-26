@@ -2,7 +2,6 @@
  * Copyright Blake Loring <blake_l@parsed.uk> 2015
  * Approximate JavaScript regular expression to Z3 regex parser
  */
-
 function CullOuterRegex(regex) {
     let firstSlash = regex.indexOf('/');
     let lastSlash = regex.lastIndexOf('/');
@@ -84,15 +83,15 @@ function RegexRecursive(ctx, regex, idx) {
         let negate = false;
 
         if (current() == '^') {
-        	next();
-        	negate = true;
+            next();
+            negate = true;
         }
 
         let r = ParseRangeInner();
 
         if (negate) {
-        	let comp = ctx.mkReComplement(r);
-        	r = ctx.mkReIntersect(Any(), comp);
+            let comp = ctx.mkReComplement(r);
+            r = ctx.mkReIntersect(Any(), comp);
         }
 
         if (next() == ']') {
@@ -113,16 +112,16 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function Digit() {
-    	return ctx.mkReRange(ctx.mkString('0'), ctx.mkString('9'));
+        return ctx.mkReRange(ctx.mkString('0'), ctx.mkString('9'));
     }
 
     function Whitespace() {
-    	let p1 = mk(' ');
-    	let p2 = mk('\t');
-    	let p3 = mk('\r');
-    	let p4 = mk('\n');
-    	let p5 = mk('\f');
-    	return ctx.mkReUnion(p1, ctx.mkReUnion(p2, ctx.mkReUnion(p3, ctx.mkReUnion(p4, p5))));
+        let p1 = mk(' ');
+        let p2 = mk('\t');
+        let p3 = mk('\r');
+        let p4 = mk('\n');
+        let p5 = mk('\f');
+        return ctx.mkReUnion(p1, ctx.mkReUnion(p2, ctx.mkReUnion(p3, ctx.mkReUnion(p4, p5))));
     }
 
     function AlphaNumeric() {
@@ -150,7 +149,7 @@ function RegexRecursive(ctx, regex, idx) {
             next();
 
             let c = next();
-            
+
             if (c == 'd') {
                 return Digit();
             } else if (c == 'D') {
@@ -182,7 +181,9 @@ function RegexRecursive(ctx, regex, idx) {
     function ParseMaybeRange() {
         if (current() == '[') {
             let range = ParseRange();
-            if (!range) { return null; }
+            if (!range) {
+                return null;
+            }
             return range;
         } else {
             return ParseMaybeEscaped();
@@ -208,34 +209,64 @@ function RegexRecursive(ctx, regex, idx) {
             }
 
             let captureIndex = captures.length - 1;
-            
+
             let atoms = ParseCaptureGroup();
-            
+
             if (next() != ')') {
                 return null;
             }
 
             console.log('Capture and peek ' + capture + ' ' + current());
 
+            function rewriteCaptureOptional(idx) {
+                //Rewrite capture[n] to be capture[n] or ''
+                let orFiller = nextFiller();
+                assertions.push(ctx.mkOr(ctx.mkEq(orFiller, captures[idx]), ctx.mkEq(orFiller, ctx.mkString(''))));
+                captures[idx] = orFiller;
+            }
+
+            function handlePlusRewriting(atoms) {
+                let atomsRewriting = [ctx.mkReStar(atoms), atoms];
+                atoms = ctx.mkReConcat(atomsRewriting[0], atomsRewriting[1]);
+                let outerFiller = nextFiller();
+                assertions.push(ctx.mkSeqInRe(outerFiller, atoms));
+
+                let innerFiller = nextFiller();
+                assertions.push(ctx.mkSeqInRe(innerFiller, atomsRewriting[0]));
+                assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, captures[captureIndex + 1]])));
+
+                captures[captureIndex] = ctx.mkSeqConcat([captures[captureIndex], outerFiller]);
+                return atoms;
+            }
+
             if (capture) {
                 let nextTok = current();
                 switch (nextTok) {
                     case '*':
-                        console.log('Special case *');
-                        break;
+                        {
+                            rewriteCaptureOptional(captureIndex + 1);
+                            let ncap = captures[captureIndex + 1];
+
+                            atoms = ctx.mkReStar(atoms);
+
+                            let outerFiller = nextFiller();
+                            assertions.push(ctx.mkSeqInRe(outerFiller, atoms));
+                            assertions.push(ctx.mkImplies(ctx.mkEq(ncap, ctx.mkString('')), ctx.mkEq(outerFiller, ctx.mkString(''))));
+
+                            let innerFiller = nextFiller();
+                            assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
+
+                            captures[captureIndex] = outerFiller;
+
+                            next();
+                            break;
+                        }
                     case '+':
-                        let atomsRewriting = [ctx.mkReStar(atoms), atoms];
-                        atoms = ctx.mkReConcat(atomsRewriting[0], atomsRewriting[1]);
-                        let outerFiller = nextFiller();
-                        assertions.push(ctx.mkSeqInRe(outerFiller, atoms));
-
-                        let innerFiller = nextFiller();
-                        assertions.push(ctx.mkSeqInRe(innerFiller, atomsRewriting[0]));
-                        assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, captures[captureIndex + 1]])));
-                            
-                        captures[captureIndex] = ctx.mkSeqConcat([captures[captureIndex], outerFiller]);
-
-                        break;
+                        {
+                            handlePlusRewriting(atoms);
+                            next();
+                            break;
+                        }
                     case '?':
                         console.log('Special Case, Should Create a capture group')
                         break;
@@ -249,7 +280,7 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseMaybePSQ() {
-        
+
         let atom = ParseMaybeCaptureGroupStart();
 
         if (!atom) {
@@ -340,11 +371,11 @@ function RegexRecursive(ctx, regex, idx) {
 
             //TODO: This is horrible, anchors should be better
             if (more()) {
-            	let parsed = ParseMaybeLoop();
-            	
-            	if (!parsed) {
-            		return null;
-            	}
+                let parsed = ParseMaybeLoop();
+
+                if (!parsed) {
+                    return null;
+                }
 
                 rollup = rollup ? ctx.mkReConcat(rollup, parsed) : parsed;
             }
