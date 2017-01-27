@@ -10,10 +10,8 @@ var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let regExToTest = [/^(abcd)+(efg)(hijk((lmnop)|(qrs)))$/];
+let regExToTest = [/^(z((x)|(y)))$/];
 let testRegexs = regExToTest.map(r => Z3.Regex(ctx, r));
-
-console.log('Test Regex: ' + JSON.stringify(testRegexs));
 
 let symbol = ctx.mkStringSymbol('HI');
 let symbolic = ctx.mkConst(symbol, ctx.mkStringSort());
