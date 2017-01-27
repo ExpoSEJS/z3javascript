@@ -190,7 +190,7 @@ function RegexRecursive(ctx, regex, idx) {
     function rewriteCaptureOptional(idx) {
         //Rewrite capture[n] to be capture[n] or ''
         let orFiller = nextFiller();
-        assertions.push(ctx.mkOr(ctx.mkEq(orFiller, captures[idx]), ctx.mkEq(orFiller, ctx.mkString(''))));
+        either(orFiller, captures[idx], ctx.mkString(''));
         captures[idx] = orFiller;
     }
 
@@ -219,10 +219,12 @@ function RegexRecursive(ctx, regex, idx) {
             }
 
             function addToCapture(idx, thing) {
+                console.log('Added to capture');
                 captures[idx] = ctx.mkSeqConcat([captures[idx], thing]);
             }
 
             function handlePlusRewriting(atoms, plusGroup) {
+                console.log('Handle + group ' + plusGroup);
                 let ncap = captures[plusGroup];
 
                 atoms = ctx.mkRePlus(atoms);
@@ -266,7 +268,6 @@ function RegexRecursive(ctx, regex, idx) {
                         {
                             rewriteCaptureOptional(newestCapture);
                             atoms = handleStarRewriting(atoms, newestCapture);
-
                             next();
                             break;
                         }
@@ -401,6 +402,11 @@ function RegexRecursive(ctx, regex, idx) {
         return rollup.simplify();
     }
 
+    function either(v, left, right) {
+        assertions.push(ctx.mkXOr(ctx.mkEq(v, left), ctx.mkEq(v, right)));
+        return v;
+    }
+
     function buildAlternationCaptureConstraints(captureIndex, startCaptures, endLeftCaptures, endRightCaptures, cLeft, cRight) {
         let leftCaptures = [];
         let leftOriginals = [];
@@ -430,7 +436,8 @@ function RegexRecursive(ctx, regex, idx) {
         buildSide(cLeft, leftCaptures, leftOriginals, rightCaptures);
         buildSide(cRight, rightCaptures, rightOriginals, leftCaptures);
 
-        assertions.push(ctx.mkOr(ctx.mkEq(cFinal, cLeft), ctx.mkEq(cFinal, cRight)));
+        either(cFinal, cLeft, cRight);
+
         captures[captureIndex] = cFinal;
     }
 
@@ -446,13 +453,15 @@ function RegexRecursive(ctx, regex, idx) {
         //So we parse one side, reset the capture to cStart, then parse the other and express
         //the final constraint as an or of the two
         let cStart = captures[captureIndex];
+        captures[captureIndex] = nextFiller();
 
         let ast = ParseMaybeAtoms(captureIndex);
 
-        let cLeft = captures[captureIndex];
-        captures[captureIndex] = cStart;
-
+        //Track the end of the left captures
         let endLeftCaptures = captures.length;
+
+        let cLeft = captures[captureIndex];
+        captures[captureIndex] = nextFiller();
 
         if (!ast) {
             return null;
@@ -469,18 +478,18 @@ function RegexRecursive(ctx, regex, idx) {
 
             //If any capture groups have been defined in the alternation we need to
             //build some new string constraints on the result
-            if (endRightCaptures != startCaptures) {
-                buildAlternationCaptureConstraints(captureIndex, startCaptures, endLeftCaptures, endRightCaptures, cLeft, cRight);
-            }
+            buildAlternationCaptureConstraints(captureIndex, startCaptures, endLeftCaptures, endRightCaptures, ctx.mkSeqConcat([cStart, cLeft]), ctx.mkSeqConcat([cStart, cRight]));
 
             if (!ast2) {
                 return null;
             }
 
-            return ctx.mkReUnion(ast, ast2);
+            ast = ctx.mkReUnion(ast, ast2);
         } else {
-            return ast;
+            captures[captureIndex] = ctx.mkSeqConcat([cStart, cLeft]);
         }
+
+        return ast;
     }
 
     function ParseCaptureGroup() {

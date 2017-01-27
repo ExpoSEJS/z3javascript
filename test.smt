@@ -1,21 +1,20 @@
-(declare-const S (String))
+(declare-fun HI () String)
+(declare-fun |^z(x\|y)$1 Fill 0| () String)
+(declare-fun |^z(x\|y)$1 Fill 1| () String)
 
-(declare-const capture0 (String))
-(declare-const capture1 (String))
+(assert (str.in.re HI
+           (re.++ (str.to.re "z") (re.union (str.to.re "x") (str.to.re "y")))))
 
-(declare-const binder0 (String))
+(assert (let ((a!1 (str.in.re HI
+                      (re.++ (str.to.re "z")
+                             (re.union (str.to.re "x") (str.to.re "y"))))))
+                           
+  (=> a!1 (= HI |^z(x\|y)$1 Fill 0|))))
 
-(define-fun r1 () (RegEx String) (str.to.re "abc"))
-(define-fun r0 () (RegEx String) (re.* r1))
+(assert (str.in.re |^z(x\|y)$1 Fill 1| (re.union (str.to.re "x") (str.to.re "y"))))
+(assert (str.in.re |^z(x\|y)$1 Fill 0|
+           (re.++ (str.to.re "z") (re.union (str.to.re "x") (str.to.re "y")))))
 
-(assert (or (str.in.re capture1 r1) (= capture1 "")))
-(assert (str.in.re capture0 r0))
-
-(assert (or (and (= capture0 (str.++ binder0 capture1)) (not (= capture1 ""))) (and (= capture0 capture1) (= capture1 ""))))
-
-(assert (=> (str.in.re S r0) (= S capture0)))
-(assert (str.in.re S r0))
-(assert (= S "abcabc"))
 
 (check-sat-using (then qe smt))
 (get-model)
