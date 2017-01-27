@@ -16,12 +16,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     let captures = [];
     let assertions = [];
-    let cap_ctr = 0;
     let fill_ctr = 0;
-
-    function nextCapture() {
-        return ctx.mkStringVar('' + regex + REGEX_CTR + ' Capture ' + cap_ctr++);
-    }
 
     function nextFiller() {
         return ctx.mkStringVar('' + regex + REGEX_CTR + ' Fill ' + fill_ctr++);
@@ -490,7 +485,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseCaptureGroup() {
         let captureIndex = captures.length;
-        captures.push(nextCapture());
+        captures.push(nextFiller());
 
         let r = ParseMaybeOption(captureIndex);
 
