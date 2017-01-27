@@ -406,6 +406,38 @@ function RegexRecursive(ctx, regex, idx) {
         return rollup.simplify();
     }
 
+    function buildAlternationCaptureConstraints(captureIndex, startCaptures, endLeftCaptures, endRightCaptures, cLeft, cRight) {
+        let leftCaptures = [];
+        let leftOriginals = [];
+        let rightCaptures = [];
+        let rightOriginals = [];
+
+        for (let i = startCaptures; i < endLeftCaptures; i++) {
+            leftOriginals.push(captures[i]);
+            rewriteCaptureOptional(i);
+            leftCaptures.push(captures[i]);
+        }
+
+        for (let i = endLeftCaptures; i < endRightCaptures; i++) {
+            rightOriginals.push(captures[i]);
+            rewriteCaptureOptional(i);
+            rightCaptures.push(captures[i]);
+        }
+        
+        let cFinal = nextFiller();
+
+        function buildSide(side, left, original, right) {
+            let forceRightNothing = right.map(x => ctx.mkEq(x, ctx.mkString('')));
+            assertions.push(ctx.mkImplies(ctx.mkEq(cFinal, side), ctx.mkAndList(forceRightNothing)));
+        }
+
+        buildSide(cLeft, leftCaptures, leftOriginals, rightCaptures);
+        buildSide(cRight, rightCaptures, rightOriginals, leftCaptures);
+
+        assertions.push(ctx.mkOr(ctx.mkEq(cFinal, cLeft), ctx.mkEq(cFinal, cRight)));
+        captures[captureIndex] = cFinal;
+    }
+
     function ParseMaybeOption(captureIndex) {
 
 
@@ -437,35 +469,11 @@ function RegexRecursive(ctx, regex, idx) {
 
             let endRightCaptures = captures.length;
 
-            let leftCaptures = [];
-            let leftOriginals = [];
-            let rightCaptures = [];
-            let rightOriginals = [];
-
-            for (let i = startCaptures; i < endLeftCaptures; i++) {
-                leftOriginals.push(captures[i]);
-                rewriteCaptureOptional(i);
-                leftCaptures.push(captures[i]);
+            //If any capture groups have been defined in the alternation we need to
+            //build some new string constraints on the result
+            if (endRightCaptures != startCaptures) {
+                buildAlternationCaptureConstraints(captureIndex, startCaptures, endLeftCaptures, endRightCaptures, cLeft, cRight);
             }
-
-            for (let i = endLeftCaptures; i < endRightCaptures; i++) {
-                rightOriginals.push(captures[i]);
-                rewriteCaptureOptional(i);
-                rightCaptures.push(captures[i]);
-            }
-
-            let cFinal = nextFiller();
-
-            function buildSide(side, left, original, right) {
-                let forceRightNothing = right.map(x => ctx.mkEq(x, ctx.mkString('')));
-                assertions.push(ctx.mkImplies(ctx.mkEq(cFinal, side), ctx.mkAndList(forceRightNothing)));
-            }
-
-            buildSide(cLeft, leftCaptures, leftOriginals, rightCaptures);
-            buildSide(cRight, rightCaptures, rightOriginals, leftCaptures);
-
-            assertions.push(ctx.mkOr(ctx.mkEq(cFinal, cLeft), ctx.mkEq(cFinal, cRight)));
-            captures[captureIndex] = cFinal;
 
             if (!ast2) {
                 return null;
