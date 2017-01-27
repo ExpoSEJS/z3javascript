@@ -10,18 +10,23 @@ var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let regExToTest = [/^z(x|y)$/];
+let regExToTest = [/^((x)|(y))$/];
 let testRegexs = regExToTest.map(r => Z3.Regex(ctx, r));
 
 let symbol = ctx.mkStringSymbol('HI');
 let symbolic = ctx.mkConst(symbol, ctx.mkStringSort());
 
 
+solver.assert(ctx.mkEq(testRegexs[0].implier, ctx.mkString('y')).simplify());
+solver.assert(ctx.mkEq(testRegexs[0].captures[1], ctx.mkString('y')).simplify());
+
+console.log(testRegexs[0].captures[0].toString());
+
 testRegexs.forEach(regex => {
 	solver.assert(ctx.mkSeqInRe(symbolic, regex.ast));
 	solver.assert(ctx.mkImplies(ctx.mkSeqInRe(symbolic, regex.ast), ctx.mkEq(symbolic, regex.implier)));
 	regex.assertions.forEach(assert => {
-		solver.assert(assert);
+		solver.assert(assert.simplify());
 	});
 });
 

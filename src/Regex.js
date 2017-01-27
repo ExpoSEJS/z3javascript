@@ -19,7 +19,7 @@ function RegexRecursive(ctx, regex, idx) {
     let fill_ctr = 0;
 
     function nextFiller() {
-        return ctx.mkStringVar('' + regex + REGEX_CTR + ' Fill ' + fill_ctr++);
+        return ctx.mkStringVar('' + REGEX_CTR + ' Fill ' + fill_ctr++);
     }
 
     function more() {
@@ -212,6 +212,8 @@ function RegexRecursive(ctx, regex, idx) {
                 capture = false;
             }
 
+            let newestCapture = captures.length;
+
             let atoms = ParseCaptureGroup();
 
             if (next() != ')') {
@@ -262,7 +264,6 @@ function RegexRecursive(ctx, regex, idx) {
             }
 
             if (capture) {
-                let newestCapture = captures.length - 1;
                 switch (current()) {
                     case '*':
                         {
@@ -494,7 +495,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseCaptureGroup() {
         let captureIndex = captures.length;
-        captures.push(nextFiller());
+        captures.push(ctx.mkString(''));
 
         let r = ParseMaybeOption(captureIndex);
 
