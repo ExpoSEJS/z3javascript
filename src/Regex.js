@@ -428,7 +428,8 @@ function RegexRecursive(ctx, regex, idx) {
 
         function buildSide(side, left, original, right) {
             let forceRightNothing = right.map(x => ctx.mkEq(x, ctx.mkString('')));
-            assertions.push(ctx.mkImplies(ctx.mkEq(cFinal, side), ctx.mkAndList(forceRightNothing)));
+            let forceLeftOriginal = left.map((x, idx) => ctx.mkEq(left[idx], original[idx]));
+            assertions.push(ctx.mkImplies(ctx.mkEq(cFinal, side), ctx.mkAndList(forceRightNothing.concat(forceLeftOriginal))));
         }
 
         buildSide(cLeft, leftCaptures, leftOriginals, rightCaptures);
@@ -440,7 +441,9 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseMaybeOption(captureIndex) {
 
-
+        //Track the length of captures through parsing of either side
+        //If it changes then the blocks parsed have a capture in them
+        //and will need extra constraints
         let startCaptures = captures.length;
 
         //The captures on an option are a bit tricky
