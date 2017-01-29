@@ -241,19 +241,6 @@ function RegexRecursive(ctx, regex, idx) {
                 return atoms;
             }
 
-            function handleLoopRewriting(atoms, loopGroup) {
-                console.log('Handle LOOP group ' + loopGroup);
-                let ncap = captures[loopGroup];
-
-                let outerFiller = nextFiller();
-                assertions.push(ctx.mkSeqInRe(outerFiller, ctx.mkRePlus(atoms)));
-
-                let innerFiller = nextFiller();
-                assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
-
-                addToCapture(captureIndex, outerFiller);
-            }
-
             function buildStarConstraints(atoms, starGroup) {
                 let ncap = captures[starGroup];
 
@@ -276,26 +263,17 @@ function RegexRecursive(ctx, regex, idx) {
 
             if (capture) {
                 switch (current()) {
+                    case '?':
                     case '*':
                         {
                             rewriteCaptureOptional(newestCapture);
                             buildStarConstraints(atoms, newestCapture);
                             break;
                         }
+                    case '{':
                     case '+':
                         {
                             buildPlusConstraints(atoms, newestCapture);
-                            break;
-                        }
-                    case '?':
-                        {
-                            rewriteCaptureOptional(newestCapture, newestCapture);
-                            buildOptionConstraints(atoms, newestCapture);
-                            break;
-                        }
-                    case '{':
-                        {
-                            handleLoopRewriting(atoms, newestCapture);
                             break;
                         }
                     default:

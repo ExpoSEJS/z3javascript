@@ -18,7 +18,7 @@ let symbolic = ctx.mkConst(symbol, ctx.mkStringSort());
 
 
 solver.assert(ctx.mkEq(testRegexs[0].implier, ctx.mkString('Q')).simplify());
-solver.assert(ctx.mkEq(testRegexs[0].captures[0], ctx.mkString('Q')).simplify());
+solver.assert(ctx.mkNot(ctx.mkEq(testRegexs[0].captures[0], ctx.mkString('Q'))).simplify());
 
 console.log(testRegexs[0].captures[0].toString());
 
