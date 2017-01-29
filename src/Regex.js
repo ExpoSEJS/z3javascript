@@ -196,7 +196,6 @@ function RegexRecursive(ctx, regex, idx) {
 
 
     function addToCapture(idx, thing) {
-        console.log('Added to capture');
         captures[idx] = ctx.mkSeqConcat([captures[idx], thing]);
     }
 
@@ -239,8 +238,7 @@ function RegexRecursive(ctx, regex, idx) {
 
                 atoms = ctx.mkRePlus(atoms);
 
-                let outerFiller = nextFiller();
-                assertions.push(ctx.mkSeqInRe(outerFiller, atoms));
+                let outerFiller = symbolIn(atoms);
 
                 let innerFiller = nextFiller();
                 assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
@@ -254,8 +252,7 @@ function RegexRecursive(ctx, regex, idx) {
 
                 atoms = ctx.mkReStar(atoms);
 
-                let outerFiller = nextFiller();
-                assertions.push(ctx.mkSeqInRe(outerFiller, atoms));
+                let outerFiller = symbolIn(atoms);
                 assertions.push(ctx.mkImplies(ctx.mkEq(ncap, ctx.mkString('')), ctx.mkEq(outerFiller, ctx.mkString(''))));
 
                 let innerFiller = nextFiller();
@@ -391,7 +388,7 @@ function RegexRecursive(ctx, regex, idx) {
             //TODO: This is horrible, anchors should be better
             if (more()) {
                 let capturesStart = captures.length;
-                
+
                 let parsed = ParseMaybeLoop(captureIndex);
 
                 if (!parsed) {
