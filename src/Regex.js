@@ -225,7 +225,7 @@ function RegexRecursive(ctx, regex, idx) {
                 captures[idx] = ctx.mkSeqConcat([captures[idx], thing]);
             }
 
-            function handlePlusRewriting(atoms, plusGroup) {
+            function buildPlusConstraints(atoms, plusGroup) {
                 console.log('Handle + group ' + plusGroup);
                 let ncap = captures[plusGroup];
 
@@ -254,7 +254,7 @@ function RegexRecursive(ctx, regex, idx) {
                 addToCapture(captureIndex, outerFiller);
             }
 
-            function handleStarRewriting(atoms, starGroup) {
+            function buildStarConstraints(atoms, starGroup) {
                 let ncap = captures[starGroup];
 
                 atoms = ctx.mkReStar(atoms);
@@ -270,10 +270,8 @@ function RegexRecursive(ctx, regex, idx) {
                 return atoms;
             }
 
-            function handleOptionRewriting(atoms, optionGroup) {
-                atoms = ctx.mkReOption(atoms);
-                addToCapture(captureIndex, optionGroup);
-                return atoms;
+            function buildOptionConstraints(atoms, optionGroup) {
+                addToCapture(captureIndex, captures[optionGroup]);
             }
 
             if (capture) {
@@ -281,21 +279,18 @@ function RegexRecursive(ctx, regex, idx) {
                     case '*':
                         {
                             rewriteCaptureOptional(newestCapture);
-                            atoms = handleStarRewriting(atoms, newestCapture);
-                            next();
+                            buildStarConstraints(atoms, newestCapture);
                             break;
                         }
                     case '+':
                         {
-                            atoms = handlePlusRewriting(atoms, newestCapture);
-                            next();
+                            buildPlusConstraints(atoms, newestCapture);
                             break;
                         }
                     case '?':
                         {
                             rewriteCaptureOptional(newestCapture, newestCapture);
-                            atoms = handleOptionRewriting(atoms);
-                            next();
+                            buildOptionConstraints(atoms, newestCapture);
                             break;
                         }
                     case '{':
