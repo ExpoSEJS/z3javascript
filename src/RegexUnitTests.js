@@ -57,7 +57,7 @@ function TestCaptures(regex, given, expectedCaptures) {
 function Assert(regex, given, expectedCaptures) {
 	if (!TestCaptures(regex, given, expectedCaptures || [])) {
 		console.log('Solver State\n'+solver.toString());
-		throw 'Regex ' + regex + ' failed test given ' + given + ' ExpectedCap ' + expectedCaptures;
+		throw ('Regex ' + regex + ' failed test given ' + given + ' ExpectedCap ' + expectedCaptures);
 	} else {
 		console.log('Regex ' + regex + ' passed test given ' + given + ' ExpectedCap ' + expectedCaptures);
 	}
@@ -65,6 +65,6 @@ function Assert(regex, given, expectedCaptures) {
 
 Assert(/xxx/, 'xxx');
 Assert(/(xxx)/, 'xxx', ['xxx']);
-Assert(/^([a-zA-Z])+ef$/, 'def', ['def', 'e']);
+Assert(/^([a-zA-Z])+ef$/, 'def', ['def', 'd']);
 Assert(/^([a-zA-Z]){5}ef$/, 'abzCDef', ['abzCDef', 'D']);
 

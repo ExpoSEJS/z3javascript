@@ -194,6 +194,18 @@ function RegexRecursive(ctx, regex, idx) {
         captures[idx] = orFiller;
     }
 
+
+    function addToCapture(idx, thing) {
+        console.log('Added to capture');
+        captures[idx] = ctx.mkSeqConcat([captures[idx], thing]);
+    }
+
+    function symbolIn(atoms) {
+        let nfil = nextFiller();
+        assertions.push(ctx.mkSeqInRe(nfil, atoms));
+        return nfil;
+    }
+
     function ParseMaybeCaptureGroupStart(captureIndex) {
         if (current() == '(') {
             next();
@@ -220,10 +232,6 @@ function RegexRecursive(ctx, regex, idx) {
                 return null;
             }
 
-            function addToCapture(idx, thing) {
-                console.log('Added to capture');
-                captures[idx] = ctx.mkSeqConcat([captures[idx], thing]);
-            }
 
             function buildPlusConstraints(atoms, plusGroup) {
                 console.log('Handle + group ' + plusGroup);
@@ -382,10 +390,16 @@ function RegexRecursive(ctx, regex, idx) {
 
             //TODO: This is horrible, anchors should be better
             if (more()) {
+                let capturesStart = captures.length;
+                
                 let parsed = ParseMaybeLoop(captureIndex);
 
                 if (!parsed) {
                     return null;
+                }
+
+                if (captures.length == capturesStart) {
+                    addToCapture(captureIndex, symbolIn(parsed));
                 }
 
                 rollup = rollup ? ctx.mkReConcat(rollup, parsed) : parsed;
