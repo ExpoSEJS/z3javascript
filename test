@@ -1,2 +1,3 @@
 ./scripts/build_wrapper
 node bin/Z3Test.js
+node bin/RegexUnitTests.js
