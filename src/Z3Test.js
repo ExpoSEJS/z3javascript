@@ -10,7 +10,7 @@ var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let regExToTest = [/^([a-zA-Z])+ef$/];
+let regExToTest = [/^(abcd)+ef$/];
 let testRegexs = regExToTest.map(r => Z3.Regex(ctx, r));
 
 let symbol = ctx.mkStringSymbol('HI');
