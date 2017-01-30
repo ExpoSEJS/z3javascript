@@ -70,6 +70,9 @@ function Assert(regex, given, expectedCaptures, not) {
 Assert(/xxx/, 'xxx');
 Assert(/(xxx)/, 'xxx', ['xxx']);
 
+Assert(/(x)(y)(z)/, 'xyz', ['xyz', 'x', 'y', 'z']);
+Assert(/(x)((yz)(z))/, 'xyzz', ['xyzz', 'x', 'yzz', 'yz', 'z']);
+
 //Tests on klene+
 Assert(/^([a-z]+)$/, 'aba', ['aba', 'aba']);
 Assert(/^([a-zA-Z]+)([a-z]{3})$/, 'abaaa', ['abaaa', 'ab', 'aaa']);
