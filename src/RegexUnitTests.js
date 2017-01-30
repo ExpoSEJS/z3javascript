@@ -78,6 +78,7 @@ Assert(/^(a)*$/, '', ['', '']);
 Assert(/^(a)*$/, 'aaa', ['aaa', 'a']);
 Assert(/^(a?)*$/, '', ['', '']);
 Assert(/^(a?)*$/, 'aaa', ['aaa', 'a']);
+Assert(/^((([a-z]+)d)ef)*$/, 'aaadefbbbdef', ['aaadefbbbdef', 'bbbdef', 'bbbd', 'bbb']);
 
 //Tests on klene+
 Assert(/^([a-z]+)$/, 'aba', ['aba', 'aba']);
