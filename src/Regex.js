@@ -19,6 +19,7 @@ function RegexRecursive(ctx, regex, idx) {
     let fill_ctr = 0;
 
     function nextFiller() {
+        console.log('MK FILLER ' + fill_ctr);
         return ctx.mkStringVar('' + REGEX_CTR + ' Fill ' + fill_ctr++);
     }
 
@@ -242,6 +243,7 @@ function RegexRecursive(ctx, regex, idx) {
 
                 let innerFiller = nextFiller();
                 assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
+                assertions.push(ctx.mkImplies(ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(innerFiller), ctx.mkIntVal(0))), ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(ncap), ctx.mkIntVal(0)))));
 
                 addToCapture(captureIndex, outerFiller);
                 return atoms;
@@ -457,7 +459,7 @@ function RegexRecursive(ctx, regex, idx) {
         //So we parse one side, reset the capture to cStart, then parse the other and express
         //the final constraint as an or of the two
         let cStart = captures[captureIndex];
-        captures[captureIndex] = nextFiller();
+        captures[captureIndex] = ctx.mkString('');
 
         let ast = ParseMaybeAtoms(captureIndex);
 
@@ -465,13 +467,13 @@ function RegexRecursive(ctx, regex, idx) {
         let endLeftCaptures = captures.length;
 
         let cLeft = captures[captureIndex];
-        captures[captureIndex] = nextFiller();
 
         if (!ast) {
             return null;
         }
 
         if (current() == '|') {
+            captures[captureIndex] = ctx.mkString('');
             next();
 
             let ast2 = ParseMaybeOption(captureIndex);
