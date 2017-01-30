@@ -19,7 +19,6 @@ function RegexRecursive(ctx, regex, idx) {
     let fill_ctr = 0;
 
     function nextFiller() {
-        console.log('MK FILLER ' + fill_ctr);
         return ctx.mkStringVar('' + REGEX_CTR + ' Fill ' + fill_ctr++);
     }
 
