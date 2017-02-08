@@ -139,7 +139,14 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function ParseAtom1() {
-        return mk(next());
+        let parsed_str = next();
+        
+        //Greedly eat anything that is definately not a special character
+        while (/[a-zA-Z0-9 ]/.test('' + current())) {
+            parsed_str += next();
+        }
+
+        return mk(parsed_str);
     }
 
     function ParseMaybeSpecial() {
