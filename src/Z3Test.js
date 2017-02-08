@@ -10,14 +10,11 @@ var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let regExToTest = [/^(abcd)+ef$/];
+let regExToTest = [/["'<>\(\)]/];
 let testRegexs = regExToTest.map(r => Z3.Regex(ctx, r));
 
 let symbol = ctx.mkStringSymbol('HI');
 let symbolic = ctx.mkConst(symbol, ctx.mkStringSort());
-
-
-solver.assert(ctx.mkEq(testRegexs[0].captures[1], ctx.mkString('f')).simplify());
 
 console.log(testRegexs[0].captures[0].toString());
 

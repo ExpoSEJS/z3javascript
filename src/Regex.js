@@ -48,17 +48,26 @@ function RegexRecursive(ctx, regex, idx) {
         return ctx.mkReUnion(beforeNewline, afterNewline);
     }
 
+    function ParseRangerNextEscaped() {
+        let c1 = next();
+        if (c1 == '\\') {
+            return ctx.mkString(next());
+        } else {
+            return ctx.mkString(c1);
+        }
+    }
+
     function ParseRangeInner() {
 
         let union = undefined;
 
         while (more() && current() != ']') {
-            let c1 = ctx.mkString(next());
+            let c1 = ParseRangerNextEscaped();
             let range = undefined;
 
             if (current() == '-') {
                 next();
-                let c2 = ctx.mkString(next());
+                let c2 = ParseRangerNextEscaped();
                 range = ctx.mkReRange(c1, c2);
             } else {
                 range = ctx.mkSeqToRe(c1);
