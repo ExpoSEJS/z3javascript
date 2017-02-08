@@ -537,7 +537,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     //TODO: Fix tagging to be multiline
     return {
-        ast: ast.tag('' + regex),
+        ast: ast,
         implier: implier,
         assertions: assertions,
         captures: captures

@@ -20,30 +20,14 @@ class Expr {
     }
 
     toString() {
-        let inner;
-        
-        if (this._tag) {
-            inner = this._tag;
-        } else {
-            inner = Z3.Z3_ast_to_string(this.ctx, this.ast);
-        }
-
+        let inner = Z3.Z3_ast_to_string(this.ctx, this.ast);
         return "Expr {" + inner + "}";
-    }
-
-    getTag() {
-        return this._tag;
     }
 
     isString() {
         return Z3.Z3_is_string(this.ctx, this.ast);
     }
-
-    tag(str) {
-        this._tag = str;
-        return this;
-    }
-
+    
     toPrettyString() {
         let output = Z3.Z3_ast_to_string(this.ctx, this.ast);
         output = output.replace(/\(not (\S)\)/g, "¬$1");
@@ -60,7 +44,6 @@ class Expr {
                 var chars = str[p1 + 2] + str[p1 + 3];
                 return String.fromCharCode(parseInt(chars, 16));
             }
-
 
             function unicodeReplacer(match, p1) {
                 var chars = str[p1 + 2] + str[p1 + 3] + str[p1 + 4] + str[p1 + 5];
