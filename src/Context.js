@@ -30,7 +30,7 @@ class Context {
     }
 
     _build(func, ...args) {
-        return this._buildConst.apply(this, [func].concat(Z3Utils.astArray(args))).tag(Z3Utils.tagStr(args));
+        return this._buildConst.apply(this, [func].concat(Z3Utils.astArray(args)));
     }
 
     _buildConst(func, ...args) {
@@ -43,7 +43,7 @@ class Context {
     }
     
     _buildVarNoArgs(func, args) {
-        return new Expr(this.ctx, func(this.ctx, args.length, Z3Utils.astArray(args))).tag(Z3Utils.tagStr(args));
+        return new Expr(this.ctx, func(this.ctx, args.length, Z3Utils.astArray(args)));
     }
 
     destroy() {
