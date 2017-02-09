@@ -149,7 +149,7 @@ function RegexRecursive(ctx, regex, idx) {
         let parsed_str = next();
         
         //Greedly eat anything that is definately not a special character
-        while (/[a-zA-Z0-9 ]/.test('' + current())) {
+        while (current() && /[a-zA-Z0-9 ]/.test('' + current())) {
             parsed_str += next();
         }
 
