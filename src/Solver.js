@@ -37,7 +37,7 @@ class Solver {
     }
 
     pop() {
-        //Z3.Z3_solver_pop(this.ctx, this.slv, 1);
+        Z3.Z3_solver_pop(this.ctx, this.slv, 1);
     }
 
     check() {
