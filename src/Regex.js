@@ -31,11 +31,18 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function current() {
-        return regex[idx];
+        
+        if (regex.length > idx) {
+            return regex[idx];
+        }
+
+        return undefined;
     }
 
     function next() {
-        return regex[idx++];
+        let r = current();
+        idx++;
+        return r;
     }
 
     function peek() {
