@@ -44,7 +44,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     function Any() {
         let beforeNewline = ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\x09'));
-        let afterNewline = ctx.mkReRange(ctx.mkString('\\x0B'), ctx.mkString('\\xFF'));
+        let afterNewline = ctx.mkReRange(ctx.mkString('\\x0B'), ctx.mkString('\\x79'));
         return ctx.mkReUnion(beforeNewline, afterNewline);
     }
 

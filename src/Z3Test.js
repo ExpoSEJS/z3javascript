@@ -10,7 +10,7 @@ var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let regExToTest = [/["'<>\(\)]/];
+let regExToTest = [/((s|\-|\ |\.)+(atr%C3%A1s|em)*(s|\-|\ |\.)*(\d+|zero|e meio|um|dois|tr%C3%AAs|poucos|alguns|quatro|cinco|seis|sete|oito|nove|dez|onze|doze|treze|catorze|quinze|dezesseis|dezessete|dezoito|dezenove|vinte|trinta|quarenta|cinquenta|sessenta|setenta|oitenta|noventa|cem|mil|milh%C3%A3o)+(s|\-|\ |\.)*((milissegundo|segundo|minuto|hora|dia|semana|m%C3%AAs|trimestre|ano|d%C3%A9cada)(s|\-|\ |\.)*|s|\-|\ |\.)*(atr%C3%A1s|em)*(s|\-|\ |\.)+)/];
 let testRegexs = regExToTest.map(r => Z3.Regex(ctx, r));
 
 let symbol = ctx.mkStringSymbol('HI');
@@ -20,10 +20,10 @@ console.log(testRegexs[0].captures[0].toString());
 
 testRegexs.forEach(regex => {
 	solver.assert(ctx.mkSeqInRe(symbolic, regex.ast));
-	solver.assert(ctx.mkImplies(ctx.mkSeqInRe(symbolic, regex.ast), ctx.mkEq(symbolic, regex.implier)));
+	/**solver.assert(ctx.mkImplies(ctx.mkSeqInRe(symbolic, regex.ast), ctx.mkEq(symbolic, regex.implier)));
 	regex.assertions.forEach(assert => {
 		solver.assert(assert.simplify());
-	});
+	});*/
 });
 
 console.log('Solver ' + solver.toString());
