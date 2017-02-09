@@ -12,7 +12,7 @@ class Context {
 
     constructor(timeout) {
           let config = Z3.Z3_mk_config();
-          
+
           Z3.Z3_set_param_value(config, "model", "true");
           Z3.Z3_set_param_value(config, "MODEL", "true");
           Z3.Z3_set_param_value(config, "well_sorted_check", "true");
