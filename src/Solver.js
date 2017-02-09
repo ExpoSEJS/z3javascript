@@ -13,9 +13,8 @@ class Solver {
 
     constructor(context) {
         this.ctx = context.ctx;
-        this.slv = Z3.Z3_mk_solver(this.ctx);
+        this.slv = Z3.Z3_mk_simple_solver(this.ctx);
         Z3.Z3_solver_inc_ref(this.ctx, this.slv);
-        this.push();
     }
 
     destroy() {
@@ -31,7 +30,7 @@ class Solver {
     }
 
     pop() {
-        Z3.Z3_solver_pop(this.ctx, this.slv, 1);
+        Z3.Z3_solver_reset(this.ctx, this.slv);
     }
 
     check() {
