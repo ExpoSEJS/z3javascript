@@ -15,10 +15,6 @@ class Context {
 
           Z3.Z3_set_param_value(config, "model", "true");
 
-          if (timeout) {
-            Z3.Z3_set_param_value(config, "timeout", '' + timeout);
-          }
-
           this.ctx = Z3.Z3_mk_context_rc(config);
           Z3.Z3_del_config(config);
     }

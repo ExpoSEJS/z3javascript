@@ -14,6 +14,20 @@ class Expr {
         Z3.Z3_inc_ref(this.ctx, this.ast);
     }
 
+    /**
+     * Singleton simplify params, just allocate once per execution and
+     * leave it rather than inc_ref and dec_refing each time
+     */
+    _simplifyParams() {
+        if (!Expr._simpleParams) {
+            let config = Z3.Z3_mk_params(this.ctx);
+            Z3.Z3_params_inc_ref(this.ctx, config);
+            Z3.Z3_params_set_bool(this.ctx, config, Z3.Z3_mk_string_symbol(this.ctx, "rewriter.elim_to_real"), true);
+            Expr._simpleParams = config;
+        }
+        return Expr._simpleParams;
+    }
+
     destroy() {
         Z3.Z3_dec_ref(this.ctx, this.ast);
         this.ast = null;
@@ -79,7 +93,7 @@ class Expr {
     }
 
     simplify() {
-        let newAst = Z3.Z3_simplify(this.ctx, this.ast);
+        let newAst = Z3.Z3_simplify_ex(this.ctx, this.ast, this._simplifyParams());
         Z3.Z3_inc_ref(this.ctx, newAst);
         this.destroy();
         this.ast = newAst;

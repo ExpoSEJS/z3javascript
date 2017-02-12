@@ -19,7 +19,7 @@ let symbolic = ctx.mkConst(symbol, ctx.mkStringSort());
 console.log(testRegexs[0].captures[0].toString());
 
 testRegexs.forEach(regex => {
-	solver.assert(ctx.mkSeqInRe(symbolic, regex.ast));
+	solver.assert(ctx.mkSeqInRe(symbolic, regex.ast).simplify());
 	/**solver.assert(ctx.mkImplies(ctx.mkSeqInRe(symbolic, regex.ast), ctx.mkEq(symbolic, regex.implier)));
 	regex.assertions.forEach(assert => {
 		solver.assert(assert.simplify());
