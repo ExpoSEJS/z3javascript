@@ -105,6 +105,14 @@ class Context {
         return this._build(Z3.Z3_mk_seq_index, str, str2, off);
     }
 
+    mkStrToInt(str) {
+        return this._build(Z3.Z3_mk_str_to_int, str);
+    }
+
+    mkIntToStr(num) {
+        return this._build(Z3.Z3_mk_int_to_str, num);
+    }
+
     mkSeqInRe(seq, re) {
         return this._build(Z3.Z3_mk_seq_in_re, seq, re);
     }
