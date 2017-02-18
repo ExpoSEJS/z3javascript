@@ -426,8 +426,8 @@ function RegexRecursive(ctx, regex, idx) {
                 rollup = rollup ? ctx.mkReConcat(rollup, parsed) : parsed;
             }
         }
-
-        return rollup.simplify();
+        
+        return rollup;
     }
 
     function either(v, left, right) {
