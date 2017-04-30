@@ -10,20 +10,15 @@ var solver = new Z3.Solver(ctx);
 
 console.log('Compiling RegEx');
 
-let regExToTest = [/((s|\-|\ |\.)+(atr%C3%A1s|em)*(s|\-|\ |\.)*(\d+|zero|e meio|um|dois|tr%C3%AAs|poucos|alguns|quatro|cinco|seis|sete|oito|nove|dez|onze|doze|treze|catorze|quinze|dezesseis|dezessete|dezoito|dezenove|vinte|trinta|quarenta|cinquenta|sessenta|setenta|oitenta|noventa|cem|mil|milh%C3%A3o)+(s|\-|\ |\.)*((milissegundo|segundo|minuto|hora|dia|semana|m%C3%AAs|trimestre|ano|d%C3%A9cada)(s|\-|\ |\.)*|s|\-|\ |\.)*(atr%C3%A1s|em)*(s|\-|\ |\.)+)/];
-let testRegexs = regExToTest.map(r => Z3.Regex(ctx, r));
+let Origin = /^a+(a)?$/;
+let TestRegex = Z3.Regex(ctx, Origin);
+let symbolic = ctx.mkConst(ctx.mkStringSymbol('TestC0'), ctx.mkStringSort());
 
-let symbol = ctx.mkStringSymbol('HI');
-let symbolic = ctx.mkConst(symbol, ctx.mkStringSort());
-
-console.log(testRegexs[0].captures[0].toString());
-
-testRegexs.forEach(regex => {
-	solver.assert(ctx.mkSeqInRe(symbolic, regex.ast).simplify());
-	/**solver.assert(ctx.mkImplies(ctx.mkSeqInRe(symbolic, regex.ast), ctx.mkEq(symbolic, regex.implier)));
-	regex.assertions.forEach(assert => {
-		solver.assert(assert.simplify());
-	});*/
+solver.assert(ctx.mkEq(TestRegex.captures[1], ctx.mkString('a')));
+solver.assert(ctx.mkSeqInRe(symbolic, TestRegex.ast).simplify());
+solver.assert(ctx.mkImplies(ctx.mkSeqInRe(symbolic, TestRegex.ast), ctx.mkEq(symbolic, TestRegex.implier)));
+TestRegex.assertions.forEach(assert => {
+	solver.assert(assert.simplify());
 });
 
 console.log('Solver ' + solver.toString());
@@ -31,21 +26,24 @@ console.log('Solver ' + solver.toString());
 let mdl = solver.getModel();
 
 if (mdl) {
+		let match = Origin.exec(mdl.eval(symbolic).asConstant());
+		console.log('Modelled Match: ' + mdl.eval(symbolic).asConstant());
+		
+		if (match) {
+			console.log('Model: ' + mdl.eval(symbolic).asConstant());
+			console.log('Match Length: ' + match.length + ' CapturesLength: ' + TestRegex.captures.length);
+			
+			for (let i = 0; i < match.length; i++) {
+				let modeled_i = mdl.eval(TestRegex.captures[i]).asConstant();
+				console.log('Capture: ' + i + ' Match: ' + match[i] + ' Model: ' + modeled_i);
+				if (match[i] !== modeled_i) {
+					console.log('Bad Capture');
+				}
+			}
 
-	for (let i = 0; i < regExToTest.length; i++) {
-		if (!regExToTest[i].test(mdl.eval(symbolic).asConstant())) {
-			console.log('FAILED');
 		} else {
-			console.log(mdl.eval(symbolic).asConstant());
-			console.log('Checked' + regExToTest[i]);
-
-			testRegexs.forEach(regex => {
-				regex.captures.forEach((capture, idx) => {
-					console.log('Capture ' + idx + ' ' + mdl.eval(capture).asConstant());
-				});
-			});
+			console.log('BAD MATCH')
 		}
-	}
 } else {
 	console.log('Unsat');
 }

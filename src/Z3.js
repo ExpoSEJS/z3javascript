@@ -15,6 +15,8 @@ import Model from './Model';
 import Context from './Context.js';
 import Solver from './Solver';
 import Regex from './Regex';
+import Query from './Query';
+import Check from './Check';
 
 let API = {};
 
@@ -23,5 +25,7 @@ API.Context = Context;
 API.Model = Model;
 API.Expr = Expr;
 API.Regex = Regex;
+API.Query = Query;
+API.Check = Check;
 
 export default API;
