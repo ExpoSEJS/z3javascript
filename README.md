@@ -11,7 +11,7 @@ Emscripten support is new, buggy and not recommended. if `Z3_WEB` env variable i
 ## Usage
 Used as an npm dependency.
 
-`npm install git+ssh://github.com/jawline/z3javascript.git`
+`npm install git+ssh://github.com/ExpoSEJS/z3javascript.git`
 
 Z3 will be automatically downloaded and built using either emscripten or clang. Uses a forked version of Z3 to maintain compatability with wrapper and build bindings automatically.
 
