@@ -256,7 +256,6 @@ function RegexRecursive(ctx, regex, idx) {
 
 
             function buildPlusConstraints(atoms, plusGroup) {
-                console.log('Handle + group ' + plusGroup);
                 let ncap = captures[plusGroup];
 
                 atoms = ctx.mkRePlus(atoms);

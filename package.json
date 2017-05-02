@@ -15,7 +15,7 @@
     "prepublish": "",
     "postinstall": "./postinstall",
     "build": "",
-    "test": "echo \"Error: no test specified\""
+    "test": "./test"
   },
   "repository": {
     "type": "git",

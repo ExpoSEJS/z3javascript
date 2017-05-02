@@ -18,7 +18,6 @@ Query.process = function(solver, alternatives) {
 		solver.push();
         {
         	next.exprs.forEach(clause => solver.assert(clause));
-            console.log(`Playing Alternate ${solver.toString()}`);
             model = solver.getModel();
         }
         solver.pop();
@@ -34,14 +33,11 @@ Query.process = function(solver, alternatives) {
         	
         	//If we have found a satisfying model return it otherwise add alternatives from check
         	if (Failed) {
-                console.log(`Condition Failed in ${model.toString()}.`);
         		model.destroy();
         	} else {
                 return model;
             }
-        } else {
-            console.log(`Unsat`);
-        }
+        } //Else unsat
 	}
 }
 
