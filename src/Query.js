@@ -1,7 +1,7 @@
 class Query {
-	constructor(exprs, check) {
+	constructor(exprs, checks) {
 		this.exprs = exprs;
-		this.check = check;
+		this.checks = checks;
 	}
 
 	getModel(solver) {
@@ -18,21 +18,29 @@ Query.process = function(solver, alternatives) {
 		solver.push();
         {
         	next.exprs.forEach(clause => solver.assert(clause));
-        	console.log('Solver ' + solver.toString());
+            console.log(`Playing Alternate ${solver.toString()}`);
             model = solver.getModel();
         }
         solver.pop();
 
         if (model) {
-        	let CheckState = next.check(model);
-        	
-        	//If we have found a satisfying model return it
-        	if (CheckState.isSAT) {
-        		return model;
-        	}
+            
+            //Run all the checks and concat any alternatives
+            let Checks = next.checks.map(check => check(next, model));
+            alternatives = Checks.reduce((alt, next) => alt.concat(next.alternatives), alternatives);
 
-        	model.destroy();
-        	alternatives = alternatives.concat(CheckState.alternatives);
+            //Find any failing check
+        	let Failed = Checks.find(check => !check.isSAT);
+        	
+        	//If we have found a satisfying model return it otherwise add alternatives from check
+        	if (Failed) {
+                console.log(`Condition Failed in ${model.toString()}.`);
+        		model.destroy();
+        	} else {
+                return model;
+            }
+        } else {
+            console.log(`Unsat`);
         }
 	}
 }
