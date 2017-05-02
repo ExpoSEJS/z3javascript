@@ -19,12 +19,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jawline/z3javascript.git"
+    "url": "git+https://github.com/ExpoSEJS/z3javascript.git"
   },
   "author": "Blake Loring <blake_l@parsed.uk>",
   "license": "MIT (./LICENSE)",
   "bugs": {
-    "url": "https://github.com/jawline/z3javascript/issues"
+    "url": "https://github.com/ExpoSEJS/z3javascript/issues"
   },
-  "homepage": "https://github.com/jawline/z3javascript#readme"
+  "homepage": "https://github.com/ExpoSEJS/z3javascript#readme"
 }
