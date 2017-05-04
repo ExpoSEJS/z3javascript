@@ -1,3 +1,7 @@
+/**
+ * Copyright Blake Loring <blake_l@parsed.uk>
+ */
+
 export default function(check_predicate, altgen) {
 	return function(query, model) {
 
