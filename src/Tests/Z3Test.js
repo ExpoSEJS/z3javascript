@@ -16,11 +16,11 @@ function Test(Origin) {
 
 	//Assert to make capture correct all the time solver.assert(ctx.mkEq(TestRegex.captures[1], ctx.mkString('')));
 	//solver.assert(ctx.mkEq(TestRegex.captures[1], ctx.mkString('a')));
-	solver.assert(ctx.mkSeqInRe(symbolic, TestRegex.ast).simplify());
+	solver.assert(ctx.mkSeqInRe(symbolic, TestRegex.ast));
 	solver.assert(ctx.mkImplies(ctx.mkSeqInRe(symbolic, TestRegex.ast), ctx.mkEq(symbolic, TestRegex.implier)));
 
 	TestRegex.assertions.forEach(assert => {
-		solver.assert(assert.simplify());
+		solver.assert(assert);
 	});
 
 	function Exists(array1, array2, pred) {
@@ -74,7 +74,7 @@ function Test(Origin) {
 			console.log('Modelled Match: ' + mdl.eval(symbolic).asConstant());
 			
 			if (match) {
-				console.log('Model: ' + mdl.eval(symbolic).asConstant());
+				console.log(`Model: ${mdl.eval(symbolic).asConstant()} Captures: ${JSON.stringify(match)}`);
 				console.log('Match Length: ' + match.length + ' CapturesLength: ' + TestRegex.captures.length);
 				return CheckCorrect(mdl) ? 'GOOD' : 'BAD CAPTURE';
 			} else {

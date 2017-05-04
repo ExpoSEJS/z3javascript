@@ -4,5 +4,5 @@
 if [ -e z3 ]; then
 	echo "Dont need to pull Z3"
 else
-	git clone http://github.com/jawline/z3.git
+	git clone https://github.com/ExpoSEJS/z3.git
 fi

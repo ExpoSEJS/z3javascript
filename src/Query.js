@@ -9,8 +9,11 @@ class Query {
 	}
 }
 
+Query.TOTAL = 0;
+
 Query.process = function(solver, alternatives) {
 	while (alternatives.length) {
+        Query.TOTAL++;
 		let next = alternatives.shift();
 
 		let model;
@@ -18,12 +21,15 @@ Query.process = function(solver, alternatives) {
 		solver.push();
         {
         	next.exprs.forEach(clause => solver.assert(clause));
+            console.log(`${solver.toString()}`);
             model = solver.getModel();
         }
         solver.pop();
 
         if (model) {
-            
+
+            console.log(`${model.toString()}`);
+
             //Run all the checks and concat any alternatives
             let Checks = next.checks.map(check => check(next, model));
             alternatives = Checks.reduce((alt, next) => alt.concat(next.alternatives), alternatives);

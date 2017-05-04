@@ -264,8 +264,12 @@ function RegexRecursive(ctx, regex, idx) {
 
                 let innerFiller = nextFiller();
                 assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
-                assertions.push(ctx.mkImplies(ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(innerFiller), ctx.mkIntVal(0))), ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(ncap), ctx.mkIntVal(0)))));
-
+                
+                //TODO: Work out what's wrong with this
+                //let implier = ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(innerFiller), ctx.mkIntVal(0)));
+                //let implies = ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(ncap), ctx.mkIntVal(0)));
+                //assertions.push(ctx.mkImplies(implier, implies));
+                
                 addToCapture(captureIndex, outerFiller);
                 return atoms;
             }
