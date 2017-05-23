@@ -1,3 +1,6 @@
+/**
+ * Copyright Blake Loring <blake_l@parsed.uk>
+ */
 class Query {
 	constructor(exprs, checks) {
 		this.exprs = exprs;
