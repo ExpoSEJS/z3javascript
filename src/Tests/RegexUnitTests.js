@@ -51,6 +51,12 @@ Assert(/^([a-zA-Z]){5}ef$/);
 //Loop tests on captures
 Assert(/^([a-zA-Z]?){5}$/);
 
+//Real world ones
+Assert(/^abc$|^$/);
+Assert(/^((?:<|>)?=?)\s*([v=\s]*([0-9]+)\.([0-9]+)\.([0-9]+))$/);
+Assert(/^((?:<|>)?=?)\s*([v=\s]*([0-9]+)\.([0-9]+)\.([0-9]+)(?:-?((?:[0-9]+|\d*[a-zA-Z-][a-zA-Z0-9-]*)(?:\.(?:[0-9]+|\d*[a-zA-Z-][a-zA-Z0-9-]*))*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?)$/);
+
+
 console.log(`Exit with ${errorCount} errors`);
 
 process.exit(errorCount);

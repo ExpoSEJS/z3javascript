@@ -220,7 +220,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     function symbolIn(atoms) {
         let nfil = nextFiller();
-        assertions.push(ctx.mkSeqInRe(nfil, atoms));
+        //assertions.push(ctx.mkSeqInRe(nfil, atoms));
         return nfil;
     }
 
@@ -244,7 +244,7 @@ function RegexRecursive(ctx, regex, idx) {
 
             let newestCapture = captures.length;
 
-            let atoms = ParseCaptureGroup();
+            let atoms = ParseCaptureGroup(captureIndex, capture);
 
             if (next() != ')') {
                 throw 'Expected ) (Capture Group Close)';
@@ -387,7 +387,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseMaybeAtoms(captureIndex) {
 
-        let rollup = null;
+        let rollup = mk('');
 
         while (more()) {
 
@@ -409,6 +409,8 @@ function RegexRecursive(ctx, regex, idx) {
                 rollup = rollup ? ctx.mkReConcat(rollup, parsed) : parsed;
             }
         }
+
+        console.log(rollup + ' ' + regex[idx] + regex[idx - 1]);
         
         return rollup;
     }
@@ -495,18 +497,23 @@ function RegexRecursive(ctx, regex, idx) {
         return ast;
     }
 
-    function ParseCaptureGroup() {
-        let captureIndex = captures.length;
-        captures.push(ctx.mkString(''));
+    function ParseCaptureGroup(captureIndex, capture) {
+
+        if (capture) {
+            captureIndex = captures.length;
+            captures.push(ctx.mkString(''));
+        }
 
         let r = ParseMaybeOption(captureIndex);
 
-        assertions.push(ctx.mkSeqInRe(captures[captureIndex], r));
+        if (capture) {
+            //assertions.push(ctx.mkSeqInRe(captures[captureIndex], r));
+        }
 
         return r;
     }
 
-    let ast = ParseCaptureGroup();
+    let ast = ParseCaptureGroup(0, true);
 
     let implier = captures[0];
 
@@ -533,8 +540,7 @@ function RegexOuter(ctx, regex) {
     try {
         return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false);
     } catch (e) {
-
-        throw `${e} ${e.trace} parsing regex ${regex}`;
+        throw `${e.toString()} ${e.stack} parsing regex ${regex}`;
     }
 }
 
