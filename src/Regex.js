@@ -220,7 +220,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     function symbolIn(atoms) {
         let nfil = nextFiller();
-        //assertions.push(ctx.mkSeqInRe(nfil, atoms));
+        assertions.push(ctx.mkSeqInRe(nfil, atoms));
         return nfil;
     }
 
@@ -262,9 +262,9 @@ function RegexRecursive(ctx, regex, idx) {
                 assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
                 
                 //TODO: Work out what's wrong with this
-                //let implier = ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(innerFiller), ctx.mkIntVal(0)));
-                //let implies = ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(ncap), ctx.mkIntVal(0)));
-                //assertions.push(ctx.mkImplies(implier, implies));
+                let implier = ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(innerFiller), ctx.mkIntVal(0)));
+                let implies = ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(ncap), ctx.mkIntVal(0)));
+                assertions.push(ctx.mkImplies(implier, implies));
                 
                 addToCapture(captureIndex, outerFiller);
                 return atoms;
@@ -507,7 +507,7 @@ function RegexRecursive(ctx, regex, idx) {
         let r = ParseMaybeOption(captureIndex);
 
         if (capture) {
-            //assertions.push(ctx.mkSeqInRe(captures[captureIndex], r));
+            assertions.push(ctx.mkSeqInRe(captures[captureIndex], r));
         }
 
         return r;
