@@ -110,7 +110,7 @@ function RegexRecursive(ctx, regex, idx) {
         if (next() == ']') {
             return r;
         } else {
-            return null;
+            throw 'Regex Parsing Error (Range)';
         }
     }
 
@@ -200,11 +200,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseMaybeRange() {
         if (current() == '[') {
-            let range = ParseRange();
-            if (!range) {
-                return null;
-            }
-            return range;
+            return ParseRange();
         } else {
             return ParseMaybeEscaped();
         }
@@ -239,7 +235,7 @@ function RegexRecursive(ctx, regex, idx) {
                 next();
 
                 if (current() != ':') {
-                    return null;
+                    throw 'Expected : after ?';
                 }
 
                 next();
@@ -251,7 +247,7 @@ function RegexRecursive(ctx, regex, idx) {
             let atoms = ParseCaptureGroup();
 
             if (next() != ')') {
-                return null;
+                throw 'Expected ) (Capture Group Close)';
             }
 
 
@@ -326,10 +322,6 @@ function RegexRecursive(ctx, regex, idx) {
 
         let atom = ParseMaybeCaptureGroupStart(captureIndex);
 
-        if (!atom) {
-            return null;
-        }
-
         if (current() == '*') {
             next();
             atom = ctx.mkReStar(atom);
@@ -353,7 +345,7 @@ function RegexRecursive(ctx, regex, idx) {
         let numStr = '';
 
         if (!digit()) {
-            return null;
+            throw 'Expected Digit (Parse Number)';
         }
 
         while (digit()) {
@@ -365,10 +357,6 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseLoopCount() {
         let n1 = ParseNumber();
-
-        if (n1 === null) {
-            return [null, null];
-        }
 
         if (current() == ',') {
             next();
@@ -387,12 +375,8 @@ function RegexRecursive(ctx, regex, idx) {
 
             let [lo, hi] = ParseLoopCount();
 
-            if (lo === null || hi === null) {
-                return null;
-            }
-
             if (!next() == '}') {
-                return null;
+                throw 'Expected } following loop count';
             }
 
             atom = ctx.mkReLoop(atom, lo, hi);
@@ -417,10 +401,6 @@ function RegexRecursive(ctx, regex, idx) {
                 let capturesStart = captures.length;
 
                 let parsed = ParseMaybeLoop(captureIndex);
-
-                if (!parsed) {
-                    return null;
-                }
 
                 if (captures.length == capturesStart) {
                     addToCapture(captureIndex, symbolIn(parsed));
@@ -493,10 +473,6 @@ function RegexRecursive(ctx, regex, idx) {
 
         let cLeft = captures[captureIndex];
 
-        if (!ast) {
-            return null;
-        }
-
         if (current() == '|') {
             captures[captureIndex] = ctx.mkString('');
             next();
@@ -511,10 +487,6 @@ function RegexRecursive(ctx, regex, idx) {
             //build some new string constraints on the result
             buildAlternationCaptureConstraints(captureIndex, startCaptures, endLeftCaptures, endRightCaptures, ctx.mkSeqConcat([cStart, cLeft]), ctx.mkSeqConcat([cStart, cRight]));
 
-            if (!ast2) {
-                return null;
-            }
-
             ast = ctx.mkReUnion(ast, ast2);
         } else {
             captures[captureIndex] = ctx.mkSeqConcat([cStart, cLeft]);
@@ -528,10 +500,6 @@ function RegexRecursive(ctx, regex, idx) {
         captures.push(ctx.mkString(''));
 
         let r = ParseMaybeOption(captureIndex);
-
-        if (!r) {
-            return null;
-        }
 
         assertions.push(ctx.mkSeqInRe(captures[captureIndex], r));
 
