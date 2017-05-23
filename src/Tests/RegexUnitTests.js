@@ -10,10 +10,12 @@ let errorCount = 0;
 
 function Assert(regex, given, expectedCaptures, not) {
 	let before = Z3.Query.TOTAL;
-	if (Test(regex) === 'GOOD') {
+	let res = Test(regex);
+	if (res === 'GOOD') {
 		console.log(`Generated good model for ${regex} with ${Z3.Query.TOTAL - before} queries`);
 	} else {
-		console.log(`Error in ${regex}`);
+		console.log(`Error in ${regex} ${res}`);
+		process.exit(1);
 		errorCount++;
 	}
 }

@@ -530,7 +530,12 @@ function RegexRecursive(ctx, regex, idx) {
 }
 
 function RegexOuter(ctx, regex) {
-    return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false);
+    try {
+        return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false);
+    } catch (e) {
+
+        throw `${e} ${e.trace} parsing regex ${regex}`;
+    }
 }
 
 export default RegexOuter;
