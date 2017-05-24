@@ -286,6 +286,8 @@ function RegexRecursive(ctx, regex, idx) {
                     case '*':
                         {
                             //If anything the capture is optional then anything inside it is also optional
+                            //TODO: Take a list of originals and rewrite an implication
+                            //iff Len(origin) > 0 then c[i] = o[i]
                             for (let i = newestCapture; i < captures.length; i++) {
                                 rewriteCaptureOptional(i);
                             }
