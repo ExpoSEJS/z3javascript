@@ -256,17 +256,11 @@ function RegexRecursive(ctx, regex, idx) {
 
                 atoms = ctx.mkRePlus(atoms);
 
-                let outerFiller = symbolIn(atoms);
-
-                let innerFiller = nextFiller();
-                assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
+                //String = Something + Capture ^ in atoms
+                let added = ctx.mkSeqConcat([nextFiller(), ncap]);
+                assertions.push(ctx.mkSeqInRe(added, atoms));
                 
-                //TODO: Work out what's wrong with this
-                let implier = ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(innerFiller), ctx.mkIntVal(0)));
-                let implies = ctx.mkNot(ctx.mkEq(ctx.mkSeqLength(ncap), ctx.mkIntVal(0)));
-                assertions.push(ctx.mkImplies(implier, implies));
-                
-                addToCapture(captureIndex, outerFiller);
+                addToCapture(captureIndex, added);
                 return atoms;
             }
 
@@ -275,13 +269,10 @@ function RegexRecursive(ctx, regex, idx) {
 
                 atoms = ctx.mkReStar(atoms);
 
-                let outerFiller = symbolIn(atoms);
-                assertions.push(ctx.mkImplies(ctx.mkEq(ncap, ctx.mkString('')), ctx.mkEq(outerFiller, ctx.mkString(''))));
+                let added = ctx.mkSeqConcat([nextFiller(), ncap]);
+                assertions.push(ctx.mkImplies(ctx.mkEq(ncap, ctx.mkString('')), ctx.mkEq(added, ctx.mkString(''))));
 
-                let innerFiller = nextFiller();
-                assertions.push(ctx.mkEq(outerFiller, ctx.mkSeqConcat([innerFiller, ncap])));
-
-                addToCapture(captureIndex, outerFiller);
+                addToCapture(captureIndex, added);
                 return atoms;
             }
 
@@ -416,7 +407,7 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function either(v, left, right) {
-        assertions.push(ctx.mkXOr(ctx.mkEq(v, left), ctx.mkEq(v, right)));
+        assertions.push(ctx.mkOr(ctx.mkEq(v, left), ctx.mkEq(v, right)));
         return v;
     }
 
