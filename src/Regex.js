@@ -285,7 +285,11 @@ function RegexRecursive(ctx, regex, idx) {
                     case '?':
                     case '*':
                         {
-                            rewriteCaptureOptional(newestCapture);
+                            //If anything the capture is optional then anything inside it is also optional
+                            for (let i = newestCapture; i < captures.length; i++) {
+                                rewriteCaptureOptional(i);
+                            }
+
                             buildStarConstraints(atoms, newestCapture);
                             break;
                         }
