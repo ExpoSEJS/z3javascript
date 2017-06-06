@@ -316,9 +316,13 @@ function RegexRecursive(ctx, regex, idx) {
         if (current() == '*') {
             next();
             atom = ctx.mkReStar(atom);
+
+            (current() == '?') && next();
         } else if (current() == '+') {
             next();
             atom = ctx.mkRePlus(atom);
+
+            (current() == '?') && next();
         } else if (current() == '?') {
             next();
             atom = ctx.mkReOption(atom);
