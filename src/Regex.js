@@ -374,6 +374,9 @@ function RegexRecursive(ctx, regex, idx) {
                 throw 'Expected } following loop count';
             }
 
+            //Discard any succeeding ?
+            (current() == '?') && next();
+
             atom = ctx.mkReLoop(atom, lo, hi);
         }
 
