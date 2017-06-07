@@ -154,7 +154,7 @@ function RegexRecursive(ctx, regex, idx) {
         //Makes SMT formulee look prettier
         //We need to look ahead for this and just drop back to standard parsing atom by atom if
         //the lookahead is special
-        while (current() && IS_JUST_TEXT.test('' + current()) && IS_JUST_TEXT.test('' + next())) {
+        while (current() && IS_JUST_TEXT.test('' + current()) && IS_JUST_TEXT.test('' + peek())) {
             parsed_str += next();
         }
 
