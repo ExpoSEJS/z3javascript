@@ -341,11 +341,12 @@ function RegexRecursive(ctx, regex, idx) {
         return atom;
     }
 
+    function digit() {
+        return current() >= '0' && current() <= '9';
+    }
+
     function ParseNumber() {
 
-        function digit() {
-            return current() >= '0' && current() <= '9';
-        }
 
         let numStr = '';
 
@@ -365,8 +366,14 @@ function RegexRecursive(ctx, regex, idx) {
 
         if (current() == ',') {
             next();
-            let n2 = ParseNumber();
-            return [n1, n2];
+
+            if (!digit()) {
+                //Either a syntax error or a min loop, assume a min loop
+                return [n1, undefined];
+            } else {
+                let n2 = ParseNumber();
+                return [n1, n2];
+            }
         } else {
             return [n1, n1];
         }
@@ -387,7 +394,12 @@ function RegexRecursive(ctx, regex, idx) {
             //Discard any succeeding ?
             if (current() == '?') { next(); }
 
-            atom = ctx.mkReLoop(atom, lo, hi);
+            //If hi is undefined then it's a min loop {5,}
+            if (hi === undefined) {
+                atom = ctx.mkReConcat(ctx.mkReLoop(atom, lo, lo), ctx.mkReStar(atom));
+            } else {
+                atom = ctx.mkReLoop(atom, lo, hi);
+            }
         }
 
         return atom;
