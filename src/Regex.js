@@ -147,9 +147,14 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseAtom1() {
         let parsed_str = next();
+
+        const IS_JUST_TEXT = /^[a-zA-Z0-9]$/;
         
-        //Greedly eat anything that is definately not a special character
-        while (current() && /[a-zA-Z0-9 ]/.test('' + current())) {
+        //Hack to greedly eat anything that is definately not a special character
+        //Makes SMT formulee look prettier
+        //We need to look ahead for this and just drop back to standard parsing atom by atom if
+        //the lookahead is special
+        while (current() && IS_JUST_TEXT.test('' + current()) && IS_JUST_TEXT.test('' + next())) {
             parsed_str += next();
         }
 
