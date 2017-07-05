@@ -521,9 +521,15 @@ function RegexRecursive(ctx, regex, idx) {
 
     let implier = captures[0];
 
+    let startIndex;
+
     if (regex[0] !== '^') {
+        let startFiller = nextFiller();
         ast = ctx.mkReConcat(ctx.mkReStar(Any()), ast);
-        implier = ctx.mkSeqConcat([nextFiller(), implier]);
+        implier = ctx.mkSeqConcat([startFiller, implier]);
+        startIndex = ctx.mkSeqLength(startFiller);
+    } else {
+        startIndex = ctx.mkIntVal(0);
     }
 
     if (regex[regex.length - 1] !== '$') {
@@ -536,7 +542,8 @@ function RegexRecursive(ctx, regex, idx) {
         ast: ast,
         implier: implier,
         assertions: assertions,
-        captures: captures
+        captures: captures,
+        startIndex: startIndex
     };
 }
 
