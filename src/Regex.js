@@ -193,6 +193,10 @@ function RegexRecursive(ctx, regex, idx) {
                 return mk('\r');
             } else if (c == 't') {
                 return mk('\t');
+            } else if (c == 'b' || c == 'B') {
+                throw 'Word boundary currently unsupported';
+            } else if (c >= '1' && c <= '9') {
+                throw 'Backreference';
             } else if (c == '0') {
                 return mk('\\x00');
             }
