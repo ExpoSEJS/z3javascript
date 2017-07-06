@@ -198,7 +198,7 @@ function RegexRecursive(ctx, regex, idx) {
                 throw 'Word boundary currently unsupported';
             } else if (c >= '1' && c <= '9') {
                 if (parseInt(c) < captureIndex) {
-                    captures[captureIndex] = addToCapture(captureIndex, captures[parseInt(c)]);
+                    addToCapture(captureIndex, captures[parseInt(c)]);
                     return previousCaptureAst[i];
                 } else {
                     return mk('');
