@@ -169,7 +169,7 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
-    function ParseMaybeEscaped() {
+    function ParseMaybeEscaped(captureIndex) {
         if (current() == '\\') {
             next();
 
@@ -196,7 +196,11 @@ function RegexRecursive(ctx, regex, idx) {
             } else if (c == 'b' || c == 'B') {
                 throw 'Word boundary currently unsupported';
             } else if (c >= '1' && c <= '9') {
-                throw 'Backreference';
+                if (parseInt(c) >= captureIndex) {
+                    captures[captureIndex] = addToCapture(captureIndex, captures[parseInt(c)]);
+                } else {
+                    throw 'Backreference unclosed in this context';
+                }
             } else if (c == '0') {
                 return mk('\\x00');
             }
@@ -207,11 +211,11 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
-    function ParseMaybeRange() {
+    function ParseMaybeRange(captureIndex) {
         if (current() == '[') {
             return ParseRange();
         } else {
-            return ParseMaybeEscaped();
+            return ParseMaybeEscaped(captureIndex);
         }
     }
 
@@ -320,7 +324,7 @@ function RegexRecursive(ctx, regex, idx) {
 
             return atoms;
         } else {
-            return ParseMaybeRange();
+            return ParseMaybeRange(captureIndex);
         }
     }
 
