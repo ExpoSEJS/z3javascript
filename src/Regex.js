@@ -18,6 +18,7 @@ function RegexRecursive(ctx, regex, idx) {
     let previousCaptureAst = [];
     let assertions = [];
     let fill_ctr = 0;
+    let backreferences = false;
 
     function nextFiller() {
         return ctx.mkStringVar('' + REGEX_CTR + ' Fill ' + fill_ctr++);
@@ -198,6 +199,7 @@ function RegexRecursive(ctx, regex, idx) {
                 throw 'Word boundary currently unsupported';
             } else if (c >= '1' && c <= '9') {
                 if (parseInt(c) < captureIndex) {
+                    backreferences = true;
                     addToCapture(captureIndex, captures[parseInt(c)]);
                     return previousCaptureAst[i];
                 } else {
@@ -570,7 +572,8 @@ function RegexRecursive(ctx, regex, idx) {
         implier: implier,
         assertions: assertions,
         captures: captures,
-        startIndex: startIndex
+        startIndex: startIndex,
+        backreferences: true
     };
 }
 
