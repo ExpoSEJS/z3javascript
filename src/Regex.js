@@ -198,10 +198,11 @@ function RegexRecursive(ctx, regex, idx) {
             } else if (c == 'b' || c == 'B') {
                 throw 'Word boundary currently unsupported';
             } else if (c >= '1' && c <= '9') {
-                if (parseInt(c) < captureIndex) {
+                let idx = parseInt(c);
+                if (idx < captures.length) {
                     backreferences = true;
-                    addToCapture(captureIndex, captures[parseInt(c)]);
-                    return previousCaptureAst[i];
+                    addToCapture(captureIndex, captures[idx]);
+                    return previousCaptureAst[idx];
                 } else {
                     return mk('');
                 }
@@ -533,6 +534,7 @@ function RegexRecursive(ctx, regex, idx) {
 
         if (capture) {
             captureIndex = captures.length;
+            previousCaptureAst.push(null);
             captures.push(ctx.mkString(''));
         }
 
@@ -540,7 +542,7 @@ function RegexRecursive(ctx, regex, idx) {
 
         if (capture) {
             assertions.push(ctx.mkSeqInRe(captures[captureIndex], r));
-            previousCaptureAst.push(r);
+            previousCaptureAst[captureIndex] = r;
         }
 
         return r;
