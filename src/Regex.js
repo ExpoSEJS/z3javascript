@@ -12,15 +12,19 @@ let REGEX_CTR = 0;
 
 function RegexRecursive(ctx, regex, idx) {
 
-    REGEX_CTR++;
+    let lrctr = REGEX_CTR++;
+
+    console.log('Recursive lrctr = ' + lrctr);
 
     let captures = [];
     let previousCaptureAst = [];
     let assertions = [];
     let fill_ctr = 0;
+    let backreferences = false;
 
     function nextFiller() {
-        return ctx.mkStringVar('' + REGEX_CTR + ' Fill ' + fill_ctr++);
+        console.log('NextFill ' + lrctr);
+        return ctx.mkStringVar('' + lrctr + ' Fill ' + fill_ctr++);
     }
 
     function more() {
@@ -40,14 +44,14 @@ function RegexRecursive(ctx, regex, idx) {
         return undefined;
     }
 
-    function next() {
+    function next(num) {
         let r = current();
-        idx++;
+        idx += (num || 1);
         return r;
     }
 
-    function peek() {
-        return regex[idx + 1];
+    function peek(num) {
+        return regex[idx + (num || 1)];
     }
 
     function Any() {
@@ -197,9 +201,11 @@ function RegexRecursive(ctx, regex, idx) {
             } else if (c == 'b' || c == 'B') {
                 throw 'Word boundary currently unsupported';
             } else if (c >= '1' && c <= '9') {
-                if (parseInt(c) < captureIndex) {
-                    addToCapture(captureIndex, captures[parseInt(c)]);
-                    return previousCaptureAst[i];
+                let idx = parseInt(c);
+                if (idx < captures.length) {
+                    backreferences = true;
+                    addToCapture(captureIndex, captures[idx]);
+                    return previousCaptureAst[idx];
                 } else {
                     return mk('');
                 }
@@ -330,9 +336,32 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
+    function ParseMaybeAssertion(captureIndex) {
+        if (current() == '(' && peek() == '?' && peek(2) == '=') {
+            next(3);
+            let SubRe = '^' + regex.slice(idx);
+            
+            let subexpression = RegexRecursive(ctx, SubRe, 0);
+            captures.concat(subexpression.captures.slice(1));
+            assertions = assertions.concat(subexpression.assertions);
+            idx += subexpression.idx;
+
+            let follows = RegexRecursive(ctx, '^' + regex.slice(idx), 0);
+            captures.concat(follows.captures.slice(1));
+            assertions = assertions.concat(follows.assertions);
+            idx += subexpression.idx + 1;
+
+            assertions.push(ctx.mkEq(subexpression.implier, follows.implier));
+
+            return ctx.mkReIntersect(subexpression.ast, follows.ast);
+        } else {
+            return ParseMaybeCaptureGroupStart(captureIndex);
+        }
+    }
+
     function ParseMaybePSQ(captureIndex) {
 
-        let atom = ParseMaybeCaptureGroupStart(captureIndex);
+        let atom = ParseMaybeAssertion(captureIndex);
 
         if (current() == '*') {
             next();
@@ -531,6 +560,7 @@ function RegexRecursive(ctx, regex, idx) {
 
         if (capture) {
             captureIndex = captures.length;
+            previousCaptureAst.push(null);
             captures.push(ctx.mkString(''));
         }
 
@@ -538,7 +568,7 @@ function RegexRecursive(ctx, regex, idx) {
 
         if (capture) {
             assertions.push(ctx.mkSeqInRe(captures[captureIndex], r));
-            previousCaptureAst.push(r);
+            previousCaptureAst[captureIndex] = r;
         }
 
         return r;
@@ -570,7 +600,9 @@ function RegexRecursive(ctx, regex, idx) {
         implier: implier,
         assertions: assertions,
         captures: captures,
-        startIndex: startIndex
+        startIndex: startIndex,
+        backreferences: true,
+        idx: idx //Return the index so recursion assertions work out
     };
 }
 

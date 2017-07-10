@@ -9,3 +9,4 @@ node_modules/
 # Debug files
 *.dSYM/
 **/.DS_Store
+package-lock.json
