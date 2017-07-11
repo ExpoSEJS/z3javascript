@@ -14,16 +14,16 @@ function RegexRecursive(ctx, regex, idx) {
 
     let lrctr = REGEX_CTR++;
 
-    console.log('Recursive lrctr = ' + lrctr);
-
     let captures = [];
     let previousCaptureAst = [];
     let assertions = [];
     let fill_ctr = 0;
     let backreferences = false;
 
+    //TODO: This is a bad way of handling symbolIn, in general the whole processing fillers is weak
+    let shouldAddFillerIn = true;
+
     function nextFiller() {
-        console.log('NextFill ' + lrctr);
         return ctx.mkStringVar('' + lrctr + ' Fill ' + fill_ctr++);
     }
 
@@ -205,6 +205,7 @@ function RegexRecursive(ctx, regex, idx) {
                 if (idx < captures.length) {
                     backreferences = true;
                     addToCapture(captureIndex, captures[idx]);
+                    shouldAddFillerIn = false;
                     return previousCaptureAst[idx];
                 } else {
                     return mk('');
@@ -329,6 +330,8 @@ function RegexRecursive(ctx, regex, idx) {
                         }
                 }
             }
+
+            shouldAddFillerIn = false;
 
             return atoms;
         } else {
@@ -461,9 +464,11 @@ function RegexRecursive(ctx, regex, idx) {
 
                 let parsed = ParseMaybeLoop(captureIndex);
 
-                if (captures.length == capturesStart) {
+                if (shouldAddFillerIn) {
                     addToCapture(captureIndex, symbolIn(parsed));
                 }
+
+                shouldAddFillerIn = true;
 
                 rollup = rollup ? ctx.mkReConcat(rollup, parsed) : parsed;
             }
