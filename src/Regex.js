@@ -606,7 +606,7 @@ function RegexRecursive(ctx, regex, idx) {
         assertions: assertions,
         captures: captures,
         startIndex: startIndex,
-        backreferences: true,
+        backreferences: backreferences,
         idx: idx //Return the index so recursion assertions work out
     };
 }
