@@ -20,6 +20,14 @@ function RegexRecursive(ctx, regex, idx) {
     let fill_ctr = 0;
     let backreferences = false;
 
+    function BuildError(msg) {
+        return {
+            error: msg,
+            idx: idx,
+            remaining: regex.slice(idx)
+        }
+    }
+
     //TODO: This is a bad way of handling symbolIn, in general the whole processing fillers is weak
     let shouldAddFillerIn = true;
 
@@ -63,9 +71,9 @@ function RegexRecursive(ctx, regex, idx) {
     function ParseRangerNextEscaped() {
         let c1 = next();
         if (c1 == '\\') {
-            return ctx.mkString(next());
+            return next();
         } else {
-            return ctx.mkString(c1);
+            return c1;
         }
     }
 
@@ -74,15 +82,16 @@ function RegexRecursive(ctx, regex, idx) {
         let union = undefined;
 
         while (more() && current() != ']') {
+
             let c1 = ParseRangerNextEscaped();
             let range = undefined;
 
-            if (current() == '-') {
+            if (current() == '-' && peek() != ']') {
                 next();
                 let c2 = ParseRangerNextEscaped();
-                range = ctx.mkReRange(c1, c2);
+                range = ctx.mkReRange(ctx.mkString(c1), ctx.mkString(c2));
             } else {
-                range = ctx.mkSeqToRe(c1);
+                range = ctx.mkSeqToRe(ctx.mkString(c1));
             }
 
             if (!union) {
@@ -115,7 +124,7 @@ function RegexRecursive(ctx, regex, idx) {
         if (next() == ']') {
             return r;
         } else {
-            throw 'Regex Parsing Error (Range)';
+            throw BuildError('Regex Parsing Error (Range)');
         }
     }
 
@@ -203,7 +212,7 @@ function RegexRecursive(ctx, regex, idx) {
             } else if (c == 'f') {
                 return mk('\f');
             } else if (c == 'b' || c == 'B') {
-                throw 'Word boundary currently unsupported';
+                throw BuildError('Word boundary currently unsupported');
             } else if (c >= '1' && c <= '9') {
                 let idx = parseInt(c);
                 if (idx < captures.length) {
@@ -261,7 +270,7 @@ function RegexRecursive(ctx, regex, idx) {
                 next();
 
                 if (current() != ':') {
-                    throw 'Expected : after ?';
+                    throw BuildError('Expected : after ?');
                 }
 
                 next();
@@ -273,7 +282,7 @@ function RegexRecursive(ctx, regex, idx) {
             let atoms = ParseCaptureGroup(captureIndex, capture);
 
             if (next() != ')') {
-                throw 'Expected ) (Capture Group Close)';
+                throw BuildError('Expected ) (Capture Group Close)');
             }
 
 
@@ -361,6 +370,23 @@ function RegexRecursive(ctx, regex, idx) {
             assertions.push(ctx.mkEq(subexpression.implier, follows.implier));
 
             return ctx.mkReIntersect(subexpression.ast, follows.ast);
+        } else if (current() == '(' && peek() == '?' && peek(2) == '!') {
+            next(3);
+            let SubRe = '^' + regex.slice(idx);
+            
+            let subexpression = RegexRecursive(ctx, SubRe, 0);
+            captures.concat(subexpression.captures.slice(1));
+            assertions = assertions.concat(subexpression.assertions);
+            idx += subexpression.idx;
+
+            let follows = RegexRecursive(ctx, '^' + regex.slice(idx), 0);
+            captures.concat(follows.captures.slice(1));
+            assertions = assertions.concat(follows.assertions);
+            idx += subexpression.idx + 1;
+
+            assertions.push(ctx.mkEq(subexpression.implier, follows.implier));
+
+            return ctx.mkReIntersect(ctx.mkReComplement(subexpression.ast), follows.ast);
         } else {
             return ParseMaybeCaptureGroupStart(captureIndex);
         }
@@ -397,7 +423,7 @@ function RegexRecursive(ctx, regex, idx) {
         let numStr = '';
 
         if (!digit()) {
-            throw 'Expected Digit (Parse Number)';
+            throw BuildError('Expected Digit (Parse Number)');
         }
 
         while (digit()) {
@@ -434,7 +460,7 @@ function RegexRecursive(ctx, regex, idx) {
             let [lo, hi] = ParseLoopCount();
 
             if (!next() == '}') {
-                throw 'Expected } following loop count';
+                throw BuildError('Expected } following loop count');
             }
 
             //Discard any succeeding ?
@@ -619,7 +645,7 @@ function RegexOuter(ctx, regex) {
     try {
         return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false);
     } catch (e) {
-        throw `${e.toString()} ${e.stack} parsing regex ${regex}`;
+        throw `${e.error.toString()} ${e.idx} ${e.remaining} parsing regex ${regex}`;
     }
 }
 
