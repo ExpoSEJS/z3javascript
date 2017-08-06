@@ -225,8 +225,19 @@ function RegexRecursive(ctx, regex, idx) {
                 return mk(hexAsString);
             } else if (c == 'u') {
 
+                let expectingRBrace = false;
+
+                if (current() == '{') {
+                    expectingRBrace = true;
+                    next();
+                }
+
                 let unicodeSequence = next() + next() + next() + next();
                 
+                if (expectingRBrace && next() != '}') {
+                    throw BuildError('Expecting RBrace in unicode sequence');
+                }
+
                 if (!isHex(unicodeSequence)) {
                     throw BuildError('Expected digits in unicode sequence ' + unicodeSequence);
                 }
