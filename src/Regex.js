@@ -63,9 +63,17 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function Any() {
-        let beforeNewline = ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\x09'));
-        let afterNewline = ctx.mkReRange(ctx.mkString('\\x0B'), ctx.mkString('\\x79'));
+        let beforeNewline = ctx.mkReRange(ctx.mkString('\x00'), ctx.mkString('\x09'));
+        let afterNewline = ctx.mkReRange(ctx.mkString('\x0B'), ctx.mkString('\x79'));
         return ctx.mkReUnion(beforeNewline, afterNewline);
+    }
+
+    /**
+     * The . character isnt all chracters
+     * This will accept any character
+     */
+    function TruelyAny() {
+        return ctx.mkReRange(ctx.mkString('\x00'), ctx.mkString('\xFF'));
     }
 
     function ParseRangerNextEscaped() {
@@ -201,15 +209,15 @@ function RegexRecursive(ctx, regex, idx) {
             if (c == 'd') {
                 return Digit();
             } else if (c == 'D') {
-                return ctx.mkReComplement(Digit());
+                return ctx.mkReIntersect(TruelyAny(), ctx.mkReComplement(Digit()));
             } else if (c == 'w') {
                 return Word();
             } else if (c == 'W') {
-                return ctx.mkReComplement(Word());
+                return ctx.mkReIntersect(TruelyAny(), ctx.mkReComplement(Word()));
             } else if (c == 's') {
                 return Whitespace();
             } else if (c == 'S') {
-                return ctx.mkReComplement(Whitespace());
+                return ctx.mkReIntersect(TruelyAny(), ctx.mkReComplement(Whitespace()));
             } else if (c == 'n') {
                 return mk('\n');
             } else if (c == 'x') {
