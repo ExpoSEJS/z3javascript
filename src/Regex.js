@@ -183,6 +183,10 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
+    function isHex(char) {
+        return /^[0-9A-Fa-f]+$/.test(char);
+    }
+
     function ParseMaybeEscaped(captureIndex) {
         if (current() == '\\') {
             next();
@@ -203,6 +207,17 @@ function RegexRecursive(ctx, regex, idx) {
                 return ctx.mkReComplement(Whitespace());
             } else if (c == 'n') {
                 return mk('\n');
+            } else if (c == 'x') {
+                let c1 = next();
+                let c2 = next();
+
+                if (!isHex(c1) || !isHex(c2)) {
+                    throw BuildError('Expected hex character at ' + c1 + ' and ' + c2);
+                }
+
+                let hexToInt = parseInt(c1 + c2, 16);
+                let hexAsString = String.fromCharCode(hexToInt);
+                return mk(hexAsString);
             } else if (c == 'r') {
                 return mk('\r');
             } else if (c == 'v') {
