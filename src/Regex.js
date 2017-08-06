@@ -227,11 +227,11 @@ function RegexRecursive(ctx, regex, idx) {
 
                 let unicodeSequence = next() + next() + next() + next();
                 
-                if (!isDigits(unicodeSequence)) {
+                if (!isHex(unicodeSequence)) {
                     throw BuildError('Expected digits in unicode sequence ' + unicodeSequence);
                 }
 
-                let unicodeString = String.fromCharCode(parseInt(unicodeSequence));
+                let unicodeString = String.fromCharCode(parseInt(unicodeSequence, 16));
                 return mk(unicodeString);
             } else if (c == 'r') {
                 return mk('\r');
