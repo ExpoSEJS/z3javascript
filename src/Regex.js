@@ -187,6 +187,10 @@ function RegexRecursive(ctx, regex, idx) {
         return /^[0-9A-Fa-f]+$/.test(char);
     }
 
+    function isDigits(char) {
+        return /^[0-9]+$/.test(char);
+    }
+
     function ParseMaybeEscaped(captureIndex) {
         if (current() == '\\') {
             next();
@@ -217,7 +221,18 @@ function RegexRecursive(ctx, regex, idx) {
 
                 let hexToInt = parseInt(c1 + c2, 16);
                 let hexAsString = String.fromCharCode(hexToInt);
+
                 return mk(hexAsString);
+            } else if (c == 'u') {
+
+                let unicodeSequence = next() + next() + next() + next();
+                
+                if (!isDigits(unicodeSequence)) {
+                    throw BuildError('Expected digits in unicode sequence ' + unicodeSequence);
+                }
+
+                let unicodeString = String.fromCharCode(parseInt(unicodeSequence));
+                return mk(unicodeString);
             } else if (c == 'r') {
                 return mk('\r');
             } else if (c == 'v') {
