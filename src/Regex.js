@@ -148,7 +148,8 @@ function RegexRecursive(ctx, regex, idx) {
         let p3 = mk('\r');
         let p4 = mk('\n');
         let p5 = mk('\f');
-        return ctx.mkReUnion(p1, ctx.mkReUnion(p2, ctx.mkReUnion(p3, ctx.mkReUnion(p4, p5))));
+        let p5 = mk('\v');
+        return ctx.mkReUnion(p1, ctx.mkReUnion(p2, ctx.mkReUnion(p3, ctx.mkReUnion(p4, ctx.mkReUnion(p5, p6)))));
     }
 
     function AlphaNumeric() {
