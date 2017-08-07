@@ -63,8 +63,8 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function Any() {
-        let beforeNewline = ctx.mkReRange(ctx.mkString('\x00'), ctx.mkString('\x09'));
-        let afterNewline = ctx.mkReRange(ctx.mkString('\x0B'), ctx.mkString('\x79'));
+        let beforeNewline = ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\x09'));
+        let afterNewline = ctx.mkReRange(ctx.mkString('\\x0B'), ctx.mkString('\\x79'));
         return ctx.mkReUnion(beforeNewline, afterNewline);
     }
 
@@ -73,7 +73,7 @@ function RegexRecursive(ctx, regex, idx) {
      * This will accept any character
      */
     function TruelyAny() {
-        return ctx.mkReRange(ctx.mkString('\x00'), ctx.mkString('\x79'));
+        return ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\x79'));
     }
 
     function ParseRangerNextEscaped() {
