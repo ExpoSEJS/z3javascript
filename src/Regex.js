@@ -553,8 +553,6 @@ function RegexRecursive(ctx, regex, idx) {
                 rollup = rollup ? ctx.mkReConcat(rollup, parsed) : parsed;
             }
         }
-
-        console.log(rollup + ' ' + regex[idx] + regex[idx - 1]);
         
         return rollup;
     }

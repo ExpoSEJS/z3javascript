@@ -24,14 +24,14 @@ Query.process = function(solver, alternatives) {
 		solver.push();
         {
         	next.exprs.forEach(clause => solver.assert(clause));
-            console.log(`${solver.toString()}`);
+            //console.log(`${solver.toString()}`);
             model = solver.getModel();
         }
         solver.pop();
 
         if (model) {
 
-            console.log(`${model.toString()}`);
+            //console.log(`${model.toString()}`);
 
             //Run all the checks and concat any alternatives
             let Checks = next.checks.map(check => check(next, model));

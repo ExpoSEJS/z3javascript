@@ -86,7 +86,7 @@ class Expr {
             }
 
             default: {
-                console.log("Can't get constant of unknown AST kind type:", kind);
+                throw `Can't get constant of unknown AST kind type: ${kind}`;
                 return undefined;
             }
         }
