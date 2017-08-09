@@ -22,7 +22,7 @@ class Solver {
         //Z3.Z3_params_set_symbol(this.ctx, config, Z3.Z3_mk_string_symbol(this.ctx, "smt.string_solver"), Z3.Z3_mk_string_symbol(this.ctx, "z3str3"));
 
         if (timeout) {
-            Z3.Z3_params_set_uint(this.ctx, config, Z3.Z3_mk_string_symbol(this.ctx, "smt.soft_timeout"), timeout);
+            Z3.Z3_params_set_uint(this.ctx, config, Z3.Z3_mk_string_symbol(this.ctx, "timeout"), timeout);
         }
 
         this.slv = Z3.Z3_mk_simple_solver(this.ctx);
