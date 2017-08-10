@@ -4,7 +4,7 @@
 class Query {
 	constructor(exprs, checks) {
 		this.exprs = exprs;
-		this.checks = checks;
+		this.checks = this.exprs.reduce((last, expr) => last.concat(expr.checks.trueCheck), []);
 	}
 
 	getModel(solver) {
