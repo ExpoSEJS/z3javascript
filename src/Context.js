@@ -23,13 +23,38 @@ class Context {
         return new Expr(this.ctx, null);
     }
 
-    _build(func, ...args) {
-        return this._buildConst.apply(this, [func].concat(Z3Utils.astArray(args)));
+    _buildChecks(args, not) {
+
+        let checks = {
+            trueCheck: args.reduce((last, next) => last.concat(next.checks.trueCheck), []),
+            falseCheck : args.reduce((last, next) => last.concat(next.checks.falseCheck), [])
+        };
+
+        if (not) {
+            let tmp = checks.trueCheck;
+            checks.trueCheck = checks.falseCheck;
+            checks.falseCheck = checks.trueCheck;
+        }
+
+        return checks;
     }
 
-    _buildConst(func, ...args) {
+    _flipChecks(expr) {
+
+        let tmp = expr.checks.trueCheck;
+        expr.checks.trueCheck = expr.checks.falseCheck;
+        expr.checks.falseCheck = tmp;
+
+        return expr;
+    }
+
+    _build(func, ...args) {
+        return this._buildConst.apply(this, [func, this._buildChecks(args, false)].concat(Z3Utils.astArray(args)));
+    }
+
+    _buildConst(func, checks, ...args) {
         let fnResult = func.apply(this, [this.ctx].concat(args));
-        return new Expr(this.ctx, fnResult);      
+        return new Expr(this.ctx, fnResult, checks);      
     }
 
     _buildVar(func, ...args) {
@@ -37,7 +62,7 @@ class Context {
     }
     
     _buildVarNoArgs(func, args) {
-        return new Expr(this.ctx, func(this.ctx, args.length, Z3Utils.astArray(args)));
+        return new Expr(this.ctx, func(this.ctx, args.length, Z3Utils.astArray(args)), this._buildChecks(args, false));
     }
 
     destroy() {
@@ -61,7 +86,7 @@ class Context {
     }
 
     mkString(val) {
-        return this._buildConst(Z3.Z3_mk_string, val);
+        return this._buildConst(Z3.Z3_mk_string, [], val);
     }
 
     mkStringVar(name) {
@@ -212,12 +237,8 @@ class Context {
 
     //missing: distinct
 
-    mkNot() {
-        return this._build(Z3.Z3_mk_not, arg);
-    }
-
     mkNot(arg) {
-        return this._build(Z3.Z3_mk_not, arg);
+        return this._flipChecks(this._build(Z3.Z3_mk_not, arg));
     }
 
     mkIte(ifarg, thenarg, elsearg) {

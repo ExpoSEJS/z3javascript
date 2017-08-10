@@ -8,10 +8,14 @@ import Z3Utils from './Z3Utils';
 
 class Expr {
 
-    constructor(context, ast) {
+    constructor(context, ast, checks) {
         this.ctx = context;
         this.ast = ast;
         Z3.Z3_inc_ref(this.ctx, this.ast);
+        this.checks = checks || {
+            trueCheck: [],
+            falseCheck: []
+        }
     }
 
     /**
