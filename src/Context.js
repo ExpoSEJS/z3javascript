@@ -23,11 +23,15 @@ class Context {
         return new Expr(this.ctx, null);
     }
 
+    _appendList(list, l2) {
+        return l2 ? list.concat(l2) : list;
+    }
+
     _buildChecks(args, not) {
 
         let checks = {
-            trueCheck: args.reduce((last, next) => last.concat(next.checks.trueCheck), []),
-            falseCheck : args.reduce((last, next) => last.concat(next.checks.falseCheck), [])
+            trueCheck: args.reduce((last, next) => this._appendList(last, next.checks.trueCheck), []),
+            falseCheck : args.reduce((last, next) => this._appendList(last, next.checks.falseCheck), [])
         };
 
         if (not) {
