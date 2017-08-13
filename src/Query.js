@@ -2,9 +2,9 @@
  * Copyright Blake Loring <blake_l@parsed.uk>
  */
 class Query {
-	constructor(exprs, additionalChecks) {
+	constructor(exprs, checks) {
 		this.exprs = exprs;
-		this.checks = this.exprs.reduce((last, expr) => last.concat(expr.checks.trueCheck), []).concat(additionalChecks || []);
+		this.checks = checks;
 	}
 
 	getModel(solver) {
