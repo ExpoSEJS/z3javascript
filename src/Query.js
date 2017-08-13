@@ -2,9 +2,9 @@
  * Copyright Blake Loring <blake_l@parsed.uk>
  */
 class Query {
-	constructor(exprs) {
+	constructor(exprs, additionalChecks) {
 		this.exprs = exprs;
-		this.checks = this.exprs.reduce((last, expr) => last.concat(expr.checks.trueCheck), []);
+		this.checks = this.exprs.reduce((last, expr) => last.concat(expr.checks.trueCheck), []).concat(additionalChecks || []);
 	}
 
 	getModel(solver) {
@@ -32,8 +32,7 @@ Query.process = function(solver, alternatives) {
         if (model) {
 
             //console.log(`${model.toString()}`);
-            console.log('next ' + next + ' checks ' + next.checks);
-
+            
             //Run all the checks and concat any alternatives
             let Checks = next.checks.map(check => check(next, model));
             alternatives = Checks.reduce((alt, next) => alt.concat(next.alternatives), alternatives);
