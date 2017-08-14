@@ -35,8 +35,12 @@ function RegexRecursive(ctx, regex, idx) {
         return ctx.mkStringVar('' + lrctr + ' Fill ' + fill_ctr++);
     }
 
+    function moreRange() {
+        return idx < regex.length;
+    }
+
     function more() {
-        return idx < regex.length && current() != '|' && current() != ')';
+        return moreRange() && current() != '|' && current() != ')';
     }
 
     function mk(v) {
@@ -89,7 +93,7 @@ function RegexRecursive(ctx, regex, idx) {
 
         let union = undefined;
 
-        while (more() && current() != ']') {
+        while (moreRange() && current() != ']') {
 
             let c1 = ParseRangerNextEscaped();
             let range = undefined;
