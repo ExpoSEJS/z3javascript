@@ -2,10 +2,9 @@
  * Copyright Blake Loring <blake_l@parsed.uk>
  */
 class Query {
-	constructor(exprs, checks, maxRefinements) {
+	constructor(exprs, checks) {
 		this.exprs = exprs;
 		this.checks = checks;
-        this.maxRefinements = maxRefinements || -1;
 	}
 
 	getModel(solver) {
@@ -22,7 +21,7 @@ Query.canAttempt = function(currentAttempts) {
 
 Query.process = function(solver, alternatives) {
     let attempts = 0;
-    
+
 	while (Query.canAttempt(attempts) && alternatives.length) {
         
         attempts++;
