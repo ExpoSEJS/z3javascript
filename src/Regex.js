@@ -77,7 +77,7 @@ function RegexRecursive(ctx, regex, idx) {
      * This will accept any character
      */
     function TruelyAny() {
-        return ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\x79'));
+        return ctx.mkReRange(ctx.mkString('\\x00'), ctx.mkString('\\xFF'));
     }
 
     function ParseRangerNextEscaped() {
