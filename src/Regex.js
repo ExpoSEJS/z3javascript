@@ -130,7 +130,7 @@ function RegexRecursive(ctx, regex, idx) {
 
         if (negate) {
             let comp = ctx.mkReComplement(r);
-            r = ctx.mkReIntersect(Any(), comp);
+            r = ctx.mkReIntersect(TruelyAny(), comp);
         }
 
         if (next() == ']') {
@@ -669,7 +669,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     if (regex[0] !== '^') {
         let startFiller = nextFiller();
-        ast = ctx.mkReConcat(ctx.mkReStar(Any()), ast);
+        ast = ctx.mkReConcat(ctx.mkReStar(TruelyAny()), ast);
         implier = ctx.mkSeqConcat([startFiller, implier]);
         startIndex = ctx.mkSeqLength(startFiller);
     } else {
@@ -677,7 +677,7 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     if (regex[regex.length - 1] !== '$') {
-        ast = ctx.mkReConcat(ast, ctx.mkReStar(Any()));
+        ast = ctx.mkReConcat(ast, ctx.mkReStar(TruelyAny()));
         implier = ctx.mkSeqConcat([implier, nextFiller()]);
     }
 
