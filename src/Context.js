@@ -203,6 +203,10 @@ class Context {
         return Z3.Z3_mk_int_sort(this.ctx);
     }
 
+    mkSeqSort(sort) {
+        return Z3.Z3_mk_seq_sort(this.ctx, sort);
+    }
+
     mkReSort(sort) {
         return Z3.Z3_mk_re_sort(this.ctx, sort);
     }
