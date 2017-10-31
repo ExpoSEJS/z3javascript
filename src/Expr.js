@@ -9,9 +9,9 @@ import Z3Utils from './Z3Utils';
 class Expr {
 
     constructor(context, ast, checks) {
-        this.ctx = context;
+        this.context = context;
         this.ast = ast;
-        Z3.Z3_inc_ref(this.ctx, this.ast);
+        Z3.Z3_inc_ref(this.context.ctx, this.ast);
         this.checks = checks || {
             trueCheck: [],
             falseCheck: []
@@ -24,37 +24,37 @@ class Expr {
      */
     _simplifyParams() {
         if (!Expr._simpleParams) {
-            let config = Z3.Z3_mk_params(this.ctx);
-            Z3.Z3_params_inc_ref(this.ctx, config);
-            Z3.Z3_params_set_bool(this.ctx, config, Z3.Z3_mk_string_symbol(this.ctx, "rewriter.elim_to_real"), true);
+            let config = Z3.Z3_mk_params(this.context.ctx);
+            Z3.Z3_params_inc_ref(this.context.ctx, config);
+            Z3.Z3_params_set_bool(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, "rewriter.elim_to_real"), true);
             Expr._simpleParams = config;
         }
         return Expr._simpleParams;
     }
 
     destroy() {
-        Z3.Z3_dec_ref(this.ctx, this.ast);
+        Z3.Z3_dec_ref(this.context.ctx, this.ast);
         this.ast = null;
     }
 
     toString() {
-        let inner = Z3.Z3_ast_to_string(this.ctx, this.ast);
+        let inner = Z3.Z3_ast_to_string(this.context.ctx, this.ast);
         return "Expr {" + inner + "}";
     }
 
     isString() {
-        return Z3.Z3_is_string(this.ctx, this.ast);
+        return Z3.Z3_is_string(this.context.ctx, this.ast);
     }
     
     toPrettyString() {
-        let output = Z3.Z3_ast_to_string(this.ctx, this.ast);
+        let output = Z3.Z3_ast_to_string(this.context.ctx, this.ast);
         output = output.replace(/\(not (\S)\)/g, "¬$1");
         output = output.replace("or", "∨");
         return output;
     }
 
     getBoolValue() {
-        return Z3.Z3_get_bool_value(this.ctx, this.ast) == Z3.TRUE;
+        return Z3.Z3_get_bool_value(this.context.ctx, this.ast) == Z3.TRUE;
     }
 
     escapeString(str) {
@@ -72,18 +72,17 @@ class Expr {
     }
 
     asConstant() {
-        let kind = Z3.Z3_get_ast_kind(this.ctx, this.ast);
-
+        let kind = Z3.Z3_get_ast_kind(this.context.ctx, this.ast);
         switch (kind) {
 
             case Z3.NUMERAL_AST: {
-                let num_dec_string = Z3.Z3_get_numeral_decimal_string(this.ctx, this.ast, 30);
+                let num_dec_string = Z3.Z3_get_numeral_decimal_string(this.context.ctx, this.ast, 30);
                 return Number(num_dec_string);
             }
 
             case Z3.APP_AST: {
                 if (this.isString()) {
-                    return this.escapeString(Z3.Z3_get_string(this.ctx, this.ast));
+                    return this.escapeString(Z3.Z3_get_string(this.context.ctx, this.ast));
                 } else {
                     return this.getBoolValue();
                 }
@@ -97,8 +96,8 @@ class Expr {
     }
 
     simplify() {
-        let newAst = Z3.Z3_simplify_ex(this.ctx, this.ast, this._simplifyParams());
-        Z3.Z3_inc_ref(this.ctx, newAst);
+        let newAst = Z3.Z3_simplify_ex(this.context.ctx, this.ast, this._simplifyParams());
+        Z3.Z3_inc_ref(this.context.ctx, newAst);
         this.destroy();
         this.ast = newAst;
         return this;
