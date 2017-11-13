@@ -71,20 +71,47 @@ class Expr {
             return str.replace(/\\x[0-9a-fA-F]{2}/g, replacer).replace(/\\u\d{4}/g, unicodeReplacer).replace(/\\a/g, '\a').replace(/\\b/g, '\b').replace(/\\r/g, '\r').replace(/\\v/g, '\v').replace(/\\f/g, '\f').replace(/\\n/g, '\n').replace(/\\t/g, '\t');  
     }
 
+    toNumber() {
+        let num_dec_string = Z3.Z3_get_numeral_decimal_string(this.context.ctx, this.ast, 30);
+        return Number(num_dec_string);
+    }
+
+    parseNumber() {
+        let num_string = this.toString();
+        console.log(num_string)
+        if (num_string.includes('seq')) {
+            const regex = /Expr {\(seq.unit ([\d\.]+)\)}/g; 
+            const matches = regex.exec(num_string)
+            if (matches.length > 1){
+                return Number(matches[1])
+            }
+            throw new Exception(`Unable to parse number from ${number_dec_string}`)
+        }
+    }
+
     asConstant() {
         let kind = Z3.Z3_get_ast_kind(this.context.ctx, this.ast);
         switch (kind) {
 
             case Z3.NUMERAL_AST: {
-                let num_dec_string = Z3.Z3_get_numeral_decimal_string(this.context.ctx, this.ast, 30);
-                return Number(num_dec_string);
+                return this.toNumber();
             }
 
             case Z3.APP_AST: {
                 if (this.isString()) {
                     return this.escapeString(Z3.Z3_get_string(this.context.ctx, this.ast));
                 } else {
-                    return this.getBoolValue();
+                    //return this.getBoolValue();
+                    let seq_len = this.context.mkInt2Real(this.context.mkSeqLength(this)).simplify().asConstant()
+                    let array = [];
+                    
+                    for (let i = 0; i < seq_len; i++) {
+                        let targetIndex = this.context.mkIntVal(i);
+                        let targetAt = this.context.mkSeqAt(this, targetIndex);
+                        array.push(targetAt.simplify().parseNumber());
+                    }
+
+                    return array;
                 }
             }
 
