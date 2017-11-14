@@ -76,47 +76,58 @@ class Expr {
         return Number(num_dec_string);
     }
 
+    // TODO (AF) Replace this, this is horrid
     parseNumber() {
-        let num_string = this.toString();
-        console.log(num_string)
-        if (num_string.includes('seq')) {
+        let numString = this.toString();
+        if (numString.includes('seq')) {
             const regex = /Expr {\(seq.unit ([\d\.]+)\)}/g; 
-            const matches = regex.exec(num_string)
+            const matches = regex.exec(numString)
+            // console.log('Match is ' + matches[1])
             if (matches.length > 1){
                 return Number(matches[1])
             }
-            throw new Exception(`Unable to parse number from ${number_dec_string}`)
+            throw new Exception(`Unable to parse number from ${numString}`)
         }
     }
 
-    asConstant() {
-        let kind = Z3.Z3_get_ast_kind(this.context.ctx, this.ast);
-        switch (kind) {
+    getAstSortKind() {
+        return Z3.Z3_get_sort_kind(this.context.ctx, Z3.Z3_get_sort(this.context.ctx, this.ast));
+    }
 
-            case Z3.NUMERAL_AST: {
+    getAstSortName() {
+        const sortSymbol = Z3.Z3_get_sort_name(this.context.ctx, Z3.Z3_get_sort(this.context.ctx, this.ast));
+        return Z3.Z3_get_symbol_string(this.context.ctx, sortSymbol);
+    }
+
+    asConstant() {
+        switch (this.getAstSortKind()) {
+            
+            case Z3.REAL_SORT: {
                 return this.toNumber();
             }
 
-            case Z3.APP_AST: {
+            case Z3.BOOL_SORT: {
+                return this.getBoolValue();
+            }
+
+            case Z3.SEQ_SORT: {
                 if (this.isString()) {
                     return this.escapeString(Z3.Z3_get_string(this.context.ctx, this.ast));
                 } else {
-                    //return this.getBoolValue();
-                    let seq_len = this.context.mkInt2Real(this.context.mkSeqLength(this)).simplify().asConstant()
+                    const seq_len = this.context.mkInt2Real(this.context.mkSeqLength(this)).simplify().asConstant()                 
                     let array = [];
                     
                     for (let i = 0; i < seq_len; i++) {
-                        let targetIndex = this.context.mkIntVal(i);
-                        let targetAt = this.context.mkSeqAt(this, targetIndex);
+                        const targetIndex = this.context.mkIntVal(i);
+                        const targetAt = this.context.mkSeqAt(this, targetIndex);
                         array.push(targetAt.simplify().parseNumber());
                     }
-
                     return array;
                 }
             }
 
             default: {
-                throw `Can't get constant of unknown AST kind type: ${kind}`;
+                throw `Can't get constant of unknown AST sort type: ${this.getAstSortName()}`;
                 return undefined;
             }
         }
