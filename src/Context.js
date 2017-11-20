@@ -385,6 +385,10 @@ class Context {
      * Arrays
      */
 
+    mkArraySort(indexSort, elemSort) {
+        return Z3.Z3_mk_array_sort(this.ctx, indexSort, elemSort);
+    }
+
     mkSelect(array, index) {
         return this._build(Z3.Z3_mk_select, array, index);
     }
