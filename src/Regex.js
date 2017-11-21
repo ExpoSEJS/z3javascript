@@ -674,7 +674,7 @@ function RegexRecursive(ctx, regex, idx) {
         ast = ctx.mkReConcat(ctx.mkReStar(TruelyAny()), ast);
         implier = ctx.mkSeqConcat([startFiller, implier]);
         startIndex = ctx.mkSeqLength(startFiller);
-        anchoredFront = true;
+        anchoredStart = true;
     } else {
         startIndex = ctx.mkIntVal(0);
     }
