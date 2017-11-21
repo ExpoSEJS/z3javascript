@@ -666,7 +666,7 @@ function RegexRecursive(ctx, regex, idx) {
     let implier = captures[0];
 
     let startIndex;
-    let anchoredFront = false;
+    let anchoredStart = false;
     let anchoredEnd = false;
 
     if (regex[0] !== '^') {
@@ -692,7 +692,7 @@ function RegexRecursive(ctx, regex, idx) {
         assertions: assertions,
         captures: captures,
         startIndex: startIndex,
-        anchoredFront: anchoredFront,
+        anchoredStart: anchoredStart,
         anchoredEnd: anchoredEnd,
         backreferences: backreferences,
         idx: idx //Return the index so recursion assertions work out
