@@ -9,15 +9,13 @@ import Z3 from '../Z3.js';
 const ctx = new Z3.Context();
 const solver = new Z3.Solver(ctx);
 
-let arraySort = ctx.mkArraySort(ctx.mkIntSort(), ctx.mkRealSort());
-let arrayInstance = ctx.mkVar('Arr', arraySort);
-let arrayLen = ctx.mkIntVar('Arr_length');
+let arrayInstance = ctx.mkArray('Arr', ctx.mkStringSort());
 
-let forceSelect = ctx.mkEq(ctx.mkSelect(arrayInstance, ctx.mkIntVal(5)), ctx.mkIntVal(5));
-let forceSelectL = ctx.mkGt(arrayLen, ctx.mkIntVal(5));
+let forceSelect = ctx.mkEq(ctx.mkSelect(arrayInstance, ctx.mkIntVal(5)), ctx.mkString('Bob Jenkins'));
+let forceSelectL = ctx.mkGt(arrayInstance.getLength(), ctx.mkIntVal(5));
 
-let forceSelect2 = ctx.mkEq(ctx.mkSelect(arrayInstance, ctx.mkIntVal(3)), ctx.mkIntVal(0));
-let forceSelect2L = ctx.mkGt(arrayLen, ctx.mkIntVal(3));
+let forceSelect2 = ctx.mkEq(ctx.mkSelect(arrayInstance, ctx.mkIntVal(3)), ctx.mkString('Boop'));
+let forceSelect2L = ctx.mkGt(arrayInstance.getLength(), ctx.mkIntVal(3));
 
 solver.assert(forceSelect);
 solver.assert(forceSelectL);
@@ -27,13 +25,6 @@ solver.assert(forceSelect2L);
 console.log(solver.toString());
 let lmdl = solver.getModel();
 
-let arrayLReal = lmdl.eval(arrayLen).asConstant();
-let built = [];
-
-for (let i = 0; i < arrayLReal; i++) {
-	built.push(lmdl.eval(ctx.mkSelect(arrayInstance, ctx.mkIntVal(i))).asConstant());
-}
-
-console.log(JSON.stringify(built));
+console.log(JSON.stringify(lmdl.eval(arrayInstance).asConstant(lmdl)));
 
 process.exit(0);

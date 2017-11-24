@@ -10,8 +10,10 @@ class Expr {
 
     constructor(context, ast, checks) {
         this.context = context;
+
         this.ast = ast;
         Z3.Z3_inc_ref(this.context.ctx, this.ast);
+
         this.checks = checks || {
             trueCheck: [],
             falseCheck: []
@@ -57,6 +59,11 @@ class Expr {
         return Z3.Z3_get_bool_value(this.context.ctx, this.ast) == Z3.TRUE;
     }
 
+    getRealValue() {
+        let num_dec_string = Z3.Z3_get_numeral_decimal_string(this.context.ctx, this.ast, 30);
+        return Number(num_dec_string);
+    }
+
     escapeString(str) {
             function replacer(match, p1) {
                 var chars = str[p1 + 2] + str[p1 + 3];
@@ -71,28 +78,39 @@ class Expr {
             return str.replace(/\\x[0-9a-fA-F]{2}/g, replacer).replace(/\\u\d{4}/g, unicodeReplacer).replace(/\\a/g, '\a').replace(/\\b/g, '\b').replace(/\\r/g, '\r').replace(/\\v/g, '\v').replace(/\\f/g, '\f').replace(/\\n/g, '\n').replace(/\\t/g, '\t');  
     }
 
-    asConstant() {
-        let kind = Z3.Z3_get_ast_kind(this.context.ctx, this.ast);
-        switch (kind) {
+    getLength() {
+        return this._length;
+    }
 
-            case Z3.NUMERAL_AST: {
-                let num_dec_string = Z3.Z3_get_numeral_decimal_string(this.context.ctx, this.ast, 30);
-                return Number(num_dec_string);
+    setLength(l) {
+        this._length = l;
+        return this;
+    }
+
+    asConstant(mdl) {
+        let sort = Z3.Z3_get_sort(this.context.ctx, this.ast);
+        let kind = Z3.Z3_get_sort_kind(this.context.ctx, sort);
+
+        if (Z3.Z3_is_string_sort(this.context.ctx, sort)) {
+            return this.escapeString(Z3.Z3_get_string(this.context.ctx, this.ast));
+        } else if (Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_real_sort(this.context.ctx))  || Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_int_sort(this.context.ctx))) {
+            return this.getRealValue();
+        } else if (Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_bool_sort(this.context.ctx))) {
+            return this.getBoolValue();
+        } else {
+            //TODO: Propogating array lengths like this is horrible, find a better way
+            let len = mdl.eval(this.getLength()).asConstant();
+
+            let built = [];
+
+            for (let i = 0; i < len; i++) {
+                built.push(mdl.eval(this.context.mkSelect(this, this.context.mkIntVal(i))).asConstant());
             }
 
-            case Z3.APP_AST: {
-                if (this.isString()) {
-                    return this.escapeString(Z3.Z3_get_string(this.context.ctx, this.ast));
-                } else {
-                    return this.getBoolValue();
-                }
-            }
-
-            default: {
-                throw `Can't get constant of unknown AST kind type: ${kind}`;
-                return undefined;
-            }
+            return built;
         }
+
+        throw `Can't get constant of unknown AST kind type: ${sort}`;
     }
 
     simplify() {

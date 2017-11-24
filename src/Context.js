@@ -73,6 +73,13 @@ class Context {
         Z3.Z3_del_context(this.ctx);
     }
 
+    mkArray(name, baseSort) {
+        let arraySort = this.mkArraySort(this.mkIntSort(), baseSort);
+        let arrayInstance = this.mkVar(name, arraySort);
+        let arrayLen = this.mkIntVar(name + '_Array_Length');
+        return arrayInstance.setLength(arrayLen);
+    }
+
     mkVar(name, sort) {
         return new Expr(this, Z3.Z3_mk_const(this.ctx, this.mkStringSymbol(name), sort));
     }
