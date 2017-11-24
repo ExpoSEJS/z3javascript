@@ -19,7 +19,7 @@ class Solver {
         Z3.Z3_params_inc_ref(this.context.ctx, config);
 
         Z3.Z3_params_set_uint(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, "smt.random_seed"), Math.floor(Math.random() * 10000));
-        //Z3.Z3_params_set_symbol(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, "smt.string_solver"), Z3.Z3_mk_string_symbol(this.context.ctx, "z3str3"));
+        Z3.Z3_params_set_symbol(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, "smt.string_solver"), Z3.Z3_mk_string_symbol(this.context.ctx, "z3str3"));
 
         if (timeout) {
             Z3.Z3_params_set_uint(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, "timeout"), timeout);
