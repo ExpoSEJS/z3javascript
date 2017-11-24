@@ -79,7 +79,12 @@ class Expr {
     }
 
     getLength() {
-        return this._length;
+        let sort = Z3.Z3_get_sort(this.context.ctx, this.ast);
+        if (Z3.Z3_is_string_sort(this.context.ctx, sort)) {
+            return this.context.mkSeqLength(this);
+        } else {
+            return this._length;
+        }
     }
 
     setLength(l) {
