@@ -33,8 +33,6 @@ Query.process = function(solver, alternatives, incremental) {
 
         if (incremental) {
 		    solver.push();
-        } else {
-            solver.reset();
         }
 
         next.exprs.forEach(clause => solver.assert(clause));
@@ -42,6 +40,8 @@ Query.process = function(solver, alternatives, incremental) {
 
         if (incremental) {
             solver.pop();
+        } else {
+            solver.reset();
         }
 
         if (model) {
