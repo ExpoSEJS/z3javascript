@@ -7,8 +7,8 @@ class Query {
 		this.checks = checks;
 	}
 
-	getModel(solver, incremental) {
-		return Query.process(solver, [this], incremental);
+	getModel(solver) {
+		return Query.process(solver, [this]);
 	}
 }
 
@@ -19,7 +19,7 @@ Query.canAttempt = function(currentAttempts) {
     return Query.MAX_REFINEMENTS == -1 || (currentAttempts < Query.MAX_REFINEMENTS);
 }
 
-Query.process = function(solver, alternatives, incremental) {
+Query.process = function(solver, alternatives) {
     let attempts = 0;
 
 	while (Query.canAttempt(attempts) && alternatives.length) {
