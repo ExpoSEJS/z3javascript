@@ -37,11 +37,8 @@ Query.process = function(solver, alternatives, incremental) {
             solver.reset();
         }
 
-        {
-        	next.exprs.forEach(clause => solver.assert(clause));
-            console.log(`${solver.toString()}`);
-            model = solver.getModel();
-        }
+        next.exprs.forEach(clause => solver.assert(clause));
+        model = solver.getModel();
 
         if (incremental) {
             solver.pop();
