@@ -31,18 +31,12 @@ Query.process = function(solver, alternatives, incremental) {
 
 		let model;
 
-        if (incremental) {
-		    solver.push();
-        }
+		solver.push();
 
         next.exprs.forEach(clause => solver.assert(clause));
         model = solver.getModel();
 
-        if (incremental) {
-            solver.pop();
-        } else {
-            solver.reset();
-        }
+        solver.pop();
 
         if (model) {
             //Run all the checks and concat any alternatives
@@ -54,6 +48,7 @@ Query.process = function(solver, alternatives, incremental) {
         	
         	//If we have found a satisfying model return it otherwise add alternatives from check
         	if (Failed) {
+                console.log('FAILED');
         		model.destroy();
         	} else {
                 return model;

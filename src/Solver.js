@@ -11,7 +11,7 @@ import Context from './Context';
 
 class Solver {
 
-    constructor(context, timeout) {
+    constructor(context, timeout, incremental) {
         this.context = context;
 
         let config = Z3.Z3_mk_params(this.context.ctx);
@@ -25,7 +25,13 @@ class Solver {
             Z3.Z3_params_set_uint(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, "timeout"), timeout);
         }
 
-        this.slv = Z3.Z3_mk_simple_solver(this.context.ctx);
+        if (incremental) {
+            this.slv = Z3.Z3_mk_simple_solver(this.context.ctx);
+        } else {
+            let defaultTactic = Z3.Z3_mk_tactic(this.context.ctx, "default");
+            Z3.Z3_tactic_inc_ref(this.context.ctx, defaultTactic);
+            this.slv = Z3.Z3_mk_solver_from_tactic(this.context.ctx, defaultTactic);
+        }
         
         Z3.Z3_solver_inc_ref(this.context.ctx, this.slv);
         Z3.Z3_solver_set_params(this.context.ctx, this.slv, config);
