@@ -48,9 +48,6 @@ Query.process = function(solver, alternatives, incremental) {
         }
 
         if (model) {
-
-            console.log(`${model.toString()}`);
-            
             //Run all the checks and concat any alternatives
             let Checks = next.checks.map(check => check(next, model));
             alternatives = Checks.reduce((alt, next) => alt.concat(next.alternatives), alternatives);
