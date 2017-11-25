@@ -7,8 +7,8 @@ class Query {
 		this.checks = checks;
 	}
 
-	getModel(solver) {
-		return Query.process(solver, [this]);
+	getModel(solver, incremental) {
+		return Query.process(solver, [this], incremental);
 	}
 }
 
@@ -19,7 +19,7 @@ Query.canAttempt = function(currentAttempts) {
     return Query.MAX_REFINEMENTS == -1 || (currentAttempts < Query.MAX_REFINEMENTS);
 }
 
-Query.process = function(solver, alternatives) {
+Query.process = function(solver, alternatives, incremental) {
     let attempts = 0;
 
 	while (Query.canAttempt(attempts) && alternatives.length) {
@@ -31,13 +31,21 @@ Query.process = function(solver, alternatives) {
 
 		let model;
 
-		solver.push();
+        if (incremental) {
+		    solver.push();
+        } else {
+            solver.reset();
+        }
+
         {
         	next.exprs.forEach(clause => solver.assert(clause));
             console.log(`${solver.toString()}`);
             model = solver.getModel();
         }
-        solver.pop();
+
+        if (incremental) {
+            solver.pop();
+        }
 
         if (model) {
 
