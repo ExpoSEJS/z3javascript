@@ -9,22 +9,14 @@ import Z3 from '../Z3.js';
 const ctx = new Z3.Context();
 const solver = new Z3.Solver(ctx);
 
-let arrayInstance = ctx.mkArray('Arr', ctx.mkStringSort());
+let arrayInstance = ctx.mkObject('Obj', ctx.mkStringSort());
 
-let forceSelect = ctx.mkEq(ctx.mkSelect(arrayInstance, ctx.mkIntVal(5)), ctx.mkString('Bob Jenkins'));
-let forceSelectL = ctx.mkGt(arrayInstance.getLength(), ctx.mkIntVal(5));
-
-let forceSelect2 = ctx.mkEq(ctx.mkSelect(arrayInstance, ctx.mkIntVal(3)), ctx.mkString('Boop'));
-let forceSelect2L = ctx.mkGt(arrayInstance.getLength(), ctx.mkIntVal(3));
+let forceSelect = ctx.mkEq(ctx.mkSelect(arrayInstance, ctx.mkString('What')), ctx.mkString('Bob Jenkins'));
+arrayInstance.addField(ctx.mkString('What'));
 
 solver.assert(forceSelect);
-solver.assert(forceSelectL);
-solver.assert(forceSelect2);
-solver.assert(forceSelect2L);
 
-console.log(solver.toString());
-let lmdl = solver.getModel();
-
-console.log(JSON.stringify(lmdl.eval(arrayInstance).asConstant(lmdl)));
+let mdl = solver.getModel();
+console.log(arrayInstance.asConstant(mdl));
 
 process.exit(0);

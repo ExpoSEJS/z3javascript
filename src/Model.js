@@ -22,7 +22,7 @@ class Model {
         let res = Z3.bindings_model_eval(this.context.ctx, this.mdl, expr.ast);
 
         //TODO: Propogating array lengths like this is horrible, find a better way
-        return res ? (new Expr(this.context, res)).setLength(expr.getLength()) : null;
+        return res ? (new Expr(this.context, res)).setLength(expr.getLength()).setFields(expr.getFields()) : null;
     }
 
     destroy() {

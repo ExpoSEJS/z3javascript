@@ -14,6 +14,8 @@ class Expr {
         this.ast = ast;
         Z3.Z3_inc_ref(this.context.ctx, this.ast);
 
+        this._fields = [];
+
         this.checks = checks || {
             trueCheck: [],
             falseCheck: []
@@ -101,6 +103,20 @@ class Expr {
         return this;
     }
 
+    getFields() {
+        return this._fields;
+    }
+
+    setFields(f) {
+        this._fields = f;
+        return this;
+    }
+
+    addField(expr) {
+        this._fields.push(expr);
+        return this;
+    }
+
     asConstant(mdl) {
         let sort = Z3.Z3_get_sort(this.context.ctx, this.ast);
         let kind = Z3.Z3_get_sort_kind(this.context.ctx, sort);
@@ -111,17 +127,25 @@ class Expr {
             return this.getRealValue();
         } else if (Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_bool_sort(this.context.ctx))) {
             return this.getBoolValue();
-        } else {
+        } else if (this.getLength()) { //Array
             //TODO: Propogating array lengths like this is horrible, find a better way
-            let len = mdl.eval(this.getLength()).asConstant();
+            let len = mdl.eval(this.getLength()).asConstant(mdl);
 
             let built = [];
 
             for (let i = 0; i < len; i++) {
-                built.push(mdl.eval(this.context.mkSelect(this, this.context.mkIntVal(i))).asConstant());
+                built.push(mdl.eval(this.context.mkSelect(this, this.context.mkIntVal(i))).asConstant(mdl));
             }
 
             return built;
+        } else {
+            let obj = {};
+
+            this._fields.forEach(field => {
+                obj[mdl.eval(field).asConstant(mdl)] = mdl.eval(this.context.mkSelect(this, field)).asConstant(mdl);
+            });
+
+            return obj;
         }
 
         throw `Can't get constant of unknown AST kind type: ${sort}`;

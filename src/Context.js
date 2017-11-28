@@ -80,6 +80,12 @@ class Context {
         return arrayInstance.setLength(arrayLen);
     }
 
+    mkObject(name, baseSort) {
+        let objectSort = this.mkArraySort(this.mkStringSort(), baseSort);
+        let objectInstance = this.mkVar(name, objectSort);
+        return objectInstance;
+    }
+
     mkVar(name, sort) {
         return new Expr(this, Z3.Z3_mk_const(this.ctx, this.mkStringSymbol(name), sort));
     }
