@@ -28,7 +28,6 @@ class Context {
     }
 
     _buildChecks(args, not) {
-
         let checks = {
             trueCheck: args.reduce((last, next) => this._appendList(last, next.checks.trueCheck), []),
             falseCheck : args.reduce((last, next) => this._appendList(last, next.checks.falseCheck), [])
@@ -99,6 +98,15 @@ class Context {
 
     mkIntVal(val) {
         return this.mkInt(val, this.mkIntSort());
+    }
+
+    mkArray(name, sort) {
+        // Int indexed and contains homogenous type of sort
+        let arraySort = this.mkArraySort(this.mkIntSort(), sort);
+        let array = this.mkVar(name, arraySort);
+        let len = this.mkIntVar(`${name}_Length`);
+        array.length = len;
+        return array;
     }
 
     mkSeqLength(val) {
@@ -201,6 +209,11 @@ class Context {
 
     mkIntSort() {
         return Z3.Z3_mk_int_sort(this.ctx);
+    }
+
+    /// https://z3prover.github.io/api/html/group__capi.html#gad8cd465426633bd3b8c92acff9c39130
+    mkArraySort(domain, range) {
+        return Z3.Z3_mk_array_sort(this.ctx, domain, range);
     }
 
     mkSeqSort(sort) {

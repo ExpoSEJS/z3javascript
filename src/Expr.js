@@ -72,8 +72,8 @@ class Expr {
     }
 
     toNumber() {
-        let num_dec_string = Z3.Z3_get_numeral_decimal_string(this.context.ctx, this.ast, 30);
-        return Number(num_dec_string);
+        let numeralDecString = Z3.Z3_get_numeral_decimal_string(this.context.ctx, this.ast, 30);
+        return Number(numeralDecString);
     }
 
     // TODO (AF) Replace this, this is horrid
@@ -99,9 +99,16 @@ class Expr {
         return Z3.Z3_get_symbol_string(this.context.ctx, sortSymbol);
     }
 
-    asConstant() {
+    // Use this to get the value at the index of an array 
+    selectFromIndex(index) {
+        return this.context.mkSelect(this, index);
+    }
+
+    asConstant(model) {
+        console.log('Entering As Constant')
         switch (this.getAstSortKind()) {
             
+            case Z3.INT_SORT:
             case Z3.REAL_SORT: {
                 return this.toNumber();
             }
@@ -114,23 +121,29 @@ class Expr {
                 if (this.isString()) {
                     return this.escapeString(Z3.Z3_get_string(this.context.ctx, this.ast));
                 } else {
-                    const seq_len = this.context.mkInt2Real(this.context.mkSeqLength(this)).simplify().asConstant()                 
-                    let array = [];
-                    
-                    for (let i = 0; i < seq_len; i++) {
-                        const targetIndex = this.context.mkIntVal(i);
-                        const targetAt = this.context.mkSeqAt(this, targetIndex);
-                        array.push(targetAt.simplify().parseNumber());
-                    }
-                    return array;
+                    throw 'Sequence sort that is not a string'
                 }
             }
+
+            case Z3.ARRAY_SORT: {
+                const arrayLength = this.context.mkInt2Real(this.length).simplify().asConstant()                 
+                let array = [];
+                
+                for (let i = 0; i < arrayLength; i++) {
+                    const targetIndex = this.context.mkIntVal(i);
+                    const targetAt = this.context.selectFromIndex(targetIndex);
+                    array.push(targetAt.asConstant());
+                }
+                return array;
+            }
+
 
             default: {
                 throw `Can't get constant of unknown AST sort type: ${this.getAstSortName()}`;
                 return undefined;
             }
         }
+        console.log('Exiting As Constant')
     }
 
     simplify() {
