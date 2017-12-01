@@ -76,20 +76,6 @@ class Expr {
         return Number(numeralDecString);
     }
 
-    // TODO (AF) Replace this, this is horrid
-    parseNumber() {
-        let numString = this.toString();
-        if (numString.includes('seq')) {
-            const regex = /Expr {\(seq.unit ([\d\.]+)\)}/g; 
-            const matches = regex.exec(numString)
-            // console.log('Match is ' + matches[1])
-            if (matches.length > 1){
-                return Number(matches[1])
-            }
-            throw new Exception(`Unable to parse number from ${numString}`)
-        }
-    }
-
     getAstSortKind() {
         return Z3.Z3_get_sort_kind(this.context.ctx, Z3.Z3_get_sort(this.context.ctx, this.ast));
     }
@@ -101,12 +87,10 @@ class Expr {
 
     // Use this to get the value at the index of an array 
     selectFromIndex(index) {
-        let result = this.context.mkSelect(this, index);
-        return result;
+        return this.context.mkSelect(this, index);
     }
 
     asConstant(model) {
-        console.log('Entering As Constant')
         switch (this.getAstSortKind()) {
             
             case Z3.INT_SORT:
@@ -127,8 +111,6 @@ class Expr {
             }
 
             case Z3.ARRAY_SORT: {
-                console.log(this);
-                console.log(`This length ${this.length}`)
                 const arrayLength = model.eval(this.length).asConstant(model);                
                 let array = [];
                 
@@ -146,7 +128,6 @@ class Expr {
                 return undefined;
             }
         }
-        console.log('Exiting As Constant')
     }
 
     simplify() {
