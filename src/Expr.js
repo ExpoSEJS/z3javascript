@@ -101,7 +101,8 @@ class Expr {
 
     // Use this to get the value at the index of an array 
     selectFromIndex(index) {
-        return this.context.mkSelect(this, index);
+        let result = this.context.mkSelect(this, index);
+        return result;
     }
 
     asConstant(model) {
@@ -126,13 +127,15 @@ class Expr {
             }
 
             case Z3.ARRAY_SORT: {
-                const arrayLength = this.context.mkInt2Real(this.length).simplify().asConstant()                 
+                console.log(this);
+                console.log(`This length ${this.length}`)
+                const arrayLength = model.eval(this.length).asConstant(model);                
                 let array = [];
                 
                 for (let i = 0; i < arrayLength; i++) {
                     const targetIndex = this.context.mkIntVal(i);
-                    const targetAt = this.context.selectFromIndex(targetIndex);
-                    array.push(targetAt.asConstant());
+                    const targetAt = this.selectFromIndex(targetIndex);
+                    array.push(model.eval(targetAt).asConstant(model));
                 }
                 return array;
             }

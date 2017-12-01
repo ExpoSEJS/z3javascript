@@ -20,7 +20,13 @@ class Model {
 
     eval(expr) {
         let res = Z3.bindings_model_eval(this.context.ctx, this.mdl, expr.ast);
-        return res ? new Expr(this.context, res) : null;
+        if (res) {
+            // (AF) TODO Replace with uninterpreted function
+            let resultExpression = new Expr(this.context, res);     
+            resultExpression.length = expr.length;
+            return resultExpression;
+        }
+        return null;
     }
 
     destroy() {

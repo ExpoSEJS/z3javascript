@@ -105,7 +105,11 @@ class Context {
         let arraySort = this.mkArraySort(this.mkIntSort(), sort);
         let array = this.mkVar(name, arraySort);
         let len = this.mkIntVar(`${name}_Length`);
+        console.log('Length')
+        console.log(len); 
         array.length = len;
+        console.log('Array')
+        console.log(array);
         return array;
     }
 
