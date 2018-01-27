@@ -14,49 +14,49 @@ class Query {
 
 Query.MAX_REFINEMENTS = -1;
 Query.TOTAL = 0;
+Query.LAST_ATTEMPTS = 0;
 
 Query.canAttempt = function(currentAttempts) {
     return Query.MAX_REFINEMENTS == -1 || (currentAttempts < Query.MAX_REFINEMENTS);
 }
 
 Query.process = function(solver, alternatives) {
-    let attempts = 0;
+	let attempts = 0;
+	let model = null;
 
 	while (Query.canAttempt(attempts) && alternatives.length) {
-        
-        attempts++;
-        Query.TOTAL++;
+        	attempts++;
+        	Query.TOTAL++;
 
 		let next = alternatives.shift();
 
-		let model;
-
 		solver.push();
 
-        next.exprs.forEach(clause => solver.assert(clause));
-        model = solver.getModel();
+        	next.exprs.forEach(clause => solver.assert(clause));
+        	model = solver.getModel();
 
-        solver.pop();
+        	solver.pop();
 
-        if (model) {
-            //Run all the checks and concat any alternatives
-            let Checks = next.checks.map(check => check(next, model));
-            alternatives = Checks.reduce((alt, next) => alt.concat(next.alternatives), alternatives);
+		if (model) {
+			//Run all the checks and concat any alternatives
+			const all_checks = next.checks.map(check => check(next, model));
+			alternatives = all_checks.reduce((alt, next) => alt.concat(next.alternatives), alternatives);
 
-            //Find any failing check
-        	let Failed = Checks.find(check => !check.isSAT);
-        	
-        	//If we have found a satisfying model return it otherwise add alternatives from check
-        	if (Failed) {
-                console.log('FAILED');
-        		model.destroy();
-        	} else {
-                return model;
-            }
-        } //Else unsat
+			//Find any failing check
+			const failed_check = all_checks.find(check => !check.isSAT);
+			
+			//If we have found a satisfying model return it otherwise add alternatives from check
+			if (failed_check) {
+				model.destroy();
+				model = null;
+			} else {
+				break;
+			}
+		}
 	}
 
-    return null;
+	Query.LAST_ATTEMPTS = attempts;
+	return model;
 }
 
 export default Query;
