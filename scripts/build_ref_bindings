@@ -1,4 +1,3 @@
-#!/bin/bash -e
 #Copyright Blake Loring <blake_l@parsed.uk> 2015
 
 entry="$(cat ./templates/pre_ref_bindings.js)"
