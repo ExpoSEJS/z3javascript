@@ -1,7 +1,0 @@
-#Copyright Blake Loring <blake_l@parsed.uk> 2015
-
-entry="$(cat ./templates/pre_em_bindings.js)"
-binding="$(cat ./bin/z3_bindings_built.js)"
-exit="$(cat ./templates/post_em_bindings.js)"
-
-printf "$entry \n\n$binding \n\n$exit" > ./bin/z3_bindings_em.js
