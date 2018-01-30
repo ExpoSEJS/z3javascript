@@ -7,27 +7,14 @@ else
   mkdir bin
 fi
 
-#Have to install as postinstall is broken on 0.12.7 on Ubuntu
-./scripts/install_babel
+echo "DllBuild"
+./scripts/build_z3
 
-if [ ! -z ${Z3_WEB} ]; then
-	echo "Em Build"
-	./scripts/get_emscripten
-	./scripts/build_z3
-else
-	echo "DllBuild"
-	./scripts/build_z3_std
-fi
-
+echo "Building Bindings"
 ./scripts/binds
 
-if [ ! -z ${Z3_WEB} ]; then
-	echo "Em Build Cp"
-	cp ./bin/z3_bindings_em_es5.js ./bin/package.js
-else
-	echo "DllBuild Cp"
-	cp ./bin/z3_bindings_ref_es5.js ./bin/package.js
-fi
+echo "Bindings Cp"
+cp ./bin/z3_bindings_ref_es5.js ./bin/package.js
 
 echo "Done Z3JS"
 

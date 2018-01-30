@@ -1,5 +1,0 @@
-#Copyright Blake Loring <blake_l@parsed.uk> 2015
-
-npm install babel-cli
-npm install babel-preset-es2015
-npm install babel-preset-stage-0
