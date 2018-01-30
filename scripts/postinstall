@@ -1,4 +1,4 @@
 #Copyright Blake Loring <blake_l@parsed.uk> 2015
 ./scripts/pull_z3
-./setup
+./scripts/setup
 exit 0

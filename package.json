@@ -15,7 +15,7 @@
   },
   "scripts": {
     "prepublish": "",
-    "postinstall": "./postinstall",
+    "postinstall": "./scripts/postinstall",
     "build": "",
     "test": "./test"
   },
