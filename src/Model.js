@@ -22,7 +22,7 @@ class Model {
         let res = Z3.bindings_model_eval(this.context.ctx, this.mdl, expr.ast);
         if (res) {
             // (AF) TODO Replace with uninterpreted function
-            let resultExpression = new Expr(this.context, res);     
+            let resultExpression = new Expr(this.context, res); 
             resultExpression.length = expr.length;
             return resultExpression;
         }

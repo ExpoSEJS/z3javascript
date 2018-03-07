@@ -27,10 +27,13 @@ class Context {
         return l2 ? list.concat(l2) : list;
     }
 
+    /**
+     * TODO: is not recursive on array
+     */
     _buildChecks(args, not) {
         let checks = {
-            trueCheck: args.reduce((last, next) => this._appendList(last, next.checks.trueCheck), []),
-            falseCheck : args.reduce((last, next) => this._appendList(last, next.checks.falseCheck), [])
+            trueCheck: args.filter(next => next.checks).reduce((last, next) => this._appendList(last, next.checks.trueCheck), []),
+            falseCheck : args.filter(next => next.checks).reduce((last, next) => this._appendList(last, next.checks.falseCheck), [])
         };
 
         if (not) {
@@ -100,16 +103,16 @@ class Context {
         return this.mkInt(val, this.mkIntSort());
     }
 
+    mkUnsignedIntVal(val) {
+        return this.mkUnsignedInt(val, this.mkIntSort());
+    }
+
     mkArray(name, sort) {
         // Int indexed and contains homogenous type of sort
         let arraySort = this.mkArraySort(this.mkIntSort(), sort);
         let array = this.mkVar(name, arraySort);
         let len = this.mkIntVar(`${name}_Length`);
-        console.log('Length')
-        console.log(len); 
         array.length = len;
-        console.log('Array')
-        console.log(array);
         return array;
     }
 
@@ -411,7 +414,35 @@ class Context {
     }
 
     mkConstArray(sort, v) {
-        return new Expr(this, this.ctx, Z3.Z3_mk_const_array(this.ctx, sort, v.ast));
+        return new Expr(this, Z3.Z3_mk_const_array(this.ctx, sort, v.ast));
+    }
+
+    /**
+     * Quantifiers
+     * SEE: https://stackoverflow.com/questions/9777381/c-api-for-quantifiers
+     */
+
+    /// https://z3prover.github.io/api/html/group__capi.html#gaa80db40fee2eb0124922726e1db97b43
+    mkBound(index, sort) {
+        return new Expr(this, Z3.Z3_mk_bound(this.ctx, index, sort));
+    }
+
+    /// Weight, and patterns are optional. Bound should be an array of consts.
+    mkForAllConst(bound, body, patterns = [], weight = 0) {
+        return this._build(Z3.mkForAllConst, weight, bound.length, bound, patterns.length, patterns, body);
+    }
+
+    mkExists(decl_names, sorts, body, patterns = [], weight = 0) {
+        return this._build(Z3.Z3_mk_exists, weight, patterns.length, patterns, decl_names.length, [sorts], decl_names, body);
+    }
+
+    /// Weight, and patterns are optional. Bound should be an array of consts.
+    mkExistsConst(bound, body, patterns = [], weight = 0) {
+        return this._build(Z3.Z3_mk_exists_const, weight, bound.length, bound, patterns.length, patterns, body);
+    }
+
+    mkPattern(terms) {
+        return this._build(Z3.Z3_mk_pattern, this.mkIntVal(terms.length), ...terms);
     }
 }
 
