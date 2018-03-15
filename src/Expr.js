@@ -90,12 +90,9 @@ class Expr {
     }
 
     getAt(indexSymbol) {
-        let sort = Z3.Z3_get_sort(this.context.ctx, this.ast);
-        if (Z3.Z3_is_string_sort(this.context.ctx, sort)) {
-            return this.context.mkSeqAt(this, indexSymbol);
-        } else {
-            return this.context.mkSelect(this, indexSymbol);
-        }
+        const sort = Z3.Z3_get_sort(this.context.ctx, this.ast);
+        const is_string = Z3.Z3_is_string_sort(this.context.ctx, sort);
+        return is_string ? this.context.mkSeqAt(this, indexSymbol) : this.context.mkSelect(this, indexSymbol);
     }
 
     setLength(l) {
