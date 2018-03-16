@@ -89,10 +89,14 @@ class Expr {
         }
     }
 
-    getAt(indexSymbol) {
+    getField(indexSymbol) {
         const sort = Z3.Z3_get_sort(this.context.ctx, this.ast);
         const is_string = Z3.Z3_is_string_sort(this.context.ctx, sort);
         return is_string ? this.context.mkSeqAt(this, indexSymbol) : this.context.mkSelect(this, indexSymbol);
+    }
+
+    setField(indexSymbol, valueSymbol) {
+        return this.context.mkStore(this, indexSymbol, valueSymbol);
     }
 
     setLength(l) {
