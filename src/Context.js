@@ -407,7 +407,8 @@ class Context {
     }
 
     mkStore(array, index, v) {
-        return this._build(Z3.Z3_mk_store, array, index, v);
+        return this._build(Z3.Z3_mk_store, array, index, v)
+                   .setLength(array);
     }
 
     mkConstArray(sort, v) {
