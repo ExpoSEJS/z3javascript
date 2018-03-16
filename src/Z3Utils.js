@@ -7,7 +7,14 @@
  * Recursively reduce Expr to AST
  */
 function astArray(args) {
-	return args.map(a => a instanceof Array ? astArray(a) : (a.ast ? a.ast : a));
+	return args.map(a => {
+
+        if (a instanceof Array) {
+            return astArray(a);
+        }
+
+        return a.ast || a;
+    });
 }
 
 export default {

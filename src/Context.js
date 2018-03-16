@@ -31,9 +31,10 @@ class Context {
      * TODO: is not recursive on array
      */
     _buildChecks(args, not) {
+
         let checks = {
             trueCheck: args.filter(next => next.checks).reduce((last, next) => this._appendList(last, next.checks.trueCheck), []),
-            falseCheck : args.filter(next => next.checks).reduce((last, next) => this._appendList(last, next.checks.falseCheck), [])
+            falseCheck: args.filter(next => next.checks).reduce((last, next) => this._appendList(last, next.checks.falseCheck), [])
         };
 
         if (not) {
@@ -418,7 +419,8 @@ class Context {
     }
 
     mkConstArray(sort, v) {
-        return new Expr(this, Z3.Z3_mk_const_array(this.ctx, sort, v.ast));
+        return this._build(Z3.Z3_mk_const_array, sort, v)
+                   .setLength(this.mkIntVal(v.length));
     }
 
     /**
@@ -428,7 +430,7 @@ class Context {
 
     /// https://z3prover.github.io/api/html/group__capi.html#gaa80db40fee2eb0124922726e1db97b43
     mkBound(index, sort) {
-        return new Expr(this, Z3.Z3_mk_bound(this.ctx, index, sort));
+        return this._build(Z3.Z3_mk_bound, index, sort);
     }
 
     /// Weight, and patterns are optional. Bound should be an array of consts.
