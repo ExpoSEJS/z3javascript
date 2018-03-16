@@ -1,0 +1,9 @@
+#Copyright Blake Loring <blake_l@parsed.uk> 2015
+
+#Fix for broken postinstall being executed before dependencies are actually installed
+npm install babel-cli babel-preset-env
+#EOF
+
+./scripts/pull_z3
+./scripts/setup
+exit 0

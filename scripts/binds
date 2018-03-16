@@ -1,7 +1,5 @@
-#!/bin/bash -e
 #Copyright Blake Loring <blake_l@parsed.uk> 2015
 
 ./scripts/build_bindings
-./scripts/build_em_bindings
 ./scripts/build_ref_bindings
 ./scripts/compile_to_es5

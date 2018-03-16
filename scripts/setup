@@ -1,0 +1,24 @@
+#Copyright Blake Loring <blake_l@parsed.uk> 2015
+
+#Necessary as npm doesnt want to copy .PHONY and bin/
+if [ -e bin ]; then
+	echo "no bin dir"
+else
+  mkdir bin
+fi
+
+echo "DllBuild"
+./scripts/build_z3
+
+echo "Building Bindings"
+./scripts/binds
+
+echo "Bindings Cp"
+cp ./bin/z3_bindings_ref_es5.js ./bin/package.js
+
+echo "Done Z3JS"
+
+echo "Building Wrapper"
+./scripts/build_wrapper
+
+exit 0

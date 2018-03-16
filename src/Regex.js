@@ -666,12 +666,15 @@ function RegexRecursive(ctx, regex, idx) {
     let implier = captures[0];
 
     let startIndex;
+    let anchoredStart = false;
+    let anchoredEnd = false;
 
     if (regex[0] !== '^') {
         let startFiller = nextFiller();
         ast = ctx.mkReConcat(ctx.mkReStar(TruelyAny()), ast);
         implier = ctx.mkSeqConcat([startFiller, implier]);
         startIndex = ctx.mkSeqLength(startFiller);
+        anchoredStart = true;
     } else {
         startIndex = ctx.mkIntVal(0);
     }
@@ -679,6 +682,7 @@ function RegexRecursive(ctx, regex, idx) {
     if (regex[regex.length - 1] !== '$') {
         ast = ctx.mkReConcat(ast, ctx.mkReStar(TruelyAny()));
         implier = ctx.mkSeqConcat([implier, nextFiller()]);
+        anchoredEnd = true;
     }
 
     //TODO: Fix tagging to be multiline
@@ -688,6 +692,8 @@ function RegexRecursive(ctx, regex, idx) {
         assertions: assertions,
         captures: captures,
         startIndex: startIndex,
+        anchoredStart: anchoredStart,
+        anchoredEnd: anchoredEnd,
         backreferences: backreferences,
         idx: idx //Return the index so recursion assertions work out
     };

@@ -75,6 +75,19 @@ class Context {
         Z3.Z3_del_context(this.ctx);
     }
 
+    mkArray(name, baseSort) {
+        let arraySort = this.mkArraySort(this.mkIntSort(), baseSort);
+        let arrayInstance = this.mkVar(name, arraySort);
+        let arrayLen = this.mkIntVar(name + '_Array_Length');
+        return arrayInstance.setLength(arrayLen);
+    }
+
+    mkObject(name, baseSort) {
+        let objectSort = this.mkArraySort(this.mkStringSort(), baseSort);
+        let objectInstance = this.mkVar(name, objectSort);
+        return objectInstance;
+    }
+
     mkVar(name, sort) {
         return new Expr(this, Z3.Z3_mk_const(this.ctx, this.mkStringSymbol(name), sort));
     }
@@ -405,12 +418,17 @@ class Context {
      * Arrays
      */
 
+    mkArraySort(indexSort, elemSort) {
+        return Z3.Z3_mk_array_sort(this.ctx, indexSort, elemSort);
+    }
+
     mkSelect(array, index) {
         return this._build(Z3.Z3_mk_select, array, index);
     }
 
     mkStore(array, index, v) {
-        return this._build(Z3.Z3_mk_store, array, index, v);
+        return this._build(Z3.Z3_mk_store, array, index, v)
+                   .setLength(array.getLength());
     }
 
     mkConstArray(sort, v) {
