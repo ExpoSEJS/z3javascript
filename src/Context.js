@@ -452,7 +452,7 @@ class Context {
     }
 
     mkPattern(terms) {
-        return this._build(Z3.Z3_mk_pattern, terms.length, ...terms);
+        return this._build(Z3.Z3_mk_pattern, terms.length, terms);
     }
 }
 
