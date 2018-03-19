@@ -11,18 +11,15 @@ import Context from './Context';
 
 class Solver {
 
-    constructor(context, timeout, incremental) {
+    constructor(context, incremental, options) {
         this.context = context;
 
         let config = Z3.Z3_mk_params(this.context.ctx); 
         Z3.Z3_params_inc_ref(this.context.ctx, config);
 
-        Z3.Z3_params_set_uint(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, "smt.random_seed"), Math.floor(Math.random() * 10000));
-        //Z3.Z3_params_set_symbol(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, "smt.string_solver"), Z3.Z3_mk_string_symbol(this.context.ctx, "z3str3"));
-
-        if (timeout) {
-            Z3.Z3_params_set_uint(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, "soft_timeout"), timeout);
-        }
+	options.forEach(option => {
+		Z3.Z3_params_set_uint(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, option.name), option.value);	
+	});
 
         if (incremental) {
             this.slv = Z3.Z3_mk_simple_solver(this.context.ctx);
