@@ -17,9 +17,13 @@ class Solver {
         let config = Z3.Z3_mk_params(this.context.ctx); 
         Z3.Z3_params_inc_ref(this.context.ctx, config);
 
-	options.forEach(option => {
-		Z3.Z3_params_set_uint(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, option.name), option.value);	
-	});
+        options.forEach(option => {
+            if (typeof option.value === "numer") {
+                Z3.Z3_params_set_uint(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, option.name), option.value);	
+            } else if (typeof option.value === "string") {
+                Z3.Z3_params_set_symbol(this.context.ctx, config, Z3.Z3_mk_string_symbol(this.context.ctx, option.name), Z3.Z3_mk_string_symbol(this.context.ctx, option.value));
+            }
+        });
 
         if (incremental) {
             this.slv = Z3.Z3_mk_simple_solver(this.context.ctx);
