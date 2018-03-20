@@ -257,11 +257,7 @@ class Context {
 
     mkEq(left, right) {
         return this._build(Z3.Z3_mk_eq, left, right);
-    }
-    
-    mkRealToInt(real) {
-        return this._build(Z3.Z3_mk_real2int, real);
-    }
+    } 
 
     //missing: distinct
 
@@ -365,12 +361,20 @@ class Context {
         return this._build(Z3.Z3_mk_ge, left, right);
     }
 
-    mkInt2Real(arg) {
-        return this._build(Z3.Z3_mk_int2real, arg);
+    mkRealToInt(real) {
+        return this._build(Z3.Z3_mk_real2int, real);
     }
 
-    mkReal2Int(arg) {
-        return this._build(Z3.Z3_mk_real2int, arg);
+    mkIntToReal(ival) {
+        return this._build(Z3.Z3_mk_int2real, ival);
+    }
+
+    mkIntToBv(ival) {
+        return this._build(Z3.Z3_mk_int2bv, ival);
+    }
+
+    mkBvToInt(bval) {
+        return this._build(Z3.Z3_mk_bv2int, bval);
     }
 
     mkIsInt(arg) {
