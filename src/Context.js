@@ -446,6 +446,10 @@ class Context {
         return this._build(Z3.mkForAllConst, weight, bound.length, bound, patterns.length, patterns, body);
     }
 
+    mkForAll(decl_names, sorts, body, patterns = [], weight = 0) {
+        return this._build(Z3.Z3_mk_forall, weight, patterns.length, patterns, decl_names.length, [sorts], decl_names, body);
+    }
+
     mkExists(decl_names, sorts, body, patterns = [], weight = 0) {
         return this._build(Z3.Z3_mk_exists, weight, patterns.length, patterns, decl_names.length, [sorts], decl_names, body);
     }
@@ -456,7 +460,7 @@ class Context {
     }
 
     mkPattern(terms) {
-        return this._build(Z3.Z3_mk_pattern, this.mkIntVal(terms.length), ...terms);
+        return this._build(Z3.Z3_mk_pattern, terms.length, terms);
     }
 }
 

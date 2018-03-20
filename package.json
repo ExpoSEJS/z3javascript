@@ -4,8 +4,8 @@
   "description": "ExpoSE: Z3 Prover bindings for JavaScript",
   "main": "./bin/Z3.js",
   "dependencies": {
-    "babel-cli": "*",
-    "babel-preset-env": "*",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "ffi": "*",
     "node-gyp": "*",
     "ref": "*",
