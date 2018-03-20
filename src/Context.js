@@ -334,7 +334,7 @@ class Context {
     }
 
     mkBitwiseShiftRight(arg1, arg2) {
-        return this._build(Z3.Z3_mk_bvshr, arg1, arg2);
+        return this._build(Z3.Z3_mk_bvlshr, arg1, arg2);
     }
 
     mkMod(arg1, arg2) {
