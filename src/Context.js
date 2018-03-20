@@ -370,11 +370,11 @@ class Context {
     }
 
     mkIntToBv(ival) {
-        return this._build(Z3.Z3_mk_int2bv, ival);
+        return this._build(Z3.Z3_mk_int2bv, 32, ival);
     }
 
     mkBvToInt(bval) {
-        return this._build(Z3.Z3_mk_bv2int, bval);
+        return this._build(Z3.Z3_mk_bv2int, bval, true);
     }
 
     mkIsInt(arg) {
