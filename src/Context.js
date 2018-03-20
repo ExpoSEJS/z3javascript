@@ -329,6 +329,14 @@ class Context {
         return this._build(Z3.Z3_mk_div, arg1, arg2);
     }
 
+    mkBitwiseShiftLeft(arg1, arg2) {
+        return this._build(Z3.Z3_mk_bvshl, arg1, arg2);
+    }
+
+    mkBitwiseShiftRight(arg1, arg2) {
+        return this._build(Z3.Z3_mk_bvshr, arg1, arg2);
+    }
+
     mkMod(arg1, arg2) {
         return this._build(Z3.Z3_mk_mod, arg1, arg2);
     }
