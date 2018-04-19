@@ -3,7 +3,7 @@ let Z3 = ffi.Library(libPath, GeneratedBindings);
 Z3.bindings_model_eval = function(ctx, mdl, expr) {
 	var pAST = ref.alloc(Z3.Ast, null);
     var result = Z3.Z3_model_eval(ctx, mdl, expr, true, pAST);
-    return result > 0 ? pAST.deref() : null;
+    return result != 0 ? pAST.deref() : null;
 }
 
 //////// End Z3 function definitions
