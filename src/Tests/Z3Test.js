@@ -6,7 +6,7 @@
 import Z3 from '../Z3';
 
 const ctx = new Z3.Context();
-const solver = new Z3.Solver(ctx, 1000);
+const solver = new Z3.Solver(ctx, false, []);
 
 function Test(Origin) {
 	solver.reset();

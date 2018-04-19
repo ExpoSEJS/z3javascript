@@ -12,6 +12,7 @@ import Context from './Context';
 class Solver {
 
     constructor(context, incremental, options) {
+        options = options || [];
         this.context = context;
 
         let config = Z3.Z3_mk_params(this.context.ctx); 
