@@ -6,7 +6,7 @@ if [ -e build ]; then
     rm -rf ./build/
 fi
 
-python scripts/mk_make.py
+python scripts/mk_make.py -x
 (cd ../ && ./scripts/copy_bindings)
 cd build
 
