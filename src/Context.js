@@ -76,6 +76,10 @@ class Context {
         Z3.Z3_del_context(this.ctx);
     }
 
+    mkApp(func, args) {
+        return this._build(Z3.Z3_mk_app, args.length, args);
+    }
+
     mkArray(name, baseSort) {
         let arraySort = this.mkArraySort(this.mkIntSort(), baseSort);
         let arrayInstance = this.mkVar(name, arraySort);
