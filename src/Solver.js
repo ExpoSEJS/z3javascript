@@ -72,7 +72,7 @@ class Solver {
         
         const vector_size = Z3.Z3_ast_vector_size(this.context.ctx, assertions);
         
-        const last_element = new Expr(this.context.ctx,
+        const last_element = new Expr(this.context,
             Z3.Z3_ast_vector_get(this.context.ctx, assertions, vector_size - 1)
         );
 
