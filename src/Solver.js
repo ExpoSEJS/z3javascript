@@ -58,6 +58,10 @@ class Solver {
         return Z3.Z3_solver_check(this.context.ctx, this.slv) === Z3.TRUE;
     }
 
+    fromString(str) {
+        Z3.Z3_solver_from_string(this.context.ctx, this.slv, str);
+    }
+
     getModel() {
         if (this.check()) {
             return new Model(this.context, Z3.Z3_solver_get_model(this.context.ctx, this.slv));
