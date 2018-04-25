@@ -77,7 +77,7 @@ class Context {
     }
 
     mkApp(func, args) {
-        return this._build(Z3.Z3_mk_app, args.length, args);
+        return this._build(Z3.Z3_mk_app, func, args.length, args);
     }
 
     mkArray(name, baseSort) {
