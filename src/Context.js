@@ -247,6 +247,10 @@ class Context {
         return new Expr(this, Z3.Z3_mk_const(this.ctx, symb, sort));
     }
 
+    mkFunc(args, sort) {
+        return this._build(Z3.Z3_mk_func_decl, args.length, args, sort);
+    }
+
     /**
      * Propositional logic and equality
      */
