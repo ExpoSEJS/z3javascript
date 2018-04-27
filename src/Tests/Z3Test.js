@@ -90,4 +90,6 @@ function Test(Origin) {
 	}
 }
 
+Test(/hello/);
+
 module.exports = Test;

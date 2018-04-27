@@ -42,8 +42,7 @@ class Expr {
     }
 
     toString() {
-        let inner = Z3.Z3_ast_to_string(this.context.ctx, this.ast);
-        return "Expr {" + inner + "}";
+        return Z3.Z3_ast_to_string(this.context.ctx, this.ast);
     }
 
     isString() {
