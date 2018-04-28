@@ -45,8 +45,12 @@ class Expr {
         return Z3.Z3_ast_to_string(this.context.ctx, this.ast);
     }
 
+    _sortName() {
+        return Z3.Z3_get_symbol_string(this.context.ctx, Z3.Z3_get_sort_name(this.context.ctx, Z3.Z3_get_sort(this.context.ctx, this.ast)));
+    }
+
     isString() {
-        return Z3.Z3_is_string(this.context.ctx, this.ast);
+        return this._sortName() == "String";
     }
     
     toPrettyString() {
@@ -80,8 +84,7 @@ class Expr {
     }
 
     getLength() {
-        let sort = Z3.Z3_get_sort(this.context.ctx, this.ast);
-        if (Z3.Z3_is_string_sort(this.context.ctx, sort)) {
+        if (this.isString()) {
             return this.context.mkSeqLength(this);
         } else {
             return this._length;
@@ -118,7 +121,7 @@ class Expr {
     }
 
     asConstant(mdl) {
-        const sort = Z3.Z3_get_symbol_string(this.context.ctx, Z3.Z3_get_sort_name(this.context.ctx, Z3.Z3_get_sort(this.context.ctx, this.ast)));
+        const sort = this._sortName(); 
 
         if (sort === "Real") {
             return this.getRealValue();
