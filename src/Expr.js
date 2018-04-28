@@ -122,12 +122,12 @@ class Expr {
         let sort = Z3.Z3_get_sort(this.context.ctx, this.ast);
         let kind = Z3.Z3_get_sort_kind(this.context.ctx, sort);
 
-        if (Z3.Z3_is_string_sort(this.context.ctx, sort)) {
-            return this.escapeString(Z3.Z3_get_string(this.context.ctx, this.ast));
-        } else if (Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_real_sort(this.context.ctx))  || Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_int_sort(this.context.ctx))) {
+        if (Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_real_sort(this.context.ctx))  || Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_int_sort(this.context.ctx))) {
             return this.getRealValue();
         } else if (Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_bool_sort(this.context.ctx))) {
             return this.getBoolValue();
+        } else if (Z3.Z3_is_string_sort(this.context.ctx, sort)) {
+            return this.escapeString(Z3.Z3_get_string(this.context.ctx, this.ast));
         } else if (this.getLength()) { //Array
 
             //TODO: Propogating array lengths like this is horrible, find a better way
