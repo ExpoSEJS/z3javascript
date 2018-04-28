@@ -118,14 +118,13 @@ class Expr {
     }
 
     asConstant(mdl) {
-        let sort = Z3.Z3_get_sort(this.context.ctx, this.ast);
-        let kind = Z3.Z3_get_sort_kind(this.context.ctx, sort);
+        const sort = Z3.Z3_get_symbol_string(this.context.ctx, Z3.Z3_get_sort_name(this.context.ctx, Z3.Z3_get_sort(this.context.ctx, this.ast)));
 
-        if (Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_real_sort(this.context.ctx))  || Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_int_sort(this.context.ctx))) {
+        if (sort === "Real") {
             return this.getRealValue();
-        } else if (Z3.Z3_is_eq_sort(this.context.ctx, sort, Z3.Z3_mk_bool_sort(this.context.ctx))) {
+        } else if (sort === "Bool") {
             return this.getBoolValue();
-        } else if (Z3.Z3_is_string_sort(this.context.ctx, sort)) {
+        } else if (sort === "String") {
             return this.escapeString(Z3.Z3_get_string(this.context.ctx, this.ast));
         } else if (this.getLength()) { //Array
 
