@@ -123,7 +123,7 @@ class Expr {
     asConstant(mdl) {
         const sort = this._sortName(); 
 
-        if (sort === "Real") {
+        if (sort === "Real" || sort === "Int") {
             return this.getRealValue();
         } else if (sort === "Bool") {
             return this.getBoolValue();
