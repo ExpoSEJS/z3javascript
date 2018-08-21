@@ -1,9 +1,45 @@
 let Z3 = ffi.Library(libPath, GeneratedBindings);
 
+const POINTERS = {};
+let last_pointer_id = 0;
+
+function Ptr(id) { 
+    this.id = id;
+}
+
+function wrapPtr(ptr) {
+    POINTERS[last_pointer_id] = ptr;
+    return new Ptr(last_pointer_id++); 
+}
+
+function unwrap(ptr) {
+    if (ptr instanceof Ptr) {
+        return POINTERS[ptr.id];
+    } else {
+        return ptr;
+    }
+}
+
 Z3.bindings_model_eval = function(ctx, mdl, expr) {
 	var pAST = ref.alloc(Z3.Ast, null);
     var result = Z3.Z3_model_eval(ctx, mdl, expr, true, pAST);
     return result != 0 ? pAST.deref() : null;
+}
+
+for (let i in Z3) {
+    if (typeof(Z3[i]) == "function") {
+        const originFn = Z3[i];
+
+        Z3[i] = function() {
+            let new_args = [];
+
+            for (let i = 0; i < arguments.length; i++) {
+                new_args.push(unwrap(arguments[i]));
+            }
+
+            originFn.apply(this, new_args);
+        } 
+    }
 }
 
 //////// End Z3 function definitions
