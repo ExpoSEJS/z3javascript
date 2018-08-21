@@ -1,20 +1,29 @@
-let Z3 = ffi.Library(libPath, GeneratedBindings);
+const Z3 = ffi.Library(libPath, GeneratedBindings);
 
 const POINTERS = {};
 let last_pointer_id = 0;
 
-function Ptr(id) { 
+function Ptr(id) {
     this.id = id;
 }
 
 function wrapPtr(ptr) {
-    POINTERS[last_pointer_id] = ptr;
-    return new Ptr(last_pointer_id++); 
+    if (('' + ptr).indexOf('<Buffer') != -1) {
+        POINTERS[last_pointer_id] = ptr;
+        return new Ptr(last_pointer_id++);
+    } else {
+        return ptr;
+    }
 }
 
 function unwrap(ptr) {
     if (ptr instanceof Ptr) {
         return POINTERS[ptr.id];
+    } else if (ptr instanceof Array) {
+        for (let i = 0; i < ptr.length; i++) {
+            ptr[i] = unwrap(ptr[i]);
+        }
+        return ptr;
     } else {
         return ptr;
     }
