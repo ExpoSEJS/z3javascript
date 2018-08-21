@@ -46,7 +46,7 @@ for (let i in Z3) {
                 new_args.push(unwrap(arguments[i]));
             }
 
-            originFn.apply(this, new_args);
+            return wrapPtr(originFn.apply(this, new_args));
         } 
     }
 }
