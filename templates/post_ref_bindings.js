@@ -3,21 +3,17 @@ const Z3 = ffi.Library(libPath, GeneratedBindings);
 const POINTERS = {};
 let last_pointer_id = 0;
 
-function Ptr(id) {
-    this.id = id;
-}
-
 function wrapPtr(ptr) {
-    if (('' + ptr).indexOf('<Buffer') != -1) {
+    if (ptr && typeof(ptr) == "object") {
         POINTERS[last_pointer_id] = ptr;
-        return new Ptr(last_pointer_id++);
+        return { id: last_pointer_id++, _ptr: true };
     } else {
         return ptr;
     }
 }
 
 function unwrap(ptr) {
-    if (ptr instanceof Ptr) {
+    if (ptr && ptr._ptr) {
         return POINTERS[ptr.id];
     } else if (ptr instanceof Array) {
         for (let i = 0; i < ptr.length; i++) {
