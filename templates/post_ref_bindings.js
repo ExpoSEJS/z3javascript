@@ -1,5 +1,11 @@
 const Z3 = ffi.Library(libPath, GeneratedBindings);
 
+/**
+ * For some reason FFI doesn't work if a pointer passes to a renderer and then back to the master in Electron
+ * To work around this we maintain an internal heap and rewrite all incoming pointers
+ * TODO: Work out a way to clear free'd memory from the heap?
+ */
+
 const POINTERS = {};
 let last_pointer_id = 0;
 
@@ -25,11 +31,9 @@ function unwrap(ptr) {
     }
 }
 
-Z3.bindings_model_eval = function(ctx, mdl, expr) {
-	var pAST = ref.alloc(Z3.Ast, null);
-    var result = Z3.Z3_model_eval(ctx, mdl, expr, true, pAST);
-    return result != 0 ? pAST.deref() : null;
-}
+/**
+ * END OF UGLY HEAP
+ */
 
 for (let i in Z3) {
     if (typeof(Z3[i]) == "function") {
@@ -45,6 +49,28 @@ for (let i in Z3) {
             return wrapPtr(originFn.apply(this, new_args));
         } 
     }
+}/
+
+for (let i in Z3) {
+    if (typeof(Z3[i]) == "function") {
+        const originFn = Z3[i];
+
+        Z3[i] = function() {
+            let new_args = [];
+
+            for (let i = 0; i < arguments.length; i++) {
+                new_args.push(unwrap(arguments[i]));
+            }
+
+            return wrapPtr(originFn.apply(this, new_args));
+        } 
+    }
+}
+
+Z3.bindings_model_eval = function(ctx, mdl, expr) {
+	var pAST = ref.alloc(Z3.Ast, null);
+    var result = Z3.Z3_model_eval(ctx, mdl, expr, true, pAST);
+    return result != 0 ? pAST.deref() : null;
 }
 
 //////// End Z3 function definitions
