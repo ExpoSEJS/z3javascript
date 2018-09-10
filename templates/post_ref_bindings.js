@@ -49,7 +49,7 @@ for (let i in Z3) {
             return wrapPtr(originFn.apply(this, new_args));
         } 
     }
-}/
+}
 
 for (let i in Z3) {
     if (typeof(Z3[i]) == "function") {
