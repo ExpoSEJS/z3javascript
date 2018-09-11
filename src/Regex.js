@@ -406,44 +406,51 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
-    function ParseMaybeAssertion(captureIndex) {
-        if (current() == '(' && peek() == '?' && peek(2) == '=') {
-            next(3);
-            let SubRe = '^' + regex.slice(idx);
-            
-            let subexpression = RegexRecursive(ctx, SubRe, 0);
-            captures.concat(subexpression.captures.slice(1));
-            assertions = assertions.concat(subexpression.assertions);
-            idx += subexpression.idx;
+    function FindAssertEndParen() {
+        let count = 1;
 
-            let follows = RegexRecursive(ctx, '^' + regex.slice(idx), 0);
-            captures.concat(follows.captures.slice(1));
-            assertions = assertions.concat(follows.assertions);
-            idx += subexpression.idx + 1;
+        for (let i = idx; i < regex.length; i++) {
 
-            assertions.push(ctx.mkEq(subexpression.implier, follows.implier));
+            if (regex[i] == '(') {
+                count += 1;
+            }
 
-            return ctx.mkReIntersect(subexpression.ast, follows.ast);
-        } else if (current() == '(' && peek() == '?' && peek(2) == '!') {
-            next(3);
-            let SubRe = '^' + regex.slice(idx);
-            
-            let subexpression = RegexRecursive(ctx, SubRe, 0);
-            captures.concat(subexpression.captures.slice(1));
-            assertions = assertions.concat(subexpression.assertions);
-            idx += subexpression.idx;
+            if (regex[i] == ')') {
+                count -= 1;
+            }
 
-            let follows = RegexRecursive(ctx, '^' + regex.slice(idx), 0);
-            captures.concat(follows.captures.slice(1));
-            assertions = assertions.concat(follows.assertions);
-            idx += subexpression.idx + 1;
-
-            assertions.push(ctx.mkEq(subexpression.implier, follows.implier));
-
-            return ctx.mkReIntersect(ctx.mkReComplement(subexpression.ast), follows.ast);
-        } else {
-            return ParseMaybeCaptureGroupStart(captureIndex);
+            if (count == 0) { return i; }
         }
+
+        return undefined;
+    }
+
+    function ParseMaybeAssertion(captureIndex) {
+
+        if (current() == '(' && peek() == '?' && (peek(2) == '!' || peek(2) == '=')) {
+            let complement = peek(2) == '!';
+
+            next(3);
+
+            let SubRe = '^' + regex.slice(idx, FindAssertEndParen());
+            let FollowsRe ='^' + regex.slice(FindAssertEndParen() + 1);
+            
+            let subexpression = RegexRecursive(ctx, SubRe, 0);
+            captures.concat(subexpression.captures.slice(1));
+            assertions = assertions.concat(subexpression.assertions);
+            idx += subexpression.idx;
+
+            let follows = RegexRecursive(ctx, FollowsRe, 0);
+            captures.concat(follows.captures.slice(1));
+            assertions = assertions.concat(follows.assertions);
+            idx += subexpression.idx + 1;
+
+            assertions.push(ctx.mkEq(subexpression.implier, follows.implier));
+
+            return ctx.mkReIntersect(complement ? ctx.mkReComplement(subexpression.ast) : subexpression.ast, follows.ast);
+        }
+
+        return ParseMaybeCaptureGroupStart(captureIndex);
     }
 
     function ParseMaybePSQ(captureIndex) {
@@ -544,6 +551,7 @@ function RegexRecursive(ctx, regex, idx) {
 
             //TODO: This is horrible, anchors should be better
             if (more()) {
+                console.log('Parse ', current());
                 let capturesStart = captures.length;
 
                 let parsed = ParseMaybeLoop(captureIndex);
@@ -703,7 +711,7 @@ function RegexOuter(ctx, regex) {
     try {
         return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false);
     } catch (e) {
-        throw `${e.error.toString()} ${e.idx} ${e.remaining} parsing regex ${regex}`;
+        throw `${e.error.toString()} ${e.idx} "${e.remaining}" parsing regex "${regex}"`;
     }
 }
 

@@ -91,5 +91,6 @@ function Test(Origin) {
 }
 
 Test(/hello/);
+Test(/^((?!chrome|android).)*safari/i);
 
 module.exports = Test;
