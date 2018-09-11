@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ExpoSEJS/z3javascript.svg?branch=master)](https://travis-ci.org/ExpoSEJS/z3javascript)
+
 ## Z3Javascript
 
 A project to try and get Z3 running as a Javascript library. The project exercises a custom Z3 build through the library `ref`.
