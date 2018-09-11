@@ -15,7 +15,7 @@
     "prepublish": "",
     "postinstall": "./scripts/postinstall",
     "build": "",
-    "test": "./test"
+    "test": "Z3_PATH=./bin/libz3.so ./test"
   },
   "repository": {
     "type": "git",
