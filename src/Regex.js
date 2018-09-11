@@ -551,9 +551,8 @@ function RegexRecursive(ctx, regex, idx) {
 
             //TODO: This is horrible, anchors should be better
             if (more()) {
-                console.log('Parse ', current());
-                let capturesStart = captures.length;
 
+                let capturesStart = captures.length;
                 let parsed = ParseMaybeLoop(captureIndex);
 
                 if (shouldAddFillerIn) {
