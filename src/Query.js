@@ -35,11 +35,11 @@ Query.process = function(solver, alternatives) {
         	next.exprs.forEach(clause => solver.assert(clause));
         	model = solver.getModel();
 
-        	solver.pop();
+        solver.pop();
 
 		if (model) {
 			//Run all the checks and concat any alternatives
-			const all_checks = next.checks.map(check => check(next, model));
+			const all_checks = next.checks.map(check => check(next, model)).filter(x => !!x);
 			alternatives = all_checks.reduce((alt, next) => alt.concat(next.alternatives), alternatives);
 
 			//Find any failing check
