@@ -176,12 +176,13 @@ function RegexRecursive(ctx, regex, idx) {
         let parsed_str = next();
 
         const IS_JUST_TEXT = /^[a-zA-Z0-9]$/;
+        const IS_SPECIAL = /^[*+?]$/;
         
         //Hack to greedly eat anything that is definately not a special character
         //Makes SMT formulee look prettier
         //We need to look ahead for this and just drop back to standard parsing atom by atom if
         //the lookahead is special
-        while (current() && IS_JUST_TEXT.test('' + current()) && IS_JUST_TEXT.test('' + peek())) {
+        while (current() && IS_JUST_TEXT.test(current()) && !IS_SPECIAL.test(peek())) {
             parsed_str += next();
         }
 
