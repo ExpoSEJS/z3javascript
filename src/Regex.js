@@ -267,7 +267,9 @@ function RegexRecursive(ctx, regex, idx) {
             } else if (c == 'f') {
                 return mk('\f');
             } else if (c == 'b' || c == 'B') {
-                throw BuildError('Word boundary currently unsupported');
+                //TODO: Fix word boundary support
+                //TODO: This is a really naive solution
+                return mk(' ');
             } else if (c >= '1' && c <= '9') {
 
                 let idx = parseInt(c);
