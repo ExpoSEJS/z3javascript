@@ -269,7 +269,9 @@ function RegexRecursive(ctx, regex, idx) {
             } else if (c == 'b' || c == 'B') {
                 throw BuildError('Word boundary currently unsupported');
             } else if (c >= '1' && c <= '9') {
+
                 let idx = parseInt(c);
+
                 if (idx < captures.length) {
                     backreferences = true;
                     addToCapture(captureIndex, captures[idx]);
@@ -278,6 +280,7 @@ function RegexRecursive(ctx, regex, idx) {
                 } else {
                     return mk('');
                 }
+
             } else if (c == '0') {
                 return mk('\\x00');
             }
@@ -541,7 +544,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseMaybeAtoms(captureIndex) {
 
-        let rollup = mk('');
+        let rollup = null;
 
         while (more()) {
 
@@ -566,7 +569,7 @@ function RegexRecursive(ctx, regex, idx) {
             }
         }
         
-        return rollup;
+        return rollup || mk('');
     }
 
     function either(v, left, right) {
