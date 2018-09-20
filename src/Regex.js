@@ -28,9 +28,7 @@ function FindClosingParen(regex, idx) {
 }
 
 function Desugar(regex) {
-
-    console.log('Start DS');
-
+ 
     let i;
 
     //Strip ?!
@@ -41,12 +39,9 @@ function Desugar(regex) {
 
     while ((i = regex.indexOf('(')) != -1 || (i = regex.indexOf(')')) != -1) {
         if (regex[i - 1] != '\\') {
-            console.log('start ' + regex);
-            regex = regex.slice(0, i) + regex.slice(i + 1);
+             regex = regex.slice(0, i) + regex.slice(i + 1);
         }
     }
- 
-    console.log('Strip', regex);   
 
     //Remove word boundaries
     regex = regex.replace(/\\b|\\B/g, '');
@@ -57,8 +52,6 @@ function Desugar(regex) {
 let REGEX_CTR = 0;
 
 function RegexRecursive(ctx, regex, idx) { 
-
-    console.log('DS:', regex, Desugar(regex));
 
     const pp_steps = [];
 
@@ -702,7 +695,16 @@ function RegexRecursive(ctx, regex, idx) {
         anchoredEnd = true;
     }
 
-    //TODO: PP assertions here
+    /**
+     * All assertions are post-processed into SMT
+     * This is done be re-parsing a desugared version of the regex and intersecting it with the AST
+     */
+    pp_steps.forEach(item => {
+        const lhs = Desugar(regex.substr(0, item.idx));
+        const rhs = Desugar(regex.substr(item.idx));
+
+        console.log('Split', '"' + lhs + '"', '"' + rhs + '"'); 
+    });
 
     //TODO: Fix tagging to be multiline
     return {
@@ -722,7 +724,7 @@ function RegexOuter(ctx, regex) {
     try {
         return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false);
     } catch (e) {
-        throw `${e.error.toString()} ${e.idx} "${e.remaining}" parsing regex "${regex}"`;
+        throw `${e.error ? e.error.toString() : '' + e} ${e.idx} "${e.remaining}" parsing regex "${regex}"`;
     }
 }
 
