@@ -722,7 +722,6 @@ function RegexRecursive(ctx, regex, idx) {
             const r = ctx.mkReConcat(r1, r2);
 
             ast = ctx.mkReIntersect(ast, ctx.mkReUnion(l, r));
-            console.log(ast + '');
         } else {
             throw 'Currently unsupported';
         }
