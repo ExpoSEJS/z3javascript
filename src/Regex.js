@@ -267,9 +267,8 @@ function RegexRecursive(ctx, regex, idx) {
             } else if (c == 'f') {
                 return mk('\f');
             } else if (c == 'b' || c == 'B') {
-                //TODO: Fix word boundary support
-                //TODO: This is a really naive solution
-                return mk(' ');
+                //TODO: WB
+                throw BuildError('WB unsupported');
             } else if (c >= '1' && c <= '9') {
 
                 let idx = parseInt(c);
@@ -412,56 +411,9 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
-    function FindAssertEndParen() {
-        let count = 1;
-
-        for (let i = idx; i < regex.length; i++) {
-
-            if (regex[i] == '(') {
-                count += 1;
-            }
-
-            if (regex[i] == ')') {
-                count -= 1;
-            }
-
-            if (count == 0) { return i; }
-        }
-
-        return undefined;
-    }
-
-    function ParseMaybeAssertion(captureIndex) {
-
-        if (current() == '(' && peek() == '?' && (peek(2) == '!' || peek(2) == '=')) {
-            let complement = peek(2) == '!';
-
-            next(3);
-
-            let SubRe = '^' + regex.slice(idx, FindAssertEndParen());
-            let FollowsRe ='^' + regex.slice(FindAssertEndParen() + 1);
-            
-            let subexpression = RegexRecursive(ctx, SubRe, 0);
-            captures.concat(subexpression.captures.slice(1));
-            assertions = assertions.concat(subexpression.assertions);
-            idx += subexpression.idx;
-
-            let follows = RegexRecursive(ctx, FollowsRe, 0);
-            captures.concat(follows.captures.slice(1));
-            assertions = assertions.concat(follows.assertions);
-            idx += subexpression.idx + 1;
-
-            assertions.push(ctx.mkEq(subexpression.implier, follows.implier));
-
-            return ctx.mkReIntersect(complement ? ctx.mkReComplement(subexpression.ast) : subexpression.ast, follows.ast);
-        }
-
-        return ParseMaybeCaptureGroupStart(captureIndex);
-    }
-
     function ParseMaybePSQ(captureIndex) {
 
-        let atom = ParseMaybeAssertion(captureIndex);
+        let atom = ParseMaybeCaptureGroupStart(captureIndex);
 
         if (current() == '*') {
             next();

@@ -60,18 +60,21 @@ function Test(Origin) {
 		if (!real_match) {
 			return [];
 		} else {
+
 			real_match = Origin.exec(model.eval(symbolic).asConstant()).map(match => match || '');
 			console.log(`Here ${real_match.length} in ${TestRegex.captures.length}`);
+
 			TestRegex.captures.forEach((x, idx) => {
 				console.log(`${x} => ${real_match[idx]}`);
 			});
+
 			let query_list = TestRegex.captures.map((cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap));
 			return [new Z3.Query(query.exprs.concat(query_list), [Z3.Check(CheckCorrect, (query, model) => [])])];
 		}
+
 	});
 
 	let query = new Z3.Query([], [CheckFixed, NotMatch]);
-
 	let mdl = query.getModel(solver);
 
 	if (mdl) {
@@ -91,6 +94,8 @@ function Test(Origin) {
 }
 
 Test(/hello/);
+Test(/\bGiggle\b/);
 Test(/^((?!chrome|android).)*safari/i);
+Test(/^\bGiggle\b$/);
 
 module.exports = Test;
