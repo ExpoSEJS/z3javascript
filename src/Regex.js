@@ -2,15 +2,65 @@
  * Copyright Blake Loring <blake_l@parsed.uk> 2015
  * Approximate JavaScript regular expression to Z3 regex parser
  */
+
 function CullOuterRegex(regex) {
     let firstSlash = regex.indexOf('/');
     let lastSlash = regex.lastIndexOf('/');
     return regex.substr(firstSlash + 1, lastSlash - 1);
 }
 
+function FindClosingParen(regex, idx) {
+    let open = 1;
+
+    while (idx < regex.length) {
+        
+        if (regex[idx - 1] != '\\' && regex[idx] == '(') { open++; }
+        if (regex[idx - 1] != '\\' && regex[idx] == ')') { open--; }
+
+        if (open == 0) {
+            return idx;
+        }
+
+        idx++;
+    }
+
+    return -1;
+}
+
+function Desugar(regex) {
+
+    console.log('Start DS');
+
+    let i;
+
+    //Strip ?!
+    while ((i = regex.indexOf('(?!')) != -1 || (i = regex.indexOf('?=')) != -1) {
+        let end = FindClosingParen(regex, i + 1);
+        regex = regex.slice(0, i) + regex.slice(end + 1);
+    }
+
+    while ((i = regex.indexOf('(')) != -1 || (i = regex.indexOf(')')) != -1) {
+        if (regex[i - 1] != '\\') {
+            console.log('start ' + regex);
+            regex = regex.slice(0, i) + regex.slice(i + 1);
+        }
+    }
+ 
+    console.log('Strip', regex);   
+
+    //Remove word boundaries
+    regex = regex.replace(/\\b|\\B/g, '');
+
+    return regex;
+}
+
 let REGEX_CTR = 0;
 
-function RegexRecursive(ctx, regex, idx) {
+function RegexRecursive(ctx, regex, idx) { 
+
+    console.log('DS:', regex, Desugar(regex));
+
+    const pp_steps = [];
 
     let lrctr = REGEX_CTR++;
 
@@ -266,9 +316,6 @@ function RegexRecursive(ctx, regex, idx) {
                 return mk('\t');
             } else if (c == 'f') {
                 return mk('\f');
-            } else if (c == 'b' || c == 'B') {
-                //TODO: WB
-                throw BuildError('WB unsupported');
             } else if (c >= '1' && c <= '9') {
 
                 let idx = parseInt(c);
@@ -282,6 +329,12 @@ function RegexRecursive(ctx, regex, idx) {
                     return mk('');
                 }
 
+            } else if (c == 'b') {
+                pp_steps.push({ type: 'b', idx: idx });
+                return mk('');
+            } else if (c == 'B') {
+                pp_steps.push({ type: 'B', idx: idx });
+                return mk('');
             } else if (c == '0') {
                 return mk('\\x00');
             }
@@ -627,7 +680,6 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     let ast = ParseCaptureGroup(0, true);
-
     let implier = captures[0];
 
     let startIndex;
@@ -649,6 +701,8 @@ function RegexRecursive(ctx, regex, idx) {
         implier = ctx.mkSeqConcat([implier, nextFiller()]);
         anchoredEnd = true;
     }
+
+    //TODO: PP assertions here
 
     //TODO: Fix tagging to be multiline
     return {
