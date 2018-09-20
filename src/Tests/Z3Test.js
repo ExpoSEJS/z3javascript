@@ -94,6 +94,7 @@ function Test(Origin) {
 }
 
 Test(/hello/);
+Test(/\bGiggle/);
 Test(/\bGiggle\b/);
 Test(/^((?!chrome|android).)*safari/i);
 Test(/^\bGiggle\b$/);

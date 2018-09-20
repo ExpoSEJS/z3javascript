@@ -700,10 +700,32 @@ function RegexRecursive(ctx, regex, idx) {
      * This is done be re-parsing a desugared version of the regex and intersecting it with the AST
      */
     pp_steps.forEach(item => {
-        const lhs = Desugar(regex.substr(0, item.idx));
-        const rhs = Desugar(regex.substr(item.idx));
+        const lhs = RegexRecursive(ctx, Desugar(regex.substr(0, item.idx)), 0).ast;
+        const rhs = RegexRecursive(ctx, Desugar(regex.substr(item.idx)), 0).ast;
 
-        console.log('Split', '"' + lhs + '"', '"' + rhs + '"'); 
+        if (item.type == 'b') {
+
+            const l1_w = ctx.mkReConcat(ctx.mkReStar(TruelyAny()), ctx.mkReIntersect(TruelyAny(), Word())); 
+            const l1 = ctx.mkReIntersect(lhs, ctx.mkReUnion(l1_w, mk('')));
+
+            const l2_w = ctx.mkReConcat(Word(), ctx.mkReStar(TruelyAny()));
+            const l2 = ctx.mkReIntersect(rhs, l2_w);
+
+            const l = ctx.mkReConcat(l1, l2);
+
+            const r1_w = ctx.mkReConcat(ctx.mkReStar(TruelyAny()), Word());
+            const r1 = ctx.mkReIntersect(lhs, r1_w);
+
+            const r2_w = ctx.mkReConcat(ctx.mkReIntersect(TruelyAny(), Word()), ctx.mkReStar(TruelyAny()));
+            const r2 = ctx.mkReIntersect(rhs, r2_w, mk(''));
+
+            const r = ctx.mkReConcat(r1, r2);
+
+            ast = ctx.mkReIntersect(ast, ctx.mkReUnion(l, r));
+            console.log(ast + '');
+        } else {
+            throw 'Currently unsupported';
+        }
     });
 
     //TODO: Fix tagging to be multiline
@@ -724,7 +746,7 @@ function RegexOuter(ctx, regex) {
     try {
         return RegexRecursive(ctx, CullOuterRegex('' + regex), 0, false);
     } catch (e) {
-        throw `${e.error ? e.error.toString() : '' + e} ${e.idx} "${e.remaining}" parsing regex "${regex}"`;
+        throw `${e.error ? e.error.toString() : '' + e} ${e.idx} "${e.remaining}" parsing regex "${regex}" ${e.stack}`;
     }
 }
 
