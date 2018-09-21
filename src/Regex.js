@@ -457,9 +457,21 @@ function RegexRecursive(ctx, regex, idx) {
         }
     }
 
+    function ParseMaybeAssertion(captureIndex) {
+
+        if (current() == '(' && peek() == '?' && (peek(2) == '!' || peek(2) == '=')) {
+            const end = FindClosingParen(regex, idx + 3);
+            const re = regex.slice(idx + 3, end);
+            pp_steps.push({ type: peek(2), re: re, idx: end + 1 });
+            idx = end + 1;
+        }
+
+        return ParseMaybeCaptureGroupStart(captureIndex);
+    }
+
     function ParseMaybePSQ(captureIndex) {
 
-        let atom = ParseMaybeCaptureGroupStart(captureIndex);
+        let atom = ParseMaybeAssertion(captureIndex);
 
         if (current() == '*') {
             next();
@@ -700,9 +712,14 @@ function RegexRecursive(ctx, regex, idx) {
      * This is done be re-parsing a desugared version of the regex and intersecting it with the AST
      */
     pp_steps.forEach(item => {
+
+        const ds_lhs = Desugar(regex.substr(0, item.idx));
+        const ds_rhs = Desugar(regex.substr(item.idx));
         
-        const lhs = RegexRecursive(ctx, Desugar(regex.substr(0, item.idx)), 0).ast;
-        const rhs = RegexRecursive(ctx, Desugar(regex.substr(item.idx)), 0).ast;
+        const lhs = RegexRecursive(ctx, ds_lhs, 0).ast;
+        const rhs = RegexRecursive(ctx, ds_rhs, 0).ast;
+
+        console.log(ds_lhs, ds_rhs);
 
         if (item.type == 'b' || item.type == 'B') {
 
@@ -741,6 +758,21 @@ function RegexRecursive(ctx, regex, idx) {
 
             //Assert ast intersects l | r
             ast = ctx.mkReIntersect(ast, ctx.mkReUnion(l, r));
+        } else if (item.type == '=' || item.type == '!') {
+
+            //Compute the asserted regex
+            let assert = RegexRecursive(ctx, '^' + item.re + '$', 0).ast;
+            assert = ctx.mkReConcat(assert, ctx.mkReStar(TruelyAny()));
+
+            //Negate it if ?!
+            if (item.type == '!') {
+                assert = ctx.mkReComplement(assert);
+            }
+
+            const follows_assert = ctx.mkReIntersect(rhs, assert);
+            const lr = ctx.mkReConcat(lhs, follows_assert);
+            ast = ctx.mkReIntersect(ast, lr);
+
         } else {
             throw 'Currently unsupported';
         }

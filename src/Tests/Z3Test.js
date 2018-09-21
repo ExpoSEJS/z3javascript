@@ -93,7 +93,7 @@ function Test(Origin) {
 	}
 }
 
-const test_re = [/hello/, /webkit|android|google/, /(?:webkit)?google/, /^\bGiggles$/, /^Hello.\bWorld$/, /^<(.+)>.+<\1>$/, /(Capture)\1/, /^\bGiggles\b$/, /^((?!chrome|android).)*safari/i];
+const test_re = [/hello/, /(?!hi)hello/, /(?=hello).*/, /webkit|android|google/, /(?:webkit)?google/, /^\bGiggles$/, /^Hello.\bWorld$/, /^<(.+)>.+<\1>$/, /(Capture)\1/, /^\bGiggles\b$/, /^((?!chrome|android).)*safari/i];
 
 
 let failed = 0;
