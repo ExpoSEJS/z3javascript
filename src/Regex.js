@@ -768,8 +768,8 @@ function RegexRecursive(ctx, regex, idx) {
             }
 
             const lr = ctx.mkReConcat(lhs, ctx.mkReIntersect(rhs, assert));
+            
             ast = ctx.mkReIntersect(ast, lr);
-            console.log('astNow', ast.toString());
         } else {
             throw 'Currently unsupported';
         }
