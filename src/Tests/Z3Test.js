@@ -93,8 +93,29 @@ function Test(Origin) {
 	}
 }
 
-const test_re = [/hello/, /^\bGiggles$/, /^Hello.\bWorld$/, /(Capture)\1/, /^\bGiggles\b$/, /^((?!chrome|android).)*safari/i];
+const test_re = [/hello/, /webkit|android|google/, /(?:webkit)?google/, /^\bGiggles$/, /^Hello.\bWorld$/, /^<(.+)>.+<\1>$/, /(Capture)\1/, /^\bGiggles\b$/, /^((?!chrome|android).)*safari/i];
 
-test_re.forEach(re => { if (Test(re) != 'GOOD') { throw re } });
+
+let failed = 0;
+
+test_re.forEach(re => {
+    try {
+
+        console.log('Testing', re);
+        if (Test(re) != 'GOOD') {
+            throw re;
+        }
+
+    } catch (e) {
+        failed += 1;
+        console.log('Failed', '' + e);
+    }
+});
+
+failed += 1;
+
+if (failed) {
+    throw failed + ' errors';
+}
 
 module.exports = Test;

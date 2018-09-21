@@ -705,19 +705,26 @@ function RegexRecursive(ctx, regex, idx) {
 
         if (item.type == 'b') {
 
-            const l1_w = ctx.mkReConcat(ctx.mkReStar(TruelyAny()), ctx.mkReIntersect(TruelyAny(), Word())); 
-            const l1 = ctx.mkReIntersect(lhs, ctx.mkReUnion(l1_w, mk('')));
+            const any_string = ctx.mkReStar(TruelyAny());
+            
+            const word = Word();
+            const not_word = ctx.mkReComplement(Word());
 
-            const l2_w = ctx.mkReConcat(Word(), ctx.mkReStar(TruelyAny()));
+            const empty_string = mk('');
+
+            const l1_w = ctx.mkReConcat(any_string, not_word); 
+            const l1 = ctx.mkReIntersect(lhs, ctx.mkReUnion(l1_w, empty_string));
+
+            const l2_w = ctx.mkReConcat(word, any_string);
             const l2 = ctx.mkReIntersect(rhs, l2_w);
 
             const l = ctx.mkReConcat(l1, l2);
 
-            const r1_w = ctx.mkReConcat(ctx.mkReStar(TruelyAny()), Word());
+            const r1_w = ctx.mkReConcat(any_string, word);
             const r1 = ctx.mkReIntersect(lhs, r1_w);
 
-            const r2_w = ctx.mkReConcat(ctx.mkReIntersect(TruelyAny(), Word()), ctx.mkReStar(TruelyAny()));
-            const r2 = ctx.mkReIntersect(rhs, r2_w, mk(''));
+            const r2_w = ctx.mkReConcat(not_word, any_string);
+            const r2 = ctx.mkReIntersect(rhs, ctx.mkReUnion(r2_w, empty_string));
 
             const r = ctx.mkReConcat(r1, r2);
 
