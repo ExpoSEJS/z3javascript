@@ -175,7 +175,7 @@ class Context {
     }
 
     mkReFull() {
-        return new Expr(Z3.Z3_mk_re_full(this.ctx, this.mkStringSort()));
+        return this._build(Z3.Z3_mk_re_full, this.mkStringSort());
     }
 
     mkReOption(re) {
@@ -207,8 +207,7 @@ class Context {
     }
 
     mkReLoop(re, lo, hi) {
-        let fnResult = Z3.Z3_mk_re_loop(this.ctx, re.ast, lo, hi);
-        return new Expr(this, fnResult);
+        return this._build(Z3.Z3_mk_re_loop, re, lo, hi);
     }
 
     mkSeqToRe(seq) {
