@@ -700,34 +700,46 @@ function RegexRecursive(ctx, regex, idx) {
      * This is done be re-parsing a desugared version of the regex and intersecting it with the AST
      */
     pp_steps.forEach(item => {
+        
         const lhs = RegexRecursive(ctx, Desugar(regex.substr(0, item.idx)), 0).ast;
         const rhs = RegexRecursive(ctx, Desugar(regex.substr(item.idx)), 0).ast;
 
-        if (item.type == 'b') {
+        if (item.type == 'b' || item.type == 'B') {
 
+            //Constants for use in query
             const any_string = ctx.mkReStar(TruelyAny());
-            
-            const word = Word();
-            const not_word = ctx.mkReComplement(Word());
+
+            let word = Word();
+            let not_word = ctx.mkReComplement(Word());
+
+            //If B then flip word and not word
+            if (item.type == 'B') {
+                const t = not_word;
+                not_word = word;
+                word = not_word;
+            }
 
             const empty_string = mk('');
 
+            //L = lhs in .*\W & rhs in \w.*
             const l1_w = ctx.mkReConcat(any_string, not_word); 
-            const l1 = ctx.mkReIntersect(lhs, ctx.mkReUnion(l1_w, empty_string));
+            const l1 = ctx.mkReUnion(ctx.mkReIntersect(lhs, l1_w), empty_string);
 
             const l2_w = ctx.mkReConcat(word, any_string);
             const l2 = ctx.mkReIntersect(rhs, l2_w);
 
             const l = ctx.mkReConcat(l1, l2);
 
+            //R - lhs in .*\w & rhs in \W.*
             const r1_w = ctx.mkReConcat(any_string, word);
             const r1 = ctx.mkReIntersect(lhs, r1_w);
 
             const r2_w = ctx.mkReConcat(not_word, any_string);
-            const r2 = ctx.mkReIntersect(rhs, ctx.mkReUnion(r2_w, empty_string));
+            const r2 = ctx.mkReUnion(ctx.mkReIntersect(rhs, r2_w), empty_string);
 
             const r = ctx.mkReConcat(r1, r2);
 
+            //Assert ast intersects l | r
             ast = ctx.mkReIntersect(ast, ctx.mkReUnion(l, r));
         } else {
             throw 'Currently unsupported';

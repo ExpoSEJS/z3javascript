@@ -170,6 +170,10 @@ class Context {
         return this._buildVar(Z3.Z3_mk_re_concat, re1, re2);
     }
 
+    mkReEmpty() {
+        return this._build(Z3.Z3_mk_re_empty, this.mkReSort(this.mkStringSort()));
+    }
+
     mkReFull() {
         return new Expr(Z3.Z3_mk_re_full(this.ctx, this.mkStringSort()));
     }
