@@ -93,7 +93,7 @@ function Test(Origin) {
 	}
 }
 
-const test_re = [/hello/, /^\bGiggles$/, /^\bGiggles\b$/, /^((?!chrome|android).)*safari/i];
+const test_re = [/hello/, /^\bGiggles$/, /^Hello.\bWorld$/, /(Capture)\1/, /^\bGiggles\b$/, /^((?!chrome|android).)*safari/i];
 
 test_re.forEach(re => { if (Test(re) != 'GOOD') { throw re } });
 
