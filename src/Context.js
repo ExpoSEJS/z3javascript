@@ -77,11 +77,11 @@ class Context {
     }
 
     incRef(e) {
-        this._build(Z3.Z3_inc_ref, e);
+        Z3.Z3_inc_ref(this.ctx, e.ast);
     }
 
     decRef(e) {
-        this._build(Z3.Z3_dec_ref, e);
+        Z3.Z3_dec_ref(this.ctx, e.ast);
     }
 
     mkApp(func, args) {
@@ -102,15 +102,15 @@ class Context {
     }
 
     mkGetSort(e) {
-        return this._build(Z3.Z3_get_sort, e);
+        return Z3.Z3_get_sort(this.ctx, e.ast);
     }
 
     mkSortName(sort) {
-        return this._build(Z3.Z3_get_sort_name, sort);
+        return Z3.Z3_get_sort_name(this.ctx, sort);
     }
 
     mkSymbolString(s) {
-        return this._build(Z3.Z3_get_symbol_string, s);
+        return Z3.Z3_get_symbol_string(this.ctx, s);
     }
 
     mkVar(name, sort) {
@@ -441,7 +441,7 @@ class Context {
     }
 
     mkToString(e) {
-        return this._build(Z3.Z3_ast_to_string, e);
+        return Z3.Z3_ast_to_string(this.ctx, e.ast || e);
     }
 
     /**
