@@ -197,7 +197,6 @@ class Context {
     mkReComplement(re) {
         return this._build(Z3.Z3_mk_re_complement, re);
     }
-/new Expr
 
     mkRePlus(re) {
         return this._build(Z3.Z3_mk_re_plus, re);
