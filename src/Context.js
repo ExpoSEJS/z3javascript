@@ -76,6 +76,14 @@ class Context {
         return this._build(Z3.Z3_del_context);
     }
 
+    incRef(e) {
+        this._build(Z3.Z3_inc_ref, e);
+    }
+
+    decRef(e) {
+        this._build(Z3.Z3_dec_ref, e);
+    }
+
     mkApp(func, args) {
         return this._build(Z3.Z3_mk_app, func, args.length, args);
     }
@@ -91,6 +99,18 @@ class Context {
         let objectSort = this.mkArraySort(this.mkStringSort(), baseSort);
         let objectInstance = this.mkVar(name, objectSort);
         return objectInstance;
+    }
+
+    mkGetSort(e) {
+        return this._build(Z3.Z3_get_sort, e);
+    }
+
+    mkSortName(sort) {
+        return this._build(Z3.Z3_get_sort_name, sort);
+    }
+
+    mkSymbolString(s) {
+        return this._build(Z3.Z3_get_symbol_string, s);
     }
 
     mkVar(name, sort) {
@@ -420,7 +440,7 @@ class Context {
         return this._build(Z3.Z3_mk_unsigned_int64, v, sort);
     }
 
-    toString(e) {
+    mkToString(e) {
         return this._build(Z3.Z3_ast_to_string, e);
     }
 

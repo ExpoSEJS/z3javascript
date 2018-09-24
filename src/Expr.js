@@ -12,7 +12,7 @@ class Expr {
         this.context = context;
 
         this.ast = ast;
-        Z3.Z3_inc_ref(this.context.ctx, this.ast);
+        this.context.incRef(this); 
 
         this._fields = [];
 
@@ -37,16 +37,16 @@ class Expr {
     }
 
     destroy() {
-        Z3.Z3_dec_ref(this.context.ctx, this.ast);
+        this.context.decRef(this);
         this.ast = null;
     }
 
     toString() {
-        return this.context.toString(this);
+        return this.context.mkToString(this);
     }
 
     _sortName() {
-        return Z3.Z3_get_symbol_string(this.context.ctx, Z3.Z3_get_sort_name(this.context.ctx, Z3.Z3_get_sort(this.context.ctx, this.ast)));
+        return this.context.mkSymbolString(this.context.mkSortName(this.context.mkGetSort(this)));
     }
 
     isString() {
@@ -54,7 +54,7 @@ class Expr {
     }
     
     toPrettyString() {
-        let output = Z3.Z3_ast_to_string(this.context.ctx, this.ast);
+        let output = this.context.mkToString(this);
         output = output.replace(/\(not (\S)\)/g, "¬$1");
         output = output.replace("or", "∨");
         return output;
