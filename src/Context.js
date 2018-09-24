@@ -73,7 +73,7 @@ class Context {
     }
 
     destroy() {
-        Z3.Z3_del_context(this.ctx);
+        return this._build(Z3.Z3_del_context);
     }
 
     mkApp(func, args) {
@@ -94,7 +94,7 @@ class Context {
     }
 
     mkVar(name, sort) {
-        return new Expr(this, Z3.Z3_mk_const(this.ctx, this.mkStringSymbol(name), sort));
+        return this._build(Z3.Z3_mk_const, this.mkStringSymbol(name), sort);
     }
 
     mkIntVar(name) {
@@ -175,7 +175,7 @@ class Context {
     }
 
     mkReFull() {
-        return new Expr(Z3.Z3_mk_re_full(this.ctx, this.mkStringSort()));
+        return this._build(Z3.Z3_mk_re_full, this.mkStringSort());
     }
 
     mkReOption(re) {
@@ -197,6 +197,7 @@ class Context {
     mkReComplement(re) {
         return this._build(Z3.Z3_mk_re_complement, re);
     }
+/new Expr
 
     mkRePlus(re) {
         return this._build(Z3.Z3_mk_re_plus, re);
@@ -207,8 +208,7 @@ class Context {
     }
 
     mkReLoop(re, lo, hi) {
-        let fnResult = Z3.Z3_mk_re_loop(this.ctx, re.ast, lo, hi);
-        return new Expr(this, fnResult);
+        return this._build(Z3.Z3_mk_re_loop, re, lo, hi);
     }
 
     mkSeqToRe(seq) {
@@ -216,7 +216,7 @@ class Context {
     }
 
     isString(ast) {
-        return Z3.Z3_is_string(this.ctx, ast) === Z3.TRUE;
+        return this.build(Z3.Z3_is_string, ast) === Z3.TRUE;
     }
 
     mkBoolSort() {
@@ -248,7 +248,7 @@ class Context {
     }
 
     mkConst(symb, sort) {
-        return new Expr(this, Z3.Z3_mk_const(this.ctx, symb, sort));
+        return this._build(Z3.Z3_mk_const, symb, sort);
     }
 
     mkFunc(name, args, sort) {
@@ -398,31 +398,31 @@ class Context {
      */
 
     mkNumeral(numeral, sort) {
-        return new Expr(this, Z3.Z3_mk_numeral(this.ctx, numeral, sort));
+        return this._build(Z3.Z3_mk_numeral, numeral, sort);
     }
 
     mkReal(num, den) {
-        return new Expr(this, Z3.Z3_mk_real(this.ctx, num, den));
+        return this._build(Z3.Z3_mk_real, num, den);
     }
 
     mkInt(v, sort) {
-        return new Expr(this, Z3.Z3_mk_int(this.ctx, v, sort));
+        return this._build(Z3.Z3_mk_int, v, sort);
     }
 
     mkUnsignedInt(v, sort) {
-        return new Expr(this, Z3.Z3_mk_unsigned_int(this.ctx, v, sort));
+        return this._build(Z3.Z3_mk_unsigned_int, v, sort);
     }
 
     mkInt64(v, sort) {
-        return new Expr(this, Z3.Z3_mk_int64(this.ctx, v, sort));
+        return this._build(Z3.Z3_mk_int64, v, sort);
     }
 
     mkUnsignedInt64(v, sort) {
-        return new Expr(this, Z3.Z3_mk_unsigned_int64(this.ctx, v, sort));
+        return this._build(Z3.Z3_mk_unsigned_int64, v, sort);
     }
 
-    toString(ast) {
-        return Z3.Z3_ast_to_string(this.ctx, this.ast);
+    toString(e) {
+        return this._build(Z3.Z3_ast_to_string, e);
     }
 
     /**
@@ -430,7 +430,7 @@ class Context {
      */
 
     mkArraySort(indexSort, elemSort) {
-        return Z3.Z3_mk_array_sort(this.ctx, indexSort, elemSort);
+        return this._build(Z3.Z3_mk_array_sort, indexSort, elemSort);
     }
 
     mkSelect(array, index) {

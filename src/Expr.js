@@ -42,7 +42,7 @@ class Expr {
     }
 
     toString() {
-        return Z3.Z3_ast_to_string(this.context.ctx, this.ast);
+        return this.context.toString(this);
     }
 
     _sortName() {
