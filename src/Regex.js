@@ -716,10 +716,8 @@ function RegexRecursive(ctx, regex, idx) {
         const ds_lhs = Desugar(regex.substr(0, item.idx));
         const ds_rhs = Desugar(regex.substr(item.idx));
         
-        const lhs = RegexRecursive(ctx, ds_lhs, 0).ast;
-        const rhs = RegexRecursive(ctx, ds_rhs, 0).ast;
-
-        console.log(ds_lhs, ds_rhs);
+        const lhs = RegexRecursive(ctx, ds_lhs + '$', 0).ast;
+        const rhs = RegexRecursive(ctx, '^' + ds_rhs, 0).ast;
 
         if (item.type == 'b' || item.type == 'B') {
 
@@ -769,10 +767,9 @@ function RegexRecursive(ctx, regex, idx) {
                 assert = ctx.mkReComplement(assert);
             }
 
-            const follows_assert = ctx.mkReIntersect(rhs, assert);
-            const lr = ctx.mkReConcat(lhs, follows_assert);
+            const lr = ctx.mkReConcat(lhs, ctx.mkReIntersect(rhs, assert));
+            
             ast = ctx.mkReIntersect(ast, lr);
-
         } else {
             throw 'Currently unsupported';
         }

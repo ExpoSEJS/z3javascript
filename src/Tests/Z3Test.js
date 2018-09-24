@@ -43,13 +43,14 @@ function Test(Origin) {
 	}
 
 	function CheckCorrect(model) {
-		let real_match = Origin.exec(model.eval(symbolic).asConstant());
-		let sym_match = TestRegex.captures.map(cap => model.eval(cap).asConstant());
-		return real_match && !Exists(real_match, sym_match, DoesntMatch);
+		const real_match = Origin.exec(model.eval(symbolic).asConstant());
+		const sym_match = TestRegex.captures.map(cap => model.eval(cap).asConstant());
+		const matches = real_match && !Exists(real_match, sym_match, DoesntMatch);
+        console.log('Matches:', matches, model.eval(symbolic).asConstant(), Origin);
+        return matches;
 	}
 
 	let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
-		console.log(model.eval(symbolic).asConstant());
 		let query_list = query.exprs.concat([ctx.mkNot(ctx.mkEq(symbolic, ctx.mkString(model.eval(symbolic).asConstant())))]);
 		return new Z3.Query(query_list, query.checks);
 	});
@@ -93,8 +94,7 @@ function Test(Origin) {
 	}
 }
 
-const test_re = [/hello/, /(?!hi)hello/, /(?=hello).*/, /webkit|android|google/, /(?:webkit)?google/, /^\bGiggles$/, /^Hello.\bWorld$/, /^<(.+)>.+<\1>$/, /(Capture)\1/, /^\bGiggles\b$/, /^((?!chrome|android).)*safari/i];
-
+const test_re = [/hello/, /(?!hi)hello/, /(?=hello)hello/, /(?=[12345])./, /webkit|android|google/, /(?:webkit)?google/, /^\bGiggles$/, /^Hello.\bWorld$/, /^<(.+)>.+<\1>$/, /(Capture)\1/, /^\bGiggles\b$/, /^((?!chrome|android).)*safari/i];
 
 let failed = 0;
 
@@ -102,6 +102,7 @@ test_re.forEach(re => {
     try {
 
         console.log('Testing', re);
+
         if (Test(re) != 'GOOD') {
             throw re;
         }
@@ -111,8 +112,6 @@ test_re.forEach(re => {
         console.log('Failed', '' + e);
     }
 });
-
-failed += 1;
 
 if (failed) {
     throw failed + ' errors';
