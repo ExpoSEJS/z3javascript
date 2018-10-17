@@ -106,7 +106,12 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function peek(num) {
-        return regex[idx + (num || 1)];
+
+        if (typeof(num) === "undefined") {
+            num = 1;
+        }
+
+        return regex[idx + num];
     }
 
     function Any() {
@@ -491,7 +496,9 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function digit(offset) {
-        offset = offset || 0;
+        if (typeof(offset) == undefined) {
+            offset = 0;
+        }
         return peek(offset) >= '0' && peek(offset) <= '9';
     }
 
