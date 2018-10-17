@@ -520,7 +520,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseLoopCount() {
         let n1 = ParseNumber();
-/
+
         if (current() == ',') {
             next();
 
