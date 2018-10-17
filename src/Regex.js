@@ -496,7 +496,7 @@ function RegexRecursive(ctx, regex, idx) {
     }
 
     function digit(offset) {
-        if (typeof(offset) == undefined) {
+        if (typeof(offset) === "undefined") {
             offset = 0;
         }
         return peek(offset) >= '0' && peek(offset) <= '9';
@@ -520,7 +520,7 @@ function RegexRecursive(ctx, regex, idx) {
 
     function ParseLoopCount() {
         let n1 = ParseNumber();
-
+/
         if (current() == ',') {
             next();
 
