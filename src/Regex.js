@@ -490,8 +490,9 @@ function RegexRecursive(ctx, regex, idx) {
         return atom;
     }
 
-    function digit() {
-        return current() >= '0' && current() <= '9';
+    function digit(offset) {
+        offset = offset || 0;
+        return peek(offset) >= '0' && peek(offset) <= '9';
     }
 
     function ParseNumber() {
@@ -531,7 +532,7 @@ function RegexRecursive(ctx, regex, idx) {
     function ParseMaybeLoop(captureIndex) {
         let atom = ParseMaybePSQ(captureIndex);
 
-        if (current() == '{') {
+        if (current() == '{' && digit(1)) {
             next();
 
             let [lo, hi] = ParseLoopCount();

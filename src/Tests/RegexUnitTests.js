@@ -9,6 +9,7 @@ import Z3 from '../Z3.js';
 let errorCount = 0;
 
 function Assert(regex, given, expectedCaptures, not) {
+    console.log('Process' + regex);
 	let before = Z3.Query.TOTAL;
 	let res = Test(regex);
 	if (res === 'GOOD') {
@@ -19,6 +20,9 @@ function Assert(regex, given, expectedCaptures, not) {
 		errorCount++;
 	}
 }
+
+Assert(/[0-9]{3}/);
+Assert(/[0-9]{undefined}/);
 
 Assert(/xxx/);
 Assert(/(xxx)/);
