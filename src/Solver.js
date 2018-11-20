@@ -59,26 +59,10 @@ class Solver {
     }
 
     /**
-     * Process an SMT2Lib string and return the last assertion to the solver as a Z3_AST
+     * Process an SMT2Lib string and assert it on slv 
      */
     fromString(str) {
         Z3.Z3_solver_from_string(this.context.ctx, this.slv, str);
-        
-        //Grab the list of assertions
-        const assertions = Z3.Z3_solver_get_assertions(this.context.ctx, this.slv);
-        
-        //Manual memory management for the assertions vector
-        Z3.Z3_ast_vector_inc_ref(this.context.ctx, assertions);
-        
-        const vector_size = Z3.Z3_ast_vector_size(this.context.ctx, assertions);
-        
-        const last_element = new Expr(this.context,
-            Z3.Z3_ast_vector_get(this.context.ctx, assertions, vector_size - 1)
-        );
-
-        Z3.Z3_ast_vector_dec_ref(this.context.ctx, assertions);
-
-        return last_element;
     }
 
     getModel() {
