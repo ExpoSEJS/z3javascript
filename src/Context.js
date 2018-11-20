@@ -278,6 +278,10 @@ class Context {
         return this._build(Z3.Z3_mk_rec_func_decl, name, args.length, args, sort);
     }
 
+    mkRecFuncDef(fn, args, body) {
+        return this._build(Z3.Z3_add_rec_func_decl, fn, args.length, args, body);
+		}
+
     /**
      * Propositional logic and equality
      */
