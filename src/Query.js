@@ -28,14 +28,14 @@ Query.process = function(solver, alternatives) {
         	attempts++;
         	Query.TOTAL++;
 
-		let next = alternatives.shift();
+		let next = alternatives.splice(Math.floor(Math.random() * alternatives.length), 1)[0]
 
 		solver.push();
 
-        	next.exprs.forEach(clause => solver.assert(clause));
-        	model = solver.getModel();
+			next.exprs.forEach(clause => solver.assert(clause));
+			model = solver.getModel();
 
-        solver.pop();
+		solver.pop();
 
 		if (model) {
 			//Run all the checks and concat any alternatives
