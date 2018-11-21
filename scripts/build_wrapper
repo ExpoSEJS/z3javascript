@@ -1,2 +1,7 @@
 #Copyright Blake Loring <blake_l@parsed.uk> 2015
+
+# Cleaning sources
+echo "Cleaning Sources"
+$(npm bin)/eslint --fix .eslintrc.json **/src/**.js
+
 ./node_modules/.bin/babel --presets env -d bin/ src/
