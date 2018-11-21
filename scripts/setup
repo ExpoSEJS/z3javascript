@@ -1,5 +1,9 @@
 #Copyright Blake Loring <blake_l@parsed.uk> 2015
 
+# Cleaning sources
+echo "Cleaning Sources"
+$(npm bin)/eslint --fix .eslintrc.json **/src/**.js
+
 #Necessary as npm doesnt want to copy .PHONY and bin/
 if [ -e bin ]; then
 	echo "no bin dir"
