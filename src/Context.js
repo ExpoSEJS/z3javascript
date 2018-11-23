@@ -31,7 +31,7 @@ class Context {
      * TODO: is not recursive on array
      */
     _buildChecks(args) {
-			return [args.filter(next => next.checks).reduce((last, next) => this._appendList(last, next.checks), [])];
+			return args.filter(next => next.checks).reduce((last, next) => this._appendList(last, next.checks), []);
     }
 
     _build(func, ...args) {
@@ -46,7 +46,7 @@ class Context {
     _buildVar(func, ...args) {
         return this._buildVarNoArgs(func, args);
     }
-    
+
     _buildVarNoArgs(func, args) {
         return new Expr(this, func(this.ctx, args.length, Z3Utils.astArray(args)), this._buildChecks(args, false));
     }
