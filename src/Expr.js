@@ -16,10 +16,7 @@ class Expr {
 
         this._fields = [];
 
-        this.checks = checks || {
-            trueCheck: [],
-            falseCheck: []
-        }
+        this.checks = checks || [];
     }
 
     /**

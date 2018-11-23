@@ -18,7 +18,7 @@ class Context {
           this.ctx = Z3.Z3_mk_context_rc(config);
           Z3.Z3_del_config(config);
     }
-    
+
     _nullExpr() {
         return new Expr(this, null);
     }
@@ -30,29 +30,8 @@ class Context {
     /**
      * TODO: is not recursive on array
      */
-    _buildChecks(args, not) {
-
-        let checks = {
-            trueCheck: args.filter(next => next.checks).reduce((last, next) => this._appendList(last, next.checks.trueCheck), []),
-            falseCheck: args.filter(next => next.checks).reduce((last, next) => this._appendList(last, next.checks.falseCheck), [])
-        };
-
-        if (not) {
-            let tmp = checks.trueCheck;
-            checks.trueCheck = checks.falseCheck;
-            checks.falseCheck = checks.trueCheck;
-        }
-
-        return checks;
-    }
-
-    _flipChecks(expr) {
-
-        let tmp = expr.checks.trueCheck;
-        expr.checks.trueCheck = expr.checks.falseCheck;
-        expr.checks.falseCheck = tmp;
-
-        return expr;
+    _buildChecks(args) {
+			return [args.filter(next => next.checks).reduce((last, next) => this._appendList(last, next.checks), [])];
     }
 
     _build(func, ...args) {
@@ -301,7 +280,7 @@ class Context {
     //missing: distinct
 
     mkNot(arg) {
-        return this._flipChecks(this._build(Z3.Z3_mk_not, arg));
+        return this._build(Z3.Z3_mk_not, arg);
     }
 
     mkIte(ifarg, thenarg, elsearg) {
