@@ -3,6 +3,7 @@
 if [ -e z3 ]; then
 	echo "Dont need to pull Z3"
 else
-	git clone https://github.com/ExpoSEJS/z3.git#3e971fc557f507641593e33b18cf7de7f7a54dcf
+	git clone https://github.com/ExpoSEJS/z3.git
 	cd z3
+	git checkout 3e971fc557f507641593e33b18cf7de7f7a54dcf
 fi
