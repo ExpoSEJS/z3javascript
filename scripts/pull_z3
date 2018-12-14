@@ -5,5 +5,5 @@ if [ -e z3 ]; then
 else
 	git clone https://github.com/ExpoSEJS/z3.git
 	cd z3
-	git checkout 3e971fc557f507641593e33b18cf7de7f7a54dcf
+	git checkout ac66a6b85cbc583cc57892127fef294e86e5cdc 
 fi
