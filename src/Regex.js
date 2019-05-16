@@ -696,23 +696,22 @@ function RegexRecursive(ctx, regex, idx) {
     let implier = captures[0];
 
     let startIndex;
-    let anchoredStart = false;
-    let anchoredEnd = false;
+    let anchoredStart = undefined;
+    let anchoredEnd = undefined;
 
     if (regex[0] !== '^') {
-        let startFiller = nextFiller();
+        anchoredStart = nextFiller();
         ast = ctx.mkReConcat(ctx.mkReStar(TruelyAny()), ast);
-        implier = ctx.mkSeqConcat([startFiller, implier]);
-        startIndex = ctx.mkSeqLength(startFiller);
-        anchoredStart = true;
+        implier = ctx.mkSeqConcat([anchoredStart, implier]);
+        startIndex = ctx.mkSeqLength(anchoredStart);
     } else {
         startIndex = ctx.mkIntVal(0);
     }
 
     if (regex[regex.length - 1] !== '$') {
+        anchoredEnd = nextFiller();
         ast = ctx.mkReConcat(ast, ctx.mkReStar(TruelyAny()));
-        implier = ctx.mkSeqConcat([implier, nextFiller()]);
-        anchoredEnd = true;
+        implier = ctx.mkSeqConcat([implier, anchoredEnd]);
     }
 
     /**
