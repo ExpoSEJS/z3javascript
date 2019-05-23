@@ -782,6 +782,13 @@ function RegexRecursive(ctx, regex, idx) {
         }
     });
 
+    //Give unique names to all captures for Ronny
+    for (let i = 0; i < captures.length; i++) {
+      const current = captures[i];
+      captures[i] = nextFiller();
+      assertions.push(ctx.mkEq(captures[i], current));
+    }
+
     //TODO: Fix tagging to be multiline
     return {
         ast: ast,
