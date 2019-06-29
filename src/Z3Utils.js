@@ -1,7 +1,7 @@
 /**
  * Copyright Blake Loring <blake_l@parsed.uk> 2015
  */
-"use strict";
+
 
 /**
  * Recursively reduce Expr to AST
@@ -9,12 +9,12 @@
 function astArray(args) {
 	return args.map(a => {
 
-        if (a instanceof Array) {
-            return astArray(a);
-        }
+		if (a instanceof Array) {
+			return astArray(a);
+		}
 
-        return a.ast || a;
-    });
+		return a.ast || a;
+	});
 }
 
 export default {

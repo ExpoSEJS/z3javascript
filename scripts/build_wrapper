@@ -4,4 +4,4 @@
 echo "Cleaning Sources"
 $(npm bin)/eslint --fix .eslintrc.json **/src/**.js
 
-./node_modules/.bin/babel --presets env -d bin/ src/
+./node_modules/.bin/babel --presets "@babel/preset-env" -d bin/ src/

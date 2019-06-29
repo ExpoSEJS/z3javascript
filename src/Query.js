@@ -17,23 +17,23 @@ Query.TOTAL = 0;
 Query.LAST_ATTEMPTS = 0;
 
 Query.canAttempt = function(currentAttempts) {
-    return Query.MAX_REFINEMENTS == -1 || (currentAttempts < Query.MAX_REFINEMENTS);
-}
+	return Query.MAX_REFINEMENTS == -1 || (currentAttempts < Query.MAX_REFINEMENTS);
+};
 
 Query.process = function(solver, alternatives) {
 	let attempts = 0;
 	let model = null;
 
 	while (Query.canAttempt(attempts) && alternatives.length) {
-        	attempts++;
-        	Query.TOTAL++;
+		attempts++;
+		Query.TOTAL++;
 
-		let next = alternatives.splice(Math.floor(Math.random() * alternatives.length), 1)[0]
+		let next = alternatives.splice(Math.floor(Math.random() * alternatives.length), 1)[0];
 
 		solver.push();
 
-			next.exprs.forEach(clause => solver.assert(clause));
-			model = solver.getModel();
+		next.exprs.forEach(clause => solver.assert(clause));
+		model = solver.getModel();
 
 		solver.pop();
 
@@ -57,6 +57,6 @@ Query.process = function(solver, alternatives) {
 
 	Query.LAST_ATTEMPTS = attempts;
 	return model;
-}
+};
 
 export default Query;

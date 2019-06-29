@@ -2,5 +2,5 @@
 
 if [ -e ./bin/z3_bindings_ref.js ]; then
   echo "Compling ref bindings to ES5"
-  ./node_modules/.bin/babel --presets env ./bin/z3_bindings_ref.js > ./bin/z3_bindings_ref_es5.js
+  ./node_modules/.bin/babel --presets "@babel/preset-env" ./bin/z3_bindings_ref.js > ./bin/z3_bindings_ref_es5.js
 fi

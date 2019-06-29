@@ -2,7 +2,7 @@
  * Copyright Blake Loring <blake_l@parsed.uk> 2015
  */
 
-"use strict";
+
 
 /**
  * A node.js API for Z3. Currently, all objects only increment ref counts but never decrement.
@@ -10,13 +10,13 @@
  * ref counts.
  */
 
-import Expr from './Expr';
-import Model from './Model';
-import Context from './Context.js';
-import Solver from './Solver';
-import Regex from './Regex';
-import Query from './Query';
-import Check from './Check';
+import Expr from "./Expr";
+import Model from "./Model";
+import Context from "./Context.js";
+import Solver from "./Solver";
+import Regex from "./Regex";
+import Query from "./Query";
+import Check from "./Check";
 
 let API = {};
 

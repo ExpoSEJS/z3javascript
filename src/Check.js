@@ -12,5 +12,5 @@ export default function(check_predicate, altgen) {
 			isSAT: sat,
 			alternatives: !sat ? altgen(query, model) : []
 		};
-	}
+	};
 }
