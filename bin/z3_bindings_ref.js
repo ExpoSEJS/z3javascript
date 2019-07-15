@@ -791,20 +791,14 @@ function unwrap(ptr) {
  * END OF UGLY HEAP
  */
 
-for (var i in Z3) {
-    if (typeof(Z3[i]) == "function") {
-        var originFn = Z3[i];
-
-        Z3[i] = function() {
-            var new_args = [];
-
-            for (var i = 0; i < arguments.length; i++) {
-                new_args.push(unwrap(arguments[i]));
-            }
-
-            return wrapPtr(originFn.apply(this, new_args));
-        } 
-    }
+for (var modifiedBinding in GeneratedBindings) {
+   const originFn = Z3[modifiedBinding];
+   Z3[modifiedBinding] = function() {
+       for (var i = 0; i < arguments.length; i++) {
+           arguments[i] = unwrap(arguments[i]);
+       }
+       return wrapPtr(originFn.apply(this, arguments));
+   };
 }
 
 Z3.bindings_model_eval = function(ctx, mdl, expr) {
