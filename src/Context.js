@@ -2,7 +2,6 @@
  * Copyright Blake Loring <blake_l@parsed.uk> 2015
  */
 
-
 import Z3 from "./Z3Loader";
 import Z3Utils from "./Z3Utils";
 import Expr from "./Expr";

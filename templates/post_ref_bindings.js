@@ -1,4 +1,4 @@
-const Z3 = ffi.Library(libPath, GeneratedBindings);
+var Z3 = ffi.Library(libPath, GeneratedBindings);
 
 /**
  * For some reason FFI doesn't work if a pointer passes to a renderer and then back to the master in Electron
@@ -6,8 +6,8 @@ const Z3 = ffi.Library(libPath, GeneratedBindings);
  * TODO: Work out a way to clear free'd memory from the heap?
  */
 
-const POINTERS = {};
-let last_pointer_id = 0;
+var POINTERS = {};
+var last_pointer_id = 0;
 
 function wrapPtr(ptr) {
     if (ptr && typeof(ptr) == "object") {
@@ -22,7 +22,7 @@ function unwrap(ptr) {
     if (ptr && ptr._ptr) {
         return POINTERS[ptr.id];
     } else if (ptr instanceof Array) {
-        for (let i = 0; i < ptr.length; i++) {
+        for (var i = 0; i < ptr.length; i++) {
             ptr[i] = unwrap(ptr[i]);
         }
         return ptr;
@@ -35,20 +35,14 @@ function unwrap(ptr) {
  * END OF UGLY HEAP
  */
 
-for (let i in Z3) {
-    if (typeof(Z3[i]) == "function") {
-        const originFn = Z3[i];
-
-        Z3[i] = function() {
-            let new_args = [];
-
-            for (let i = 0; i < arguments.length; i++) {
-                new_args.push(unwrap(arguments[i]));
-            }
-
-            return wrapPtr(originFn.apply(this, new_args));
-        } 
-    }
+for (var modifiedBinding in GeneratedBindings) {
+   const originFn = Z3[modifiedBinding];
+   Z3[modifiedBinding] = function() {
+       for (var i = 0; i < arguments.length; i++) {
+           arguments[i] = unwrap(arguments[i]);
+       }
+       return wrapPtr(originFn.apply(this, arguments));
+   };
 }
 
 Z3.bindings_model_eval = function(ctx, mdl, expr) {
@@ -95,7 +89,7 @@ Z3.CONST_STR = 0;
 Z3.CONST_BOOL = 1;
 Z3.FUNC = 2;
 Z3.NUMERAL = 3;
-Z3.letIABLE = 4;
+Z3.VARIABLE = 4;
 Z3.STR_VARIABLE = 5;
 Z3.INT_VARIABLE = 6;
 Z3.QUANTIFIER = 7;
@@ -334,3 +328,5 @@ Z3.RCFNumObjArray = RCFNumObjArray;
 
 return Z3;
 };
+
+module.exports.default = module.exports;
