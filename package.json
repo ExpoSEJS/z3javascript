@@ -4,19 +4,21 @@
   "description": "ExpoSE: Z3 Prover bindings for JavaScript",
   "main": "./bin/Z3.js",
   "dependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
     "eslint": "^5.16.0",
     "ffi": "*",
     "node-gyp": "*",
     "ref": "*",
     "ref-array": "*"
   },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5"
+  },
   "scripts": {
-    "prepublish": "",
+    "prepublish": "./scripts/setup",
     "postinstall": "./scripts/postinstall",
-    "build": "",
+    "build": "./scripts/setup",
     "test": "Z3_PATH=./bin/libz3.so ./test"
   },
   "repository": {

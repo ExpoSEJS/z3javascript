@@ -1,3 +1,5 @@
 #Copyright Blake Loring <blake_l@parsed.uk> 2015
 ./scripts/pull_z3
-./scripts/setup
+echo "DllBuild"
+./scripts/build_z3
+#./scripts/setup
