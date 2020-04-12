@@ -54,6 +54,7 @@ var CFloat = ref.types.float;
 var CULong = ref.types.uint64;
 var CLong = ref.types.int64;
 var CDouble = ref.types.double;
+void CChar = ref.types.char;
 var CString = ref.types.CString;
 
 // Array types. Not all of these may be valid (check over time)
