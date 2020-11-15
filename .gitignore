@@ -2,6 +2,7 @@ z3/
 emsdk_portable/
 node_modules/
 bin/libz3*
+bin/
 #Backup files
 *~
 
