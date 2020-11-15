@@ -45,6 +45,7 @@ var ParamDescrs = Voidp;
 var FuncInterpObj = Voidp;
 var FuncEntryObj = Voidp;
 var RCFNumObj = Voidp;
+var SolverCallbackObj = Voidp;
 
 // Names for standard types
 var CUInt = ref.types.uint32;
