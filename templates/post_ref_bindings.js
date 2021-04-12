@@ -1,3 +1,4 @@
+var ffi = require('ffi-napi');
 var Z3 = ffi.Library(libPath, GeneratedBindings);
 
 /**

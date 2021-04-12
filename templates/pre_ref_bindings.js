@@ -7,7 +7,6 @@
 // only the function bindings are, not the types
 var ref = require('ref');
 var ArrayType = require('ref-array');
-var ffi = require('ffi');
 
 module.exports = function(libPath) {
 
