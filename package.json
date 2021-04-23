@@ -5,7 +5,7 @@
   "main": "./bin/Z3.js",
   "dependencies": {
     "eslint": "^5.16.0",
-    "ffi": "*",
+    "ffi-napi": "*",
     "node-gyp": "*",
     "ref": "*",
     "ref-array": "*"
@@ -19,7 +19,7 @@
     "prepublish": "./scripts/setup",
     "postinstall": "./scripts/postinstall",
     "build": "./scripts/postinstall; ./scripts/setup",
-    "test": "Z3_PATH=./bin/libz3.so ./test"
+    "test": "Z3_PATH=./bin/libz3.dylib ./test"
   },
   "repository": {
     "type": "git",
