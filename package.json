@@ -5,10 +5,10 @@
   "main": "./bin/Z3.js",
   "dependencies": {
     "eslint": "^5.16.0",
-    "ffi-napi": "*",
+    "ffi-napi": "^4.0.3",
     "node-gyp": "*",
-    "ref": "*",
-    "ref-array": "*"
+    "ref-napi": "^3.0.2",
+    "ref-array-napi": "^1.2.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -19,7 +19,7 @@
     "prepublish": "./scripts/setup",
     "postinstall": "./scripts/postinstall",
     "build": "./scripts/postinstall; ./scripts/setup",
-    "test": "Z3_PATH=./bin/libz3.dylib ./test"
+    "test": "Z3_PATH=./bin/libz3 ./test"
   },
   "repository": {
     "type": "git",
